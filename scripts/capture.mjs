@@ -78,6 +78,10 @@ try {
 
   await send("Page.enable");
   await send("Runtime.enable");
+  // 진입 모션을 끈 상태로 캡처(스크롤 패럴랙스·whileInView 간섭 방지)
+  await send("Emulation.setEmulatedMedia", {
+    features: [{ name: "prefers-reduced-motion", value: "reduce" }],
+  });
   const mobile = width < 768;
   await send("Emulation.setDeviceMetricsOverride", {
     width,
