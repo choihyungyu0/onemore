@@ -15,7 +15,7 @@ export function How() {
         />
 
         {/* 모바일·태블릿: 카드 그리드 */}
-        <ol className="mt-14 grid gap-4 md:grid-cols-2 lg:hidden">
+        <ol className="how-grid mt-14 grid gap-4 md:grid-cols-2 lg:hidden">
           {how.steps.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.08} className="h-full">
               <li className="flex h-full flex-col rounded-[24px] bg-white p-6 shadow-card ring-1 ring-ink/[0.05]">

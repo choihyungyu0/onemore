@@ -105,11 +105,15 @@ try {
 
   // 끝까지 스크롤해 whileInView 트리거
   const h1 = await evaluate("document.documentElement.scrollHeight");
+  const scrollTo = (y) =>
+    evaluate(
+      `(window.__lenis ? window.__lenis.scrollTo(${y}, { immediate: true, force: true }) : window.scrollTo(0, ${y})); true`
+    );
   for (let y = 0; y < h1; y += 500) {
-    await evaluate(`window.scrollTo(0, ${y}); true`);
+    await scrollTo(y);
     await sleep(90);
   }
-  await evaluate("window.scrollTo(0, 0); true");
+  await scrollTo(0);
   await sleep(1200);
 
   // dev 배지 제거 후 전체 높이로 캡처

@@ -321,3 +321,13 @@ html.lenis body {
     cursor: none !important;
   }
 }
+
+/* ── 감속 모션: 핀/스크럽 대신 카드 그리드 ── */
+@media (prefers-reduced-motion: reduce) {
+  .how-scrub {
+    display: none !important;
+  }
+  .how-grid {
+    display: grid !important;
+  }
+}

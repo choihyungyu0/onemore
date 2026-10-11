@@ -67,7 +67,7 @@ export function HowScrub() {
   }, []);
 
   return (
-    <div ref={root} className="relative hidden h-screen items-center overflow-hidden lg:flex">
+    <div ref={root} className="how-scrub relative hidden h-screen items-center overflow-hidden lg:flex">
       <div className="mx-auto grid w-full max-w-[80rem] grid-cols-[0.9fr_1.1fr] items-center gap-16 px-12">
         {/* 거대 숫자 스택 */}
         <div className="relative h-[42vh]">

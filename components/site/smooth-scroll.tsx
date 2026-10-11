@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,6 +12,8 @@ function LenisBridge() {
   const lenis = useLenis();
   useEffect(() => {
     if (!lenis) return;
+    // 디버그·캡처 스크립트용 전역 핸들 (window.__lenis.scrollTo)
+    (window as unknown as { __lenis?: typeof lenis }).__lenis = lenis;
     const onScroll = () => ScrollTrigger.update();
     lenis.on("scroll", onScroll);
     const tick = (time: number) => lenis.raf(time * 1000);
@@ -30,6 +32,11 @@ function LenisBridge() {
  * 감속 모션 설정에서는 네이티브 스크롤 유지.
  */
 export function SmoothScroll({ children }: { children: ReactNode }) {
+  const [reduce, setReduce] = useState(false);
+  useEffect(() => {
+    setReduce(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+  if (reduce) return <>{children}</>;
   return (
     <ReactLenis
       root
