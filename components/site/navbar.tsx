@@ -5,7 +5,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { brand, nav } from "@/content/landing";
 import { cn } from "@/lib/utils";
+import { useLenis } from "lenis/react";
 import { btnClass } from "./button";
+import { Magnetic } from "./magnetic";
 import { EASE } from "./reveal";
 
 export function Logo({ className, invert }: { className?: string; invert?: boolean }) {
@@ -27,6 +29,7 @@ export function Logo({ className, invert }: { className?: string; invert?: boole
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const lenis = useLenis();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -37,10 +40,13 @@ export function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
+    if (open) lenis?.stop();
+    else lenis?.start();
     return () => {
       document.body.style.overflow = "";
+      lenis?.start();
     };
-  }, [open]);
+  }, [open, lenis]);
 
   const solid = scrolled && !open;
 
@@ -77,9 +83,11 @@ export function Navbar() {
             <a href={nav.secondary.href} className={btnClass("ghost", "md", "h-10 px-4 text-[14px]")}>
               {nav.secondary.label}
             </a>
-            <a href={nav.primary.href} className={btnClass("solid", "md", "h-10 px-4 text-[14px]")}>
-              {nav.primary.label}
-            </a>
+            <Magnetic strength={0.2}>
+              <a href={nav.primary.href} className={btnClass("solid", "md", "h-10 px-4 text-[14px]")}>
+                {nav.primary.label}
+              </a>
+            </Magnetic>
           </div>
 
           <button

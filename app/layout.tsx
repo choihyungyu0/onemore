@@ -3,6 +3,10 @@ import localFont from "next/font/local";
 import { Syne } from "next/font/google";
 import "./globals.css";
 import { brand, seo } from "@/content/landing";
+import { SmoothScroll } from "@/components/site/smooth-scroll";
+import { Preloader } from "@/components/site/preloader";
+import { Cursor } from "@/components/site/cursor";
+import { ScrollProgress } from "@/components/site/scroll-progress";
 
 // 한글 본문·헤드라인: Pretendard Variable (self-hosted, OFL)
 const pretendard = localFont({
@@ -49,11 +53,20 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+/**
+ * 첫 페인트 전에 실행 — 프리로더가 뜰 상황(세션 첫 방문·감속 모션 아님)이면
+ * html.preloading 을 붙여 히어로 CSS 진입 모션을 커튼이 걷힐 때까지 멈춰 둔다.
+ */
+const PRELOAD_SCRIPT = `try{if(!sessionStorage.getItem('onemore-preloader')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('preloading')}}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ko" className={`${pretendard.variable} ${syne.variable}`}>
+    <html lang="ko" className={`${pretendard.variable} ${syne.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: PRELOAD_SCRIPT }} />
+      </head>
       <body className="antialiased">
         <a
           href="#main"
@@ -61,7 +74,12 @@ export default function RootLayout({
         >
           본문으로 건너뛰기
         </a>
-        {children}
+        <SmoothScroll>
+          <Preloader />
+          {children}
+        </SmoothScroll>
+        <Cursor />
+        <ScrollProgress />
       </body>
     </html>
   );

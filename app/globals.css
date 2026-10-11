@@ -235,3 +235,89 @@
     animation: none;
   }
 }
+
+/* ── 프리로더가 떠 있는 동안 히어로 진입 모션 대기 ── */
+.preloading .rise,
+.preloading .rise-line,
+.preloading .rise-char {
+  animation-play-state: paused;
+}
+
+/* ── 글자 단위 리빌 (히어로 헤드라인) ── */
+@keyframes rise-char {
+  from {
+    opacity: 0;
+    transform: translateY(75%) rotate(2deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise-char {
+  display: inline-block;
+  animation: rise-char 0.9s var(--ease-expo) both;
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rise-char {
+    animation: none;
+  }
+}
+
+/* ── Lenis 관성 스크롤 기본 CSS ── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* ── 커스텀 커서 ── */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 9999px;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+.cursor-dot {
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  background: #fff;
+}
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border: 1px solid #fff;
+  transition:
+    width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    margin 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.28s ease;
+}
+.cursor-hover .cursor-ring {
+  width: 68px;
+  height: 68px;
+  margin: -34px 0 0 -34px;
+  background-color: rgba(255, 255, 255, 0.18);
+}
+@media (pointer: fine) {
+  html.has-cursor,
+  html.has-cursor * {
+    cursor: none !important;
+  }
+}

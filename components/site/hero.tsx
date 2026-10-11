@@ -6,6 +6,8 @@ import { ChevronRight } from "lucide-react";
 import { hero, images } from "@/content/landing";
 import { cn } from "@/lib/utils";
 import { ButtonLink } from "./button";
+import { DistortImage } from "./distort-image";
+import { Magnetic } from "./magnetic";
 import { Placeholder } from "./placeholder";
 import { Lines } from "./reveal";
 
@@ -54,12 +56,17 @@ function FloatingCard({
             alt={im.alt}
             sizes="260px"
             priority={priority}
-            overlay="bottom"
           >
-            <span className="absolute left-3 top-3 rounded-full bg-white/92 px-2.5 py-1 text-[11px] font-semibold text-ink backdrop-blur">
+            {/* WebGL 왜곡 레이어 (사진이 있을 때만, 마우스 환경) */}
+            {!reduce && <DistortImage src={im.src} className="absolute inset-0 z-[1]" />}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[55%] bg-gradient-to-t from-ink/85 via-ink/40 to-transparent"
+            />
+            <span className="absolute left-3 top-3 z-[3] rounded-full bg-white/92 px-2.5 py-1 text-[11px] font-semibold text-ink backdrop-blur">
               {card.chip}
             </span>
-            <span className="absolute bottom-3 left-3 text-[12px] font-semibold text-white">
+            <span className="absolute bottom-3 left-3 z-[3] text-[12px] font-semibold text-white">
               {card.tag}
             </span>
           </Placeholder>
@@ -97,11 +104,17 @@ export function Hero() {
           </p>
 
           <h1 className="display mt-5 text-[clamp(3rem,7.4vw,6rem)] text-ink">
-            {hero.title.split("\n").map((line, i) => (
-              <span key={i} className="block overflow-hidden">
-                <span className="rise-line block" style={delay(0.15 + i * 0.1)}>
-                  {line}
-                </span>
+            {hero.title.split("\n").map((line, li) => (
+              <span key={li} className="block overflow-hidden whitespace-nowrap">
+                {Array.from(line).map((ch, ci) => (
+                  <span
+                    key={ci}
+                    className="rise-char"
+                    style={delay(0.15 + li * 0.14 + ci * 0.035)}
+                  >
+                    {ch === " " ? "\u00A0" : ch}
+                  </span>
+                ))}
               </span>
             ))}
           </h1>
@@ -114,13 +127,17 @@ export function Hero() {
           </p>
 
           <div className="rise mt-9 flex flex-col gap-3 sm:flex-row" style={delay(0.58)}>
-            <ButtonLink href={hero.primary.href} variant="solid" size="lg">
-              {hero.primary.label}
-              <ChevronRight className="h-4 w-4" />
-            </ButtonLink>
-            <ButtonLink href={hero.secondary.href} variant="ghost" size="lg">
-              {hero.secondary.label}
-            </ButtonLink>
+            <Magnetic>
+              <ButtonLink href={hero.primary.href} variant="solid" size="lg">
+                {hero.primary.label}
+                <ChevronRight className="h-4 w-4" />
+              </ButtonLink>
+            </Magnetic>
+            <Magnetic>
+              <ButtonLink href={hero.secondary.href} variant="ghost" size="lg">
+                {hero.secondary.label}
+              </ButtonLink>
+            </Magnetic>
           </div>
 
           <p

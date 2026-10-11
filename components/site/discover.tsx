@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronRight, Search, X } from "lucide-react";
+import { useLenis } from "lenis/react";
 import { creators, discover, images, sizeBands, type Country, type Creator } from "@/content/landing";
 import { cn } from "@/lib/utils";
 import { ButtonLink, Button, btnClass } from "./button";
@@ -343,17 +344,20 @@ function SelectionBar() {
 /** 프로필 상세 모달 */
 function ProfileModal({ creator, onClose }: { creator: Creator | null; onClose: () => void }) {
   const sel = useSelection();
+  const lenis = useLenis();
 
   useEffect(() => {
     if (!creator) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
+    lenis?.stop();
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+      lenis?.start();
     };
-  }, [creator, onClose]);
+  }, [creator, onClose, lenis]);
 
   const rows = creator
     ? {
@@ -381,6 +385,7 @@ function ProfileModal({ creator, onClose }: { creator: Creator | null; onClose: 
             role="dialog"
             aria-modal="true"
             aria-labelledby="profile-title"
+            data-lenis-prevent
             className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-[28px] bg-white sm:rounded-[28px]"
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

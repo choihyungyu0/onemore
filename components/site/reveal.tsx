@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import type { ElementType, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export const EASE = [0.16, 1, 0.3, 1] as const;
@@ -44,16 +44,17 @@ export function RevealLines({
   className,
   lineClassName,
   delay = 0,
-  as: Tag = "span",
+  as = "span",
 }: {
   text: string;
   className?: string;
   lineClassName?: string;
   delay?: number;
-  as?: ElementType;
+  as?: "span" | "p" | "h1" | "h2" | "h3";
 }) {
   const reduce = useReducedMotion();
   const lines = text.split("\n");
+  const Tag = as;
 
   if (reduce) {
     return (

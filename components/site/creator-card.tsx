@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef, type MouseEvent } from "react";
+import { useReducedMotion } from "framer-motion";
 import { Check, Plus } from "lucide-react";
 import { discover, images, type Creator } from "@/content/landing";
 import { cn } from "@/lib/utils";
@@ -24,8 +26,27 @@ export function CreatorCard({
   className?: string;
 }) {
   const im = images[creator.image];
+  const reduce = useReducedMotion();
+  const ref = useRef<HTMLElement>(null);
+
+  // 커서 위치를 따라 살짝 기우는 3D 틸트 (마우스 환경에서만)
+  function onMove(e: MouseEvent<HTMLElement>) {
+    const el = ref.current;
+    if (!el || reduce) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `perspective(900px) translateY(-6px) rotateX(${(-py * 7).toFixed(2)}deg) rotateY(${(px * 7).toFixed(2)}deg)`;
+  }
+  function onLeave() {
+    if (ref.current) ref.current.style.transform = "";
+  }
+
   return (
     <article
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-[20px] bg-white shadow-card ring-1 ring-ink/[0.06] transition-[transform,box-shadow] duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1.5 hover:shadow-lift",
         selected && "ring-2 ring-brand",
@@ -38,13 +59,16 @@ export function CreatorCard({
         className="relative block w-full text-left"
         aria-label={`${creator.name} ${discover.card.view}`}
       >
-        <Placeholder
-          ratio="4/5"
-          tone={creator.tone}
-          src={im.src}
-          alt={im.alt}
-          sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 220px"
-        />
+        <div className="overflow-hidden">
+          <Placeholder
+            ratio="4/5"
+            tone={creator.tone}
+            src={im.src}
+            alt={im.alt}
+            sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 220px"
+            className="transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.06]"
+          />
+        </div>
         {/* 국가 태그 */}
         <span className="absolute left-3 top-3 rounded-full bg-white/92 px-2.5 py-1 text-[11px] font-semibold tracking-tight text-ink backdrop-blur">
           {creator.country} · {creator.city}

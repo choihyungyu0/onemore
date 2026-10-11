@@ -1,23 +1,27 @@
 import { ChevronRight } from "lucide-react";
 import { finale, images } from "@/content/landing";
 import { ButtonLink } from "./button";
+import { FinaleBg } from "./finale-bg";
+import { Magnetic } from "./magnetic";
 import { Placeholder } from "./placeholder";
 import { Lines, Reveal, RevealLines } from "./reveal";
 
-/** 마지막 제안 — 21:9 사진을 배경으로, 어두운 오버레이 위에 흰 글자 */
+/** 마지막 제안 — 21:9 사진 배경(스크롤 패럴랙스) + 어두운 오버레이 위 흰 글자 */
 export function Finale() {
   const im = images["final-01"];
   return (
     <section className="relative overflow-hidden bg-ink px-5 py-28 text-white sm:px-8 md:py-40 lg:px-12 lg:py-48">
-      <Placeholder
-        fill
-        tone={0}
-        label="배경 이미지 자리 21/9"
-        src={im.src}
-        alt={im.alt}
-        sizes="100vw"
-        overlay="full"
-      />
+      <FinaleBg>
+        <Placeholder
+          fill
+          tone={0}
+          label="배경 이미지 자리 21/9"
+          src={im.src}
+          alt={im.alt}
+          sizes="100vw"
+          overlay="full"
+        />
+      </FinaleBg>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/80 to-transparent"
@@ -40,13 +44,17 @@ export function Finale() {
           </p>
         </Reveal>
         <Reveal delay={0.25} className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
-          <ButtonLink href={finale.primary.href} variant="white" size="lg">
-            {finale.primary.label}
-            <ChevronRight className="h-4 w-4" />
-          </ButtonLink>
-          <ButtonLink href={finale.secondary.href} variant="brand" size="lg">
-            {finale.secondary.label}
-          </ButtonLink>
+          <Magnetic>
+            <ButtonLink href={finale.primary.href} variant="white" size="lg">
+              {finale.primary.label}
+              <ChevronRight className="h-4 w-4" />
+            </ButtonLink>
+          </Magnetic>
+          <Magnetic>
+            <ButtonLink href={finale.secondary.href} variant="brand" size="lg">
+              {finale.secondary.label}
+            </ButtonLink>
+          </Magnetic>
         </Reveal>
       </div>
     </section>
