@@ -7,13 +7,14 @@ import { hero, images } from "@/content/landing";
 import { cn } from "@/lib/utils";
 import { ButtonLink } from "./button";
 import { Placeholder } from "./placeholder";
-import { EASE, Lines } from "./reveal";
+import { Lines } from "./reveal";
 
-const fade = (delay: number) => ({
-  initial: { opacity: 0, y: 22 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, delay, ease: EASE },
-});
+/*
+ * 첫 화면 진입 모션은 CSS 키프레임(.rise / .rise-line)으로 처리한다.
+ * JS 하이드레이션 전에도 서버 HTML이 그대로 보이고, 느린 회선에서 히어로가
+ * 비어 보이는 일이 없다. 플로트·패럴랙스만 framer-motion.
+ */
+const delay = (s: number) => ({ animationDelay: `${s}s` });
 
 type HeroCard = (typeof hero.cards)[number];
 
@@ -23,7 +24,7 @@ function FloatingCard({
   className,
   width,
   drift,
-  delay,
+  enter,
   parallax,
   reduce,
   priority,
@@ -32,43 +33,39 @@ function FloatingCard({
   className?: string;
   width: string;
   drift: number;
-  delay: number;
+  enter: number;
   parallax: MotionValue<number>;
   reduce: boolean;
   priority?: boolean;
 }) {
   const im = images[card.image];
   return (
-    <motion.div
-      className={cn("absolute", className)}
-      style={{ width, y: reduce ? 0 : parallax }}
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, delay, ease: EASE }}
-    >
-      <motion.div
-        animate={reduce ? undefined : { y: [0, -drift, 0] }}
-        transition={{ duration: 6 + delay * 4, repeat: Infinity, ease: "easeInOut" }}
-        className="overflow-hidden rounded-[22px] bg-white shadow-lift ring-1 ring-ink/[0.06]"
-      >
-        <Placeholder
-          ratio="4/5"
-          tone={card.tone}
-          src={im.src}
-          alt={im.alt}
-          sizes="260px"
-          priority={priority}
-          overlay="bottom"
+    <div className={cn("rise absolute", className)} style={{ width, ...delay(enter) }}>
+      <motion.div style={{ y: reduce ? 0 : parallax }}>
+        <motion.div
+          animate={reduce ? undefined : { y: [0, -drift, 0] }}
+          transition={{ duration: 6 + enter * 4, repeat: Infinity, ease: "easeInOut" }}
+          className="overflow-hidden rounded-[22px] bg-white shadow-lift ring-1 ring-ink/[0.06]"
         >
-          <span className="absolute left-3 top-3 rounded-full bg-white/92 px-2.5 py-1 text-[11px] font-semibold text-ink backdrop-blur">
-            {card.chip}
-          </span>
-          <span className="absolute bottom-3 left-3 text-[12px] font-semibold text-white">
-            {card.tag}
-          </span>
-        </Placeholder>
+          <Placeholder
+            ratio="4/5"
+            tone={card.tone}
+            src={im.src}
+            alt={im.alt}
+            sizes="260px"
+            priority={priority}
+            overlay="bottom"
+          >
+            <span className="absolute left-3 top-3 rounded-full bg-white/92 px-2.5 py-1 text-[11px] font-semibold text-ink backdrop-blur">
+              {card.chip}
+            </span>
+            <span className="absolute bottom-3 left-3 text-[12px] font-semibold text-white">
+              {card.tag}
+            </span>
+          </Placeholder>
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -95,33 +92,28 @@ export function Hero() {
 
       <div className="relative mx-auto grid max-w-[80rem] items-center gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-8">
         <div className="max-w-[46rem]">
-          <motion.p {...fade(0.05)} className="text-[14px] font-semibold text-brand md:text-[15px]">
+          <p className="rise text-[14px] font-semibold text-brand md:text-[15px]" style={delay(0.05)}>
             {hero.eyebrow}
-          </motion.p>
+          </p>
 
           <h1 className="display mt-5 text-[clamp(3rem,7.4vw,6rem)] text-ink">
             {hero.title.split("\n").map((line, i) => (
               <span key={i} className="block overflow-hidden">
-                <motion.span
-                  className="block"
-                  initial={reduce ? false : { y: "70%", opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.9, delay: 0.15 + i * 0.1, ease: EASE }}
-                >
+                <span className="rise-line block" style={delay(0.15 + i * 0.1)}>
                   {line}
-                </motion.span>
+                </span>
               </span>
             ))}
           </h1>
 
-          <motion.p
-            {...fade(0.45)}
-            className="mt-7 max-w-xl text-[17px] leading-[1.7] text-muted md:text-lg"
+          <p
+            className="rise mt-7 max-w-xl text-[17px] leading-[1.7] text-muted md:text-lg"
+            style={delay(0.45)}
           >
             <Lines text={hero.description} />
-          </motion.p>
+          </p>
 
-          <motion.div {...fade(0.58)} className="mt-9 flex flex-col gap-3 sm:flex-row">
+          <div className="rise mt-9 flex flex-col gap-3 sm:flex-row" style={delay(0.58)}>
             <ButtonLink href={hero.primary.href} variant="solid" size="lg">
               {hero.primary.label}
               <ChevronRight className="h-4 w-4" />
@@ -129,28 +121,28 @@ export function Hero() {
             <ButtonLink href={hero.secondary.href} variant="ghost" size="lg">
               {hero.secondary.label}
             </ButtonLink>
-          </motion.div>
+          </div>
 
-          <motion.p
-            {...fade(0.7)}
-            className="mt-8 flex flex-wrap gap-x-3 gap-y-1 text-[14px] font-medium text-ink/60"
+          <p
+            className="rise mt-8 flex flex-wrap gap-x-3 gap-y-1 text-[14px] font-medium text-ink/60"
+            style={delay(0.7)}
           >
             {hero.tagline.map((t) => (
               <span key={t}>{t}</span>
             ))}
-          </motion.p>
+          </p>
         </div>
 
         {/* 데스크톱: 살짝 겹치는 카드 4장 */}
         <div className="relative hidden h-[640px] lg:block" aria-hidden>
-          <FloatingCard card={hero.cards[0]} className="left-[2%] top-[8%] z-[2]" width="232px" drift={10} delay={0.35} parallax={p1} reduce={reduce} priority />
-          <FloatingCard card={hero.cards[1]} className="left-[40%] top-[0%] z-[3]" width="224px" drift={14} delay={0.5} parallax={p2} reduce={reduce} priority />
-          <FloatingCard card={hero.cards[2]} className="left-[22%] top-[52%] z-[4]" width="216px" drift={8} delay={0.65} parallax={p3} reduce={reduce} />
-          <FloatingCard card={hero.cards[3]} className="left-[66%] top-[46%] z-[1]" width="206px" drift={12} delay={0.8} parallax={p4} reduce={reduce} />
+          <FloatingCard card={hero.cards[0]} className="left-[2%] top-[8%] z-[2]" width="232px" drift={10} enter={0.35} parallax={p1} reduce={reduce} priority />
+          <FloatingCard card={hero.cards[1]} className="left-[40%] top-[0%] z-[3]" width="224px" drift={14} enter={0.5} parallax={p2} reduce={reduce} priority />
+          <FloatingCard card={hero.cards[2]} className="left-[22%] top-[52%] z-[4]" width="216px" drift={8} enter={0.65} parallax={p3} reduce={reduce} />
+          <FloatingCard card={hero.cards[3]} className="left-[66%] top-[46%] z-[1]" width="206px" drift={12} enter={0.8} parallax={p4} reduce={reduce} />
         </div>
 
         {/* 모바일·태블릿: 한 줄로 스치는 카드 3장 */}
-        <motion.div {...fade(0.5)} className="flex gap-3 lg:hidden" aria-hidden>
+        <div className="rise flex gap-3 lg:hidden" style={delay(0.5)} aria-hidden>
           {hero.cards.slice(0, 3).map((card, i) => {
             const im = images[card.image];
             return (
@@ -172,13 +164,13 @@ export function Hero() {
               </div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
 
       {/* 발견 → 선택 → 매칭 → 성장 */}
-      <motion.ol
-        {...fade(0.85)}
-        className="relative mx-auto mt-16 flex max-w-[80rem] items-center gap-3 overflow-x-auto border-t border-line pt-6 text-[14px] font-semibold text-ink/70 lg:mt-20"
+      <ol
+        className="rise relative mx-auto mt-16 flex max-w-[80rem] items-center gap-3 overflow-x-auto border-t border-line pt-6 text-[14px] font-semibold text-ink/70 lg:mt-20"
+        style={delay(0.85)}
         aria-label="서비스 흐름"
       >
         {hero.flow.map((f, i) => (
@@ -192,7 +184,7 @@ export function Hero() {
             )}
           </li>
         ))}
-      </motion.ol>
+      </ol>
     </section>
   );
 }
