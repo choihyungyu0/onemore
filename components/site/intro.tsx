@@ -9,8 +9,8 @@ import { BrandMark } from "./brand-mark";
 
 const AUTO_MS = 3200;
 const LEAVE_MS = 1050;
-const PHOTO_W = 190;
-const PHOTO_H = 238;
+// 인트로 사진 크기 — 히어로 인셋(최대 36vh)보다 한 단계 크게. 도착하며 살짝 줄어든다 (CSS clamp라 첫 페인트부터 정확)
+const PHOTO_W = "clamp(200px, min(28vw, 42vh), 440px)";
 
 /**
  * 오프닝 — 1막: 노리스식 다크 인트로(등고선·코랄 세리프 마퀴·흰 한글 마퀴·중앙 사진 프레임 전환·서명·하단 진행선).
@@ -222,10 +222,10 @@ export function Intro() {
         ref={photoRef}
         className="intro-photo intro-in-photo fixed z-[160] overflow-hidden rounded-[6px] shadow-lift"
         style={{
-          left: `calc(50% - ${PHOTO_W / 2}px)`,
-          top: `calc(50% - ${PHOTO_H / 2 + 16}px)`,
+          left: `calc(50% - ${PHOTO_W} / 2)`,
+          top: `calc(50% - ${PHOTO_W} * 1.25 / 2 - 16px)`,
           width: PHOTO_W,
-          height: PHOTO_H,
+          aspectRatio: "4 / 5",
           animationDelay: "0.35s",
         }}
         aria-hidden

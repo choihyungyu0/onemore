@@ -75,7 +75,7 @@ export function Hero() {
           </div>
         </h1>
 
-        <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(190px,min(25vw,40vh),380px)] -translate-x-1/2 -translate-y-1/2">
+        <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(190px,min(25vw,36vh),380px)] -translate-x-1/2 -translate-y-1/2">
           {/* 호버: 살짝 커지며 라벨, 클릭: 크리에이터 찾기로 */}
           <a href={hero.cornerRight.href} className="pointer-events-auto relative block" aria-label={hero.cornerRight.label}>
             <HeroInset />
