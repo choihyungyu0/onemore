@@ -22,7 +22,6 @@ type Poster = (typeof postersType)[number];
 /**
  * 첫 화면 줌아웃 스테이지 — 스크롤하면 첫 화면 전체가 카드처럼 축소되어 아래로 내려앉고,
  * 양옆에서 포스터 4장이 상단 한 줄로 들어온다. 데스크톱만 고정(pin); 모바일은 가로 스크롤 줄.
- * 인트로가 재생 중이면 끝난 뒤에 ScrollTrigger를 만든다(핀 스페이서로 레이아웃이 바뀌지 않도록).
  */
 export function ZoomStage({ posters, children }: { posters: readonly Poster[]; children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
@@ -46,9 +45,20 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
             pin: true,
             scrub: 0.6,
             anticipatePin: 1,
+            invalidateOnRefresh: true,
           },
         });
-        tl.to(hero, { scale: 0.5, y: "27vh", borderRadius: 24, duration: 1 }, 0);
+        // 포스터 줄 아래에 카드가 들어가도록 뷰포트 높이에 맞춰 축소 비율·위치 계산 (짧은 화면 대응)
+        const posters = el.querySelector<HTMLElement>(".zoom-posters");
+        const fit = () => {
+          const vh = window.innerHeight;
+          const bottom = posters ? posters.offsetTop + posters.offsetHeight : vh * 0.45;
+          const avail = vh - bottom - 28;
+          const scale = Math.min(0.5, Math.max(0.3, avail / vh));
+          const y = bottom + 24 + (vh * scale) / 2 - vh / 2;
+          return { scale, y };
+        };
+        tl.to(hero, { scale: () => fit().scale, y: () => fit().y, borderRadius: 24, duration: 1 }, 0);
         // 안쪽 카드가 먼저, 바깥 카드가 뒤따르게 — 이동 중 서로 겹치지 않는다
         tl.to(cards, { x: 0, duration: 0.7, stagger: { each: 0.07, from: "center" } }, 0.18);
         tl.eventCallback("onUpdate", () => {
@@ -56,14 +66,6 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
         });
       });
     };
-    if (document.documentElement.classList.contains("preloading")) {
-      const h = () => init();
-      window.addEventListener("onemore:intro-done", h, { once: true });
-      return () => {
-        window.removeEventListener("onemore:intro-done", h);
-        mm.revert();
-      };
-    }
     init();
     return () => mm.revert();
   }, []);

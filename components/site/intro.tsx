@@ -85,6 +85,12 @@ export function Intro() {
     setPhase("playing");
     html.classList.add("preloading");
     document.body.style.overflow = "hidden";
+    // 새로고침 시 브라우저가 이전 스크롤 위치를 복원하면 인트로가 엉뚱한 곳에서 끝난다 → 항상 맨 위에서 시작
+    try {
+      history.scrollRestoration = "manual";
+    } catch {}
+    window.scrollTo(0, 0);
+    lenis?.scrollTo(0, { immediate: true, force: true });
     lenis?.stop();
 
     let raf = 0;
@@ -98,9 +104,13 @@ export function Intro() {
     raf = requestAnimationFrame(tick);
 
     let leaveTimer = 0;
-    const finish = () => {
+    const mountedAt = performance.now();
+    const finish = (reason = "auto") => {
       if (finished) return;
+      // 마운트 직후 0.6초 안에 들어오는 휠·포인터 이벤트는 무시 (스크롤 관성·합성 이벤트 오작동 방지)
+      if (reason !== "auto" && performance.now() - mountedAt < 600) return;
       finished = true;
+      console.debug("[intro] finish via", reason, Math.round(performance.now() - mountedAt), "ms");
       cancelAnimationFrame(raf);
       setPct(99);
 
@@ -120,6 +130,8 @@ export function Intro() {
       html.classList.add("intro-leaving");
       html.classList.remove("preloading");
       leaveTimer = window.setTimeout(() => {
+        window.removeEventListener("wheel", block);
+        window.removeEventListener("touchmove", block);
         html.classList.remove("intro-leaving");
         document.body.style.overflow = "";
         lenis?.start();
@@ -130,8 +142,12 @@ export function Intro() {
         window.dispatchEvent(new Event("onemore:intro-done"));
       }, LEAVE_MS);
     };
-    const auto = window.setTimeout(finish, AUTO_MS);
-    const skip = () => finish();
+    const auto = window.setTimeout(() => finish("auto"), AUTO_MS);
+    const skip = (e: Event) => finish(e.type);
+    // 인트로·전환 중에는 실제 스크롤이 일어나지 않게 막는다 (휠은 건너뛰기 신호로만 사용)
+    const block = (e: Event) => e.preventDefault();
+    window.addEventListener("wheel", block, { passive: false });
+    window.addEventListener("touchmove", block, { passive: false });
     window.addEventListener("wheel", skip, { passive: true });
     window.addEventListener("touchstart", skip, { passive: true });
     window.addEventListener("keydown", skip);
@@ -140,6 +156,8 @@ export function Intro() {
       cancelAnimationFrame(raf);
       window.clearTimeout(auto);
       window.clearTimeout(leaveTimer);
+      window.removeEventListener("wheel", block);
+      window.removeEventListener("touchmove", block);
       window.removeEventListener("wheel", skip);
       window.removeEventListener("touchstart", skip);
       window.removeEventListener("keydown", skip);
