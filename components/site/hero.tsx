@@ -108,7 +108,7 @@ export function Hero() {
         <p className="rise text-[13px] font-semibold text-brand md:text-[14px]" style={delay(0.2)}>
           <span className="marker">{hero.eyebrow}</span>
         </p>
-        <p className="rise mt-3 max-w-xl text-[16px] leading-[1.6] md:text-[17px]" style={delay(0.3)}>
+        <p className="rise mt-3 max-w-2xl text-[16px] leading-[1.6] md:text-[17px]" style={delay(0.3)}>
           <SweepLines text={hero.description} />
         </p>
         <div className="rise mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row" style={delay(0.42)}>
