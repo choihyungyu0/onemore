@@ -1,8 +1,8 @@
 import { how } from "@/content/landing";
-import { HowRing } from "./how-ring";
 import { HowScrub } from "./how-scrub";
 import { HowSplit } from "./how-split";
 import { Vignette } from "./how-vignettes";
+import { TabletDemo } from "./tablet-demo";
 import { Lines, Reveal, RevealLines } from "./reveal";
 import { Section } from "./section";
 
@@ -19,7 +19,7 @@ export function How() {
             <Reveal key={s.title} delay={i * 0.08} className="h-full">
               <li className="flex h-full flex-col rounded-[24px] bg-white p-6 shadow-card ring-1 ring-ink/[0.05]">
                 <div className="mb-6 aspect-[4/3]">
-                  <Vignette step={i} />
+                  {i === 0 ? <TabletDemo /> : <Vignette step={i} />}
                 </div>
                 <span className="font-display text-[40px] font-extrabold leading-none tracking-tight text-brand">
                   0{i + 1}
@@ -34,10 +34,9 @@ export function How() {
         </ol>
       </Section>
 
-      {/* 데스크톱: 1단계 = 전폭 3D 링(고정·스크롤 회전) → 2~4단계 = 고정 스크럽 */}
+      {/* 데스크톱: 고정 스크럽 4단계 (1단계 = 태블릿 데모) */}
       <div className="bg-mist">
-        <HowRing />
-        <HowScrub from={1} />
+        <HowScrub />
       </div>
 
       <Section className="bg-mist pt-10 lg:pt-16">

@@ -4,15 +4,18 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { how } from "@/content/landing";
+import { Contours } from "./contours";
 import { Vignette } from "./how-vignettes";
+import { TabletDemo } from "./tablet-demo";
 import { Lines } from "./reveal";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
 /**
- * 매칭 단계(from번째부터) — 데스크톱에서는 섹션을 화면에 고정(pin)하고
- * 스크롤 양에 비례해 왼쪽 단계 글과 오른쪽 UI 비네트가 함께 교차된다.
- * 1단계(찾아보기)는 앞의 HowRing(전폭 3D 링)이 맡으므로 보통 from={1}.
+ * 매칭 4단계 — 데스크톱에서는 섹션을 화면에 고정(pin)하고
+ * 스크롤 양에 비례해 왼쪽 단계 글과 오른쪽 시각물이 함께 교차된다.
+ * 1단계(찾아보기)는 태블릿 데모(TabletDemo), 2~4단계는 UI 비네트.
+ * 오른쪽 뒤에는 옅은 등고선과 코랄 글로우를 깔아 기기가 빛 속에 놓인 느낌을 준다.
  * 비네트 안의 [data-pop] 요소는 단계가 켜질 때 차례로 떠오른다.
  * 감속 모션에서는 핀 없이 정적으로 보여준다.
  */
@@ -76,7 +79,12 @@ export function HowScrub({ from = 0 }: { from?: number }) {
 
   return (
     <div ref={root} className="how-scrub relative hidden h-screen items-center overflow-hidden lg:flex">
-      <div className="mx-auto grid w-full max-w-[80rem] grid-cols-[1fr_1.05fr] items-center gap-14 px-12 xl:gap-20">
+      {/* 배경 — 오른쪽 절반에 등고선 질감 + 기기 뒤 코랄 글로우 */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-[64%]" aria-hidden>
+        <Contours className="absolute left-1/2 top-1/2 h-[150%] w-[150%] -translate-x-1/2 -translate-y-1/2 text-ink/[0.05]" />
+        <div className="absolute left-1/2 top-1/2 h-[70%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,90,60,0.16),transparent)] blur-2xl" />
+      </div>
+      <div className="relative mx-auto grid w-full max-w-[80rem] grid-cols-[1fr_1.05fr] items-center gap-14 px-12 xl:gap-20">
         {/* 왼쪽: 단계 글 스택 */}
         <div className="relative h-[52vh] min-h-[320px]">
           {steps.map((s, i) => (
@@ -99,7 +107,7 @@ export function HowScrub({ from = 0 }: { from?: number }) {
         <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px]" style={{ maxHeight: "68vh" }}>
           {steps.map((s, i) => (
             <div key={s.title} data-vignette className="absolute inset-0">
-              <Vignette step={from + i} />
+              {from + i === 0 ? <TabletDemo /> : <Vignette step={from + i} />}
             </div>
           ))}
         </div>

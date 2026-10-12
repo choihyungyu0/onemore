@@ -56,7 +56,7 @@ export const images = {
   "card-berlin": img("card-berlin", "베를린 노천 카페"),
   "card-paris": img("card-paris", "파리 테라스 카페"),
   // 매칭 방식 오프너 — 누끼 인물(scripts: rembg로 배경 제거, -cut.webp)
-  "split-brand": { src: "/images/split-brand-cut.webp", alt: "오른쪽을 바라보는 브랜드 담당자" },
+  "split-brand": { src: "/images/split-brand-cut-v2.webp", alt: "오른쪽을 바라보는 브랜드 담당자" },
   "split-creator": { src: "/images/split-creator-cut-v4.webp", alt: "왼쪽을 바라보는 크리에이터" },
   "show-01": img("show-01", "아침 햇살이 드는 창가에서 커피를 마시는 모습"),
   "show-02": img("show-02", "카페 창가에서 웃으며 이야기하는 친구들"),
@@ -429,7 +429,18 @@ export const creators: Creator[] = [
 ];
 
 export const how = {
-  ringHint: "스크롤하거나 ← → 키로 돌려보세요. 정면 카드를 누르면 그 나라의 크리에이터를 찾아봅니다.",
+  /* 1단계 태블릿 데모 화면 — 검색어를 치고 칩을 고르면 결과가 걸러지는 장면을 반복 시연 */
+  demo: {
+    title: "크리에이터 찾기",
+    placeholder: "국가, 키워드로 찾아보기",
+    query: "호주 여행",
+    country: "호주",
+    keyword: "여행",
+    countries: ["전체", "호주", "일본", "캐나다", "뉴질랜드"],
+    keywords: ["일상", "카페", "여행", "뷰티"],
+    sort: "팔로워 많은 순",
+    floats: ["호주 · 시드니", "#여행", "팔로워 7,400명"],
+  },
   kicker: "매칭 방식",
   /* 오프너(노리스 ON/OFF TRACK 구도) — 왼쪽 열은 브랜드, 오른쪽 열은 크리에이터 */
   split: {
