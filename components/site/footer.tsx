@@ -60,6 +60,10 @@ export function Footer() {
             <a href="https://mixkit.co/free-stock-video/clouds-moving-smoothly-in-the-sky-31459/" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
               Mixkit
             </a>
+            {", "}
+            <a href="https://mixkit.co/free-stock-video/students-walking-in-a-university-4519/" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
+              Mixkit
+            </a>
           </p>
         )}
       </div>

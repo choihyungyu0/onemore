@@ -1,5 +1,6 @@
 import { how } from "@/content/landing";
 import { HowScrub } from "./how-scrub";
+import { SkyVideo } from "./sky-video";
 import { Vignette } from "./how-vignettes";
 import { Lines, Reveal, RevealLines } from "./reveal";
 import { Section, SectionHeader } from "./section";
@@ -7,7 +8,13 @@ import { Section, SectionHeader } from "./section";
 export function How() {
   return (
     <>
-      <Section id="how" className="bg-mist pb-10 lg:pb-0">
+      <Section id="how" className="relative isolate overflow-hidden bg-mist pb-10 lg:pb-0">
+        {/* 배경 영상 — 해외 캠퍼스를 걸어가는 젊은이들(Mixkit). 흰 워시 아래 은은하게, 아래로 갈수록 바탕색으로 섞인다 */}
+        <div className="absolute inset-0 -z-10" aria-hidden>
+          <SkyVideo src="/video/how.mp4" poster="/images/how-poster.webp" className="absolute inset-0" />
+          <div className="absolute inset-0 bg-mist/70" />
+          <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-mist" />
+        </div>
         <SectionHeader
           index="02"
           kicker={how.kicker}
