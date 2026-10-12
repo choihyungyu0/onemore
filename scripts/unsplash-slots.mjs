@@ -53,6 +53,8 @@ export const SLOTS = [
   { name: "show-02", ratio: "16/9", allowFaces: true, queries: ["friends laughing cafe table sunlight", "woman cafe window latte smiling"], take: 8 },
   { name: "show-03", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["road trip friends car coast summer", "woman beach travel joy sunny"], take: 8 },
   { name: "show-04", ratio: "16/9", allowFaces: true, queries: ["young woman walking city street sunny backpack", "woman bicycle city summer smiling"], take: 8 },
+  // 함께 성장하기 카메라 장면 — 해외 거리의 한국인(동아시아인) 크리에이터, 정자세·얼굴 보임, 밝은 낮. 받은 뒤 sharp flop으로 좌우 반전해 camera-01-m.webp 로 사용(landing.ts에서 직접 지정)
+  { name: "camera-01", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["korean woman travel europe street", "asian woman traveler old town street sunny", "asian woman walking european street smiling", "korean girl travel city street camera", "asian female tourist street photo daytime", "asian woman standing city street travel portrait"], take: 48 },
   // 히어로 인셋·인트로 중앙 사진 — 바다 전망 테라스에 앉은 사람(측면/뒷모습), 따뜻한 빛. 바다라서 블루 허용
   {
     name: "inset-01",

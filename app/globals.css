@@ -32,6 +32,7 @@
 }
 
 :root {
+  --cam-lock: #4ade80;
   --paper: #ffffff;
   --cream: #f6f3ee;
   --mist: #eff1f4;
@@ -272,17 +273,17 @@
 /* ── 진입 모션이 한 번 끝난 뒤에는 완료 상태로 고정 ──
    ScrollTrigger 재계산은 핀된 첫 화면을 잠깐 떼었다 붙이는데, 그러면 안의 CSS 애니메이션이 처음부터 다시 재생돼
    글·버튼이 사라졌다 다시 떠오른다("다시 로딩되는" 현상). html.entered 이후에는 애니메이션을 끄고 최종값을 둔다. */
-html.entered .rise,
-html.entered .rise-line {
+html.entered .hero .rise,
+html.entered .hero .rise-line {
   animation: none;
   opacity: 1;
   transform: none;
 }
-html.entered .marker {
+html.entered .hero .marker {
   animation: none;
   background-size: 100% 100%;
 }
-html.entered .sweep-line {
+html.entered .hero .sweep-line {
   animation: none;
   background-position: 0 0;
 }
@@ -927,11 +928,134 @@ html[data-nav-hidden] .site-header {
     opacity: 0.15;
   }
 }
+.cam-card {
+  will-change: left, top, width, height;
+}
+/* 초점 잠금 — 상자·AF 표시가 초록으로 두 번 깜빡인다 */
+.cam-focus .cam-corner {
+  transition: border-color 0.2s;
+}
+.is-locked .cam-focus .cam-corner {
+  border-color: var(--cam-lock);
+  animation: cam-lock 0.22s steps(1) 2;
+}
+.is-locked [data-af] {
+  color: var(--cam-lock);
+}
+[data-af-dot] {
+  background: var(--cam-lock);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.is-locked [data-af-dot] {
+  opacity: 1;
+}
+@keyframes cam-lock {
+  50% {
+    opacity: 0.15;
+  }
+}
+/* 셔터 그립 — 카드 오른쪽 세로 */
+.cam-grip {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+.cam-grip-tick {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+}
+.cam-shutter {
+  display: flex;
+  width: 46px;
+  height: 46px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+}
+.cam-shutter > span {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  transition: transform 0.3s;
+}
 .cam-card:hover .cam-shutter > span {
   transform: scale(0.82);
 }
-.cam-card {
-  will-change: left, top, width, height;
+/* 필름 스트립 — 위아래 스프로킷 구멍 */
+.cam-film {
+  position: relative;
+  padding: 11px 0;
+}
+.cam-film::before,
+.cam-film::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 5px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.3) 0 6px, transparent 6px 14px);
+}
+.cam-film::before {
+  top: 0;
+}
+.cam-film::after {
+  bottom: 0;
+}
+.cam-frame {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.cam-frame--next {
+  background: transparent;
+  box-shadow: none;
+  outline: 1.5px dashed rgba(255, 255, 255, 0.35);
+  outline-offset: -1.5px;
+}
+/* 모바일: 셔터를 누르면 네 번째 컷이 튀어 들어온다 (데스크톱은 GSAP이 제어) */
+.growth-camera[data-variant="mobile"] [data-new] {
+  animation: cam-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes cam-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* 인화지 캡션 카드 */
+.cam-caption {
+  border-radius: 18px;
+  padding: 18px 20px 16px;
+  background: rgba(11, 18, 32, 0.58);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 30px 60px -30px rgba(0, 0, 0, 0.8);
 }
 @media (prefers-reduced-motion: reduce) {
   .cam-rec {

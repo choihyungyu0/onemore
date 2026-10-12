@@ -62,6 +62,8 @@ export const images = {
   "show-02": img("show-02", "카페 창가에서 웃으며 이야기하는 친구들"),
   "show-03": img("show-03", "해안 도로를 달리는 여름 로드트립"),
   "show-04": img("show-04", "햇살 좋은 낯선 도시 거리를 걷는 모습"),
+  // 카메라 장면 — 받은 사진을 좌우 반전한 파일(인물이 왼쪽에서 오른쪽 글을 바라보도록, sharp flop)
+  "camera-01": { src: "/images/camera-01-m.webp", alt: "해외 골목의 오래된 벽을 만져 보는 한국인 크리에이터" },
   "inset-01": img("inset-01", "돌기둥 아치 발코니에서 바다와 절벽을 내려다보는 뒷모습"),
   "card-sydney": img("card-sydney", "노을 진 시드니 하버 브리지 앞 부두"),
   "card-bondi": img("card-bondi", "노을 진 본다이 바다와 서퍼"),
@@ -537,12 +539,28 @@ export const growth = {
   title: "유명해진 다음에만\n만나지 않습니다.\n시작하는 순간부터 함께합니다.",
   /* 카메라 장면 — 뷰파인더 표시와 셔터 안내 (사진은 images 키) */
   camera: {
-    image: "show-04" as ImageKey,
+    image: "camera-01" as ImageKey,
     hud: { rec: "REC", mode: "4K 24", af: "AF", readouts: ["ISO 200", "1/250", "f/1.8", "35mm"] },
     hint: "스크롤하거나 셔터를 눌러 이 순간을 담아보세요",
     hintMobile: "셔터를 눌러 이 순간을 담아보세요",
     shutter: "셔터 누르기",
     captured: "첫 순간 · 지금부터",
+    /* 필름 스트립 — 앞의 세 컷은 이미 찍힌 순간, 네 번째가 지금 찍는 컷 (이미지는 images 키) */
+    film: {
+      label: "함께한 순간들",
+      counterLabel: "CUT",
+      frames: [
+        { image: "show-01", label: "첫 시딩" },
+        { image: "show-02", label: "첫 협업" },
+        { image: "show-03", label: "다음 연결" },
+      ],
+      next: "지금",
+      stamp: "NEW",
+    },
+    /* 사진 속 인화지 캡션 카드 — 촬영 메타 한 줄 + 본문 쪽수 */
+    caption: { meta: ["CUT 004", "1/250", "f/1.8", "35mm"], pager: ["01", "02"] },
+    /* 본문에서 형광펜 처리할 구절 (줄 안에 그대로 있어야 함) */
+    accents: ["지금의 숫자만으로", "오래 함께하는 관계로"],
   },
   paragraphs: [
     "팔로워 3,000명 이하의 시작에도\n브랜드와 잘 어울리는 콘텐츠와 이야기는 있습니다.\n워홀원모어는 지금의 숫자만으로\n협업의 가능성을 정하지 않습니다.",
