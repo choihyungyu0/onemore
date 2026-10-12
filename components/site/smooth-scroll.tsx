@@ -14,13 +14,21 @@ function LenisBridge() {
     if (!lenis) return;
     // 디버그·캡처 스크립트용 전역 핸들 (window.__lenis.scrollTo)
     (window as unknown as { __lenis?: typeof lenis }).__lenis = lenis;
+    (window as unknown as { __ST?: typeof ScrollTrigger }).__ST = ScrollTrigger;
     const onScroll = () => ScrollTrigger.update();
     lenis.on("scroll", onScroll);
+    // 인트로가 끝나 스크롤이 풀리면 핀 공간까지 포함해 트리거 위치를 다시 계산
+    const onIntroDone = () => {
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener("onemore:intro-done", onIntroDone);
     const tick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
     return () => {
       lenis.off("scroll", onScroll);
+      window.removeEventListener("onemore:intro-done", onIntroDone);
       gsap.ticker.remove(tick);
     };
   }, [lenis]);

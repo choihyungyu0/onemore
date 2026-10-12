@@ -2,19 +2,25 @@
 
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
 import { useReducedMotion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Check, Plus } from "lucide-react";
 import { discover, images, type Creator } from "@/content/landing";
 import { cn } from "@/lib/utils";
 import { formatFollowers } from "./creator-card";
 import { Placeholder } from "./placeholder";
 
-const DEG_PER_PX = 0.3; // 스크롤 1px당 링 회전각 (imersion 실측 ≈ 0.33°)
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
+
+const PX_PER_CARD = 280; // 핀 고정 중 카드 한 장을 넘기는 데 쓰는 스크롤 양
 const CARD_RATIO = 0.75; // 카드 4:3
+const NAV_H = 76;
 
 /**
  * 크리에이터 3D 링 (imersion.io "Currently on" 구도)
  * - 원근 1600px 장면 안에 카드가 원형으로 서 있고(rotateY(k·step) translateZ(r)), 링은 -r 만큼 물러나 정면 카드가 z=0
- * - 페이지 스크롤에 따라 링이 돈다(스크럽). 마우스 위치로 살짝 기울고, ←→ 키나 옆 카드 클릭으로 한 칸씩
+ * - 장면이 화면에 닿으면 고정(pin)되고, 스크롤에 따라 링이 돌며 마지막 카드까지 보여준 뒤 풀린다
+ * - 마우스 위치로 살짝 기울고, ←→ 키나 옆 카드 클릭으로 한 칸씩
  * - 정면 카드를 누르면 프로필 상세, 카드의 +로 선택. 뒷면은 같은 카드가 거울처럼 비친다(backface)
  * 데스크톱 전용 — 모바일은 그리드.
  */
@@ -34,14 +40,15 @@ export function CreatorRing({
   const ringRef = useRef<HTMLDivElement>(null);
   const n = list.length;
   const step = 360 / Math.max(n, 1);
-  const st = useRef({ cur: 0, target: 0, offset: 0, mx: 0, my: 0, tx: 0, ty: 0, front: 0 });
+  const st = useRef({ cur: 0, target: 0, offset: 0, scroll: 0, mx: 0, my: 0, tx: 0, ty: 0, front: 0 });
   const [front, setFront] = useState(0);
   const [dims, setDims] = useState({ w: 680, r: 760 });
 
-  // 치수 — 카드 폭 = min(680px, 53vw), 반지름은 이웃 카드가 겹치지 않는 최소 반지름 × 1.12
+  // 치수 — 카드 폭 = min(680px, 53vw, 내비 아래 화면 높이에 들어가는 폭), 반지름은 이웃 카드가 겹치지 않는 최소 × 1.12
   useEffect(() => {
     const calc = () => {
-      const w = Math.min(680, Math.round(window.innerWidth * 0.53));
+      const fitH = (window.innerHeight - NAV_H - 96 - 24) / CARD_RATIO;
+      const w = Math.round(Math.max(360, Math.min(680, window.innerWidth * 0.53, fitH)));
       const r = Math.round((w / (2 * Math.sin(Math.PI / Math.max(n, 3)))) * 1.12);
       setDims({ w, r });
     };
@@ -50,6 +57,38 @@ export function CreatorRing({
     return () => window.removeEventListener("resize", calc);
   }, [n]);
 
+  // 핀 고정 — 장면이 내비 아래에 닿으면 멈추고, 스크롤 진행도에 따라 첫 카드에서 마지막 카드까지 돈다
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene || n < 2) return;
+    const mm = gsap.matchMedia();
+    mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+      const trigger = ScrollTrigger.create({
+        trigger: scene,
+        start: `top ${NAV_H}px`,
+        end: () => `+=${(n - 1) * PX_PER_CARD}`,
+        pin: true,
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          st.current.scroll = self.progress * (n - 1) * step;
+        },
+      });
+      // 핀 공간이 문서에 끼어들었으니 다른 섹션(매칭 4단계 등)의 트리거 위치도 다시 계산.
+      // 재계산은 생성 순이 아니라 문서 순으로 해야 뒤 섹션이 앞 섹션의 핀 공간을 반영한다 → sort 먼저
+      const refreshAll = () => {
+        ScrollTrigger.sort();
+        ScrollTrigger.refresh();
+      };
+      refreshAll();
+      const t = window.setTimeout(refreshAll, 400);
+      return () => {
+        window.clearTimeout(t);
+        trigger.kill();
+      };
+    });
+    return () => mm.revert();
+  }, [n, step, dims.w]);
+
   // 프레임 루프 — 스크롤·키·클릭·마우스를 합쳐 링 각도를 부드럽게 따라간다
   useEffect(() => {
     let raf = 0;
@@ -57,11 +96,9 @@ export function CreatorRing({
     const loop = () => {
       const ring = ringRef.current;
       const scene = sceneRef.current;
-      if (ring && scene && scene.offsetParent !== null) {
-        const rect = scene.getBoundingClientRect();
-        const delta = rect.top + rect.height / 2 - window.innerHeight / 2;
-        const scrollAngle = reduce ? 0 : delta * DEG_PER_PX;
-        s.target = scrollAngle + s.offset;
+      // 핀 고정 중엔 position: fixed라 offsetParent가 null → 표시 여부는 getClientRects로 판단
+      if (ring && scene && scene.getClientRects().length > 0) {
+        s.target = s.scroll + s.offset;
         s.cur += (s.target - s.cur) * (reduce ? 1 : 0.1);
         s.tx += (s.mx - s.tx) * 0.08;
         s.ty += (s.my - s.ty) * 0.08;
@@ -106,7 +143,7 @@ export function CreatorRing({
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
       const scene = sceneRef.current;
-      if (!scene || scene.offsetParent === null) return;
+      if (!scene || scene.getClientRects().length === 0) return;
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       const r = scene.getBoundingClientRect();

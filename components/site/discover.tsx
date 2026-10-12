@@ -29,7 +29,7 @@ function Chip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "h-9 rounded-full px-3.5 text-[13.5px] font-semibold transition-colors",
+        "h-8 rounded-full px-3 text-[13px] font-semibold transition-colors",
         active
           ? "bg-ink text-white"
           : "bg-white text-ink/75 ring-1 ring-inset ring-ink/12 hover:ring-ink/30"
@@ -96,10 +96,11 @@ export function Discover() {
         description={discover.description}
       />
 
-      {/* 검색창 */}
-      <Reveal delay={0.1} className="mt-12">
+      {/* 검색 + 필터 — 한 패널로 */}
+      <div className="mt-10 rounded-[28px] bg-mist p-4 md:p-6">
+      <Reveal delay={0.1}>
         <form
-          className="flex flex-col gap-3 rounded-[24px] bg-mist p-3 md:flex-row md:items-center md:rounded-full md:p-2 md:pl-6"
+          className="flex flex-col gap-3 rounded-[20px] bg-white p-2 ring-1 ring-ink/[0.06] md:flex-row md:items-center md:rounded-full md:pl-6"
           onSubmit={(e) => {
             e.preventDefault();
             setApplied(query);
@@ -127,7 +128,7 @@ export function Discover() {
       </Reveal>
 
       {/* 필터 */}
-      <Reveal delay={0.15} className="mt-8 flex flex-col gap-5">
+      <Reveal delay={0.15} className="mt-5 flex flex-col gap-3">
         <FilterRow label={discover.filters.country.label}>
           <Chip active={country === null} onClick={() => setCountry(null)}>
             {discover.filters.country.all}
@@ -163,8 +164,10 @@ export function Discover() {
         </FilterRow>
       </Reveal>
 
+      </div>
+
       {/* 결과 헤더 */}
-      <div className="mt-16 flex flex-col gap-6 border-t border-line pt-10 md:flex-row md:items-end md:justify-between">
+      <div className="mt-12 flex flex-col gap-6 border-t border-line pt-8 md:flex-row md:items-end md:justify-between">
         <Reveal>
           <h3 className="display-md text-[clamp(1.5rem,3vw,2.25rem)]">
             <Lines text={discover.results.title} />

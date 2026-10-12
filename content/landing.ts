@@ -253,7 +253,7 @@ export const discover = {
   /** 3D 링(데스크톱 결과 보기) */
   ring: {
     label: "CURRENTLY ON ONE MORE",
-    hint: "옆 카드를 누르거나 ← → 키로 돌려보세요. 정면 카드를 누르면 프로필이 열립니다.",
+    hint: "스크롤하거나 ← → 키로 돌려보세요. 정면 카드를 누르면 프로필이 열립니다.",
   },
   /** 프로필 상세 (모달) */
   detail: {
