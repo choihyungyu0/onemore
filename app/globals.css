@@ -1119,3 +1119,55 @@ html[data-nav-hidden] .site-header {
     color: var(--brand);
   }
 }
+
+/* FAQ 답변 스테이지 */
+.faq-grow {
+  animation: faq-grow 1.2s var(--ease-expo) 0.2s both;
+}
+@keyframes faq-grow {
+  from {
+    width: 18%;
+  }
+  to {
+    width: 100%;
+  }
+}
+.faq-knob {
+  animation: faq-knob 1.2s var(--ease-expo) 0.2s both;
+}
+@keyframes faq-knob {
+  from {
+    left: 18%;
+  }
+  to {
+    left: 100%;
+  }
+}
+.faq-dash {
+  transform-origin: left center;
+  animation: faq-dash 0.6s var(--ease-expo) both;
+}
+@keyframes faq-dash {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.faq-compact {
+  max-width: 420px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq-grow,
+  .faq-knob,
+  .faq-dash {
+    animation: none;
+  }
+  .faq-grow {
+    width: 100%;
+  }
+  .faq-knob {
+    left: 100%;
+  }
+}
