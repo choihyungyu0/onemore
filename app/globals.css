@@ -120,6 +120,9 @@
   }
 
   /* 편집 디자인 세리프 이탤릭 액센트 (Instrument Serif) */
+  .font-brush {
+    font-family: var(--font-brush), "Segoe Script", cursive;
+  }
   .font-serif-accent {
     font-family: var(--font-serif-accent-stack);
     font-style: italic;
@@ -849,5 +852,28 @@ html[data-nav-hidden] .site-header {
   .split-scribble path {
     stroke-dashoffset: 0;
     animation: none;
+  }
+}
+
+/* 매칭 방식 마무리 — 손글씨 "Collab"이 펜으로 쓰듯 왼쪽→오른쪽으로 그려진다 (마스크가 글자 방향으로 열림) */
+.scribble {
+  -webkit-mask-image: linear-gradient(100deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  mask-image: linear-gradient(100deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  -webkit-mask-size: 240% 100%;
+  mask-size: 240% 100%;
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+  transition: -webkit-mask-position 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
+  transition: mask-position 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
+}
+.how-statement.in-view .scribble {
+  -webkit-mask-position: 0% 0;
+  mask-position: 0% 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scribble {
+    -webkit-mask-image: none;
+    mask-image: none;
+    transition: none;
   }
 }

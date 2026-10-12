@@ -1,8 +1,9 @@
 import { how } from "@/content/landing";
 import { HowScenes } from "./how-scenes";
 import { HowSplit } from "./how-split";
+import { HowStatement } from "./how-statement";
 import { DeviceDemo } from "./device-demo";
-import { Lines, Reveal, RevealLines } from "./reveal";
+import { Lines, Reveal } from "./reveal";
 import { Section } from "./section";
 
 export function How() {
@@ -36,21 +37,8 @@ export function How() {
       {/* 데스크톱: 코타식 장면 4개 — 고정 장면 + 가운데 렌즈 + 호 진행 */}
       <HowScenes />
 
-      <Section className="bg-mist pt-10 lg:pt-16">
-        <div className="grid gap-8 border-t border-ink/10 pt-14 lg:grid-cols-[1.2fr_1fr] lg:gap-16 lg:pt-20">
-          <RevealLines
-            as="h3"
-            text={how.statement.title}
-            className="display text-[clamp(1.9rem,4vw,3.25rem)] text-ink"
-          />
-          <Reveal delay={0.15} className="lg:pt-3">
-            <p className="text-[19px] font-bold tracking-tight text-ink">{how.statement.lead}</p>
-            <p className="mt-4 text-[16px] leading-[1.75] text-muted md:text-[17px]">
-              <Lines text={how.statement.body} />
-            </p>
-          </Reveal>
-        </div>
-      </Section>
+      {/* 마무리 — 노리스 PARTNERS & CAMPAIGNS 구도: 손글씨 Collab + 두 줄 제목 + 국가 워드마크 마퀴 */}
+      <HowStatement />
     </>
   );
 }

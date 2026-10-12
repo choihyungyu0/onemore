@@ -25,6 +25,14 @@ const mona = Mona_Sans({
   display: "swap",
 });
 
+// 손글씨 낙서(매칭 방식 마무리 "Collab"): Caveat Brush (OFL) — 기본 라틴만 서브셋, 그 섹션에서만 쓰므로 preload 안 함
+const brush = localFont({
+  src: "../public/fonts/CaveatBrush.subset.woff2",
+  variable: "--font-brush",
+  display: "swap",
+  preload: false,
+});
+
 // 편집 디자인 느낌의 세리프 이탤릭 액센트: Instrument Serif (OFL)
 const instrument = Instrument_Serif({
   subsets: ["latin"],
@@ -74,7 +82,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${pretendard.variable} ${mona.variable} ${instrument.variable}`}
+      className={`${pretendard.variable} ${mona.variable} ${instrument.variable} ${brush.variable}`}
       suppressHydrationWarning
     >
       <head>
