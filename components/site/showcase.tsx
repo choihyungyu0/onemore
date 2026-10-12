@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Plus } from "lucide-react";
 import { images, showcase } from "@/content/landing";
+import { requestFilter } from "@/lib/filter-events";
 import { Placeholder } from "./placeholder";
 import { Lines } from "./reveal";
 
@@ -19,6 +20,7 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
  */
 export function Showcase() {
   const root = useRef<HTMLElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
   const slides = showcase.slides;
   const n = slides.length;
   const row = Array(4).fill(showcase.headline).join("  ·  ") + "  ·  ";
@@ -60,6 +62,7 @@ export function Showcase() {
           invalidateOnRefresh: true,
         },
       });
+      tlRef.current = tl;
       // 1) 창 → 카드 전체. 헤드라인은 사진 뒤에 있다가 사진이 덮으면서 사라진다
       tl.to(frame, { width: "100%", height: "100%", borderRadius: "10px 10px 10px 10px", duration: 1 }, 0);
       tl.to(headline, { opacity: 0, duration: 0.3 }, 0.7);
@@ -76,8 +79,22 @@ export function Showcase() {
         tl.to(bar, { scaleX: (i + 1) / n, duration: 0.4 }, at);
       }
     });
-    return () => mm.revert();
+    return () => {
+      tlRef.current = null;
+      mm.revert();
+    };
   }, [n]);
+
+  // 지금 정면에 있는 슬라이드 (타임라인 진행도로 계산) → 그 국가로 찾기
+  const activeIndex = () => {
+    const tl = tlRef.current;
+    if (!tl) return 0;
+    const t = tl.progress() * tl.duration();
+    let idx = 0;
+    for (let i = 1; i < n; i++) if (t >= 1.3 + (i - 1) * 0.6 + 0.4) idx = i;
+    return idx;
+  };
+  const findByCountry = (i: number) => requestFilter({ country: slides[i].country });
 
   return (
     <section ref={root} id="showcase" className="bg-cream" aria-label={showcase.headline}>
@@ -138,13 +155,15 @@ export function Showcase() {
 
             {/* 하단: + 버튼 + 설명 */}
             <div className="absolute bottom-[clamp(1.5rem,6vh,4rem)] left-[clamp(1.5rem,3.6vw,4rem)] flex items-end gap-5">
-              <a
-                href={showcase.more.href}
+              <button
+                type="button"
+                onClick={() => findByCountry(activeIndex())}
                 aria-label={showcase.more.label}
+                title={showcase.more.label}
                 className="flex h-[clamp(64px,7vw,96px)] w-[clamp(64px,7vw,96px)] shrink-0 items-center justify-center rounded-full bg-ink text-white transition-transform duration-300 hover:scale-105"
               >
                 <Plus className="h-8 w-8" strokeWidth={1.5} />
-              </a>
+              </button>
               <div className="relative h-[3.3em] w-[min(40vw,460px)] text-[15px] leading-[1.55] text-white/90">
                 {slides.map((s) => (
                   <p key={s.key} className="show-desc absolute left-0 top-0">
@@ -181,12 +200,20 @@ export function Showcase() {
             );
           })}
         </ul>
-        <a href={showcase.more.href} className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-ink">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-white">
-            <Plus className="h-4 w-4" />
-          </span>
-          {showcase.more.label}
-        </a>
+        <ul className="mt-6 flex flex-wrap gap-2">
+          {slides.map((sl, i) => (
+            <li key={sl.key}>
+              <button
+                type="button"
+                onClick={() => findByCountry(i)}
+                className="inline-flex h-9 items-center gap-1.5 rounded-full bg-ink px-3.5 text-[13px] font-semibold text-white"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                {sl.title} 크리에이터
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

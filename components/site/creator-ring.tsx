@@ -84,6 +84,8 @@ export function CreatorRing({
       return () => {
         window.clearTimeout(t);
         trigger.kill();
+        // 핀 공간이 사라지니 뒤 섹션 위치도 다시 계산
+        requestAnimationFrame(refreshAll);
       };
     });
     return () => mm.revert();

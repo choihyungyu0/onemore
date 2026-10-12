@@ -26,6 +26,11 @@ export const SLOTS = [
   { name: "fit-03", ratio: "4/5", queries: ["holding product cafe"], take: 6 },
   { name: "creator-01", ratio: "4/5", queries: ["young person laptop cafe"], take: 6 },
   { name: "final-01", ratio: "21/9", queries: ["sydney sunset skyline"], take: 6 },
+  // 쇼케이스 국가 슬라이드(가로) — 밝은 낮, 도시·거리, 얼굴 허용
+  { name: "country-01", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["sydney harbour sunny day", "bondi beach sunny day people"], take: 8 },
+  { name: "country-02", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["tokyo street daytime", "osaka street daytime people"], take: 8 },
+  { name: "country-03", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["vancouver city mountains sunny", "toronto street summer people"], take: 8 },
+  { name: "country-04", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["european old town street summer", "lisbon street tram sunny"], take: 8 },
   // 줌아웃 스테이지 배경 — 밝고 부드러운 하늘·구름(블루 허용)
   { name: "stage-sky", ratio: "16/9", allowBlue: true, queries: ["soft clouds blue sky daylight", "above the clouds aerial soft light"], take: 8 },
   // 콘텐츠 쇼케이스 슬라이드(가로) — 밝은 자연광, 사람·얼굴 허용

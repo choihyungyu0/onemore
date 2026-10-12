@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ChevronRight, Search, X } from "lucide-react";
+import { ChevronRight, LayoutGrid, Orbit, Search, X } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { creators, discover, images, sizeBands, type Country, type Creator } from "@/content/landing";
+import { FILTER_EVENT, type FilterRequest } from "@/lib/filter-events";
 import { cn } from "@/lib/utils";
 import { ButtonLink, Button, btnClass } from "./button";
 import { CreatorCard, formatFollowers } from "./creator-card";
@@ -73,6 +74,28 @@ export function Discover() {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [band, setBand] = useState<number | null>(null);
   const [detail, setDetail] = useState<Creator | null>(null);
+  const [view, setView] = useState<"ring" | "grid">("ring");
+  const lenis = useLenis();
+
+  // 포스터("키워드")·쇼케이스("국가")에서 보낸 필터 요청 → 적용하고 검색 패널로 스크롤
+  useEffect(() => {
+    const onFilter = (e: Event) => {
+      const req = (e as CustomEvent<FilterRequest>).detail ?? {};
+      // 요청한 조건 하나만 남기고 나머지는 초기화 (포스터는 키워드, 쇼케이스는 국가)
+      setCountry(req.country ? (req.country as Country) : null);
+      setKeywords(req.keyword ? [req.keyword] : []);
+      setBand(null);
+      setQuery("");
+      setApplied("");
+      setView("ring");
+      const el = document.getElementById("discover-panel");
+      if (!el) return;
+      if (lenis) lenis.scrollTo(el, { offset: -96 });
+      else el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    window.addEventListener(FILTER_EVENT, onFilter);
+    return () => window.removeEventListener(FILTER_EVENT, onFilter);
+  }, [lenis]);
 
   const list = useMemo(
     () => creators.filter((c) => matches(c, applied, country, keywords, band)),
@@ -97,7 +120,7 @@ export function Discover() {
       />
 
       {/* 검색 + 필터 — 한 패널로 */}
-      <div className="mt-10 rounded-[28px] bg-mist p-4 md:p-6">
+      <div id="discover-panel" className="mt-10 rounded-[28px] bg-mist p-4 md:p-6">
       <Reveal delay={0.1}>
         <form
           className="flex flex-col gap-3 rounded-[20px] bg-white p-2 ring-1 ring-ink/[0.06] md:flex-row md:items-center md:rounded-full md:pl-6"
@@ -166,19 +189,36 @@ export function Discover() {
 
       </div>
 
-      {/* 결과 헤더 */}
-      <div className="mt-12 flex flex-col gap-6 border-t border-line pt-8 md:flex-row md:items-end md:justify-between">
+      {/* 결과 툴바 — 섹션 제목과 겹치지 않게 한 줄 리드 + 인원·예시 표기·보기 전환 */}
+      <div className="mt-10 flex flex-col gap-4 border-t border-line pt-6 md:flex-row md:items-center md:justify-between">
         <Reveal>
-          <h3 className="display-md text-[clamp(1.5rem,3vw,2.25rem)]">
-            <Lines text={discover.results.title} />
-          </h3>
-          <p className="mt-3 text-muted">{discover.results.description}</p>
+          <p className="text-[18px] font-bold tracking-tight text-ink md:text-[19px]">
+            {discover.results.title.replace("\n", " ")}
+          </p>
+          <p className="mt-1 text-[14px] text-muted">{discover.results.description}</p>
         </Reveal>
-        <Reveal delay={0.1} className="flex items-center gap-3 text-[13px] text-muted">
+        <Reveal delay={0.1} className="flex flex-wrap items-center gap-3 text-[13px] text-muted">
           <span className="tnum rounded-full bg-mist px-3 py-1 font-semibold text-ink/70">
             {discover.results.count.replace("{n}", String(list.length))}
           </span>
           <span>{discover.results.exampleNote}</span>
+          <div className="hidden items-center rounded-full bg-mist p-1 lg:inline-flex" role="group" aria-label={discover.view.label}>
+            {(["ring", "grid"] as const).map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setView(v)}
+                aria-pressed={view === v}
+                className={cn(
+                  "inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[12.5px] font-semibold transition-colors",
+                  view === v ? "bg-ink text-white" : "text-ink/60 hover:text-ink"
+                )}
+              >
+                {v === "ring" ? <Orbit className="h-3.5 w-3.5" /> : <LayoutGrid className="h-3.5 w-3.5" />}
+                {discover.view[v]}
+              </button>
+            ))}
+          </div>
         </Reveal>
       </div>
 
@@ -193,11 +233,18 @@ export function Discover() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {/* 데스크톱: imersion식 3D 링 — 스크롤로 돌고, 정면 카드를 누르면 상세 */}
-              <CreatorRing list={list} isSelected={sel.isSelected} onToggle={sel.toggle} onView={setDetail} />
+              {/* 데스크톱 기본: imersion식 3D 링 — 고정된 채 스크롤로 돌고, 정면 카드를 누르면 상세 */}
+              {view === "ring" && (
+                <CreatorRing list={list} isSelected={sel.isSelected} onToggle={sel.toggle} onView={setDetail} />
+              )}
 
-              {/* 모바일·태블릿: 카드 그리드 */}
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 lg:hidden">
+              {/* 모바일·태블릿은 항상 그리드, 데스크톱은 "카드로 한번에 보기"일 때 */}
+              <div
+                className={cn(
+                  "grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5",
+                  view === "grid" ? "lg:grid-cols-3 xl:grid-cols-6" : "lg:hidden"
+                )}
+              >
               {list.map((c, i) => (
                 <motion.div
                   key={c.id}

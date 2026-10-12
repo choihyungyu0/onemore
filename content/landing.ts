@@ -43,6 +43,10 @@ export const images = {
   "hero-03": img("hero-03", "여행지에서 삼각대에 올린 스마트폰"),
   "hero-04": img("hero-04", "카메라를 들고 촬영하는 뒷모습"),
   "stage-sky": img("stage-sky", "부드러운 구름이 떠 있는 밝은 하늘"),
+  "country-01": img("country-01", "맑은 날의 시드니 항구"),
+  "country-02": img("country-02", "낮의 도쿄 거리"),
+  "country-03": img("country-03", "산이 보이는 밴쿠버 도심"),
+  "country-04": img("country-04", "여름 유럽 구시가지 거리"),
   "show-01": img("show-01", "아침 햇살이 드는 창가에서 커피를 마시는 모습"),
   "show-02": img("show-02", "카페 창가에서 웃으며 이야기하는 친구들"),
   "show-03": img("show-03", "해안 도로를 달리는 여름 로드트립"),
@@ -149,23 +153,23 @@ export const hero = {
 
 /** 첫 화면이 축소되며 양옆에서 들어오는 포스터 카드 4장 — 콘텐츠 키워드 */
 export const posters = [
-  { tag: "#현지일상", title: "현지 일상", description: "일하고, 먹고, 쉬는\n보통의 하루", image: "marquee-04" as ImageKey, color: "ink" as const },
-  { tag: "#카페", title: "카페", description: "동네 단골집과\n플랫화이트 한 잔", image: "marquee-01" as ImageKey, color: "coral" as const },
-  { tag: "#여행", title: "여행", description: "주말 로드트립과\n바다", image: "card-goldcoast" as ImageKey, color: "forest" as const },
-  { tag: "#워홀", title: "워홀", description: "낯선 도시에서의\n첫 해 기록", image: "marquee-09" as ImageKey, color: "char" as const },
+  { tag: "#현지일상", keyword: "일상", title: "현지 일상", description: "일하고, 먹고, 쉬는\n보통의 하루", image: "marquee-04" as ImageKey, color: "ink" as const },
+  { tag: "#카페", keyword: "카페", title: "카페", description: "동네 단골집과\n플랫화이트 한 잔", image: "marquee-01" as ImageKey, color: "coral" as const },
+  { tag: "#여행", keyword: "여행", title: "여행", description: "주말 로드트립과\n바다", image: "card-goldcoast" as ImageKey, color: "forest" as const },
+  { tag: "#워홀", keyword: "워홀", title: "워홀", description: "낯선 도시에서의\n첫 해 기록", image: "marquee-09" as ImageKey, color: "char" as const },
 ];
 
-/** 콘텐츠 쇼케이스(핀 고정 슬라이드) — 포스터 4개 카테고리를 가로 사진으로 */
+/** 콘텐츠 쇼케이스(핀 고정 슬라이드) — "어디서": 활동 국가별 현지 풍경. 포스터("무엇을")와 역할을 나눈다 */
 export const showcase = {
   headline: "크리에이터가 현지에서 만드는 콘텐츠",
   hint: "(Scroll)",
-  more: { label: "크리에이터 찾기", href: "#discover" },
-  slides: posters.map((p, i) => ({
-    key: p.tag,
-    title: p.title,
-    description: p.description,
-    image: `show-0${i + 1}` as ImageKey,
-  })),
+  more: { label: "이 나라 크리에이터 찾기", href: "#discover" },
+  slides: [
+    { key: "au", title: "호주", country: "호주" as Country, description: "시드니·멜버른·브리즈번,\n워홀러의 하루가 시작되는 곳", image: "country-01" as ImageKey },
+    { key: "jp", title: "일본", country: "일본" as Country, description: "도쿄·오사카의 거리와 카페,\n가까운 나라의 다른 하루", image: "country-02" as ImageKey },
+    { key: "ca", title: "캐나다", country: "캐나다" as Country, description: "밴쿠버·토론토,\n유학과 워홀이 만나는 도시", image: "country-03" as ImageKey },
+    { key: "etc", title: "유럽·그 외", country: "기타 국가" as Country, description: "유럽에서 동남아까지,\n새로 시작하는 도시들", image: "country-04" as ImageKey },
+  ],
 };
 
 export const marquee = {
@@ -250,6 +254,8 @@ export const discover = {
     example: "예시 프로필",
     followers: "팔로워 {n}명",
   },
+  /** 결과 보기 방식 전환 (데스크톱) */
+  view: { label: "보기 방식", ring: "3D로 둘러보기", grid: "카드로 한번에 보기" },
   /** 3D 링(데스크톱 결과 보기) */
   ring: {
     label: "CURRENTLY ON ONE MORE",
@@ -310,38 +316,38 @@ export const creators: Creator[] = [
   {
     id: "c03",
     name: "크리에이터 03",
-    country: "호주",
-    city: "멜버른",
+    country: "기타 국가",
+    city: "리스본",
     platform: "Instagram",
     followers: 15200,
-    tags: ["카페", "패션", "유학"],
-    bio: "멜버른 골목 카페와 유학생의 데일리 룩.",
+    tags: ["카페", "여행", "일상"],
+    bio: "리스본 골목 카페와 주말 여행을 기록해요.",
     tone: 4,
-    image: "card-melbourne",
+    image: "country-04",
   },
   {
     id: "c04",
     name: "크리에이터 04",
-    country: "호주",
-    city: "브리즈번",
+    country: "일본",
+    city: "도쿄",
     platform: "Instagram",
     followers: 4100,
-    tags: ["워홀", "푸드", "일상"],
-    bio: "브리즈번 워홀러의 퇴근 후 강변 산책과 저녁.",
+    tags: ["카페", "패션", "유학"],
+    bio: "도쿄 유학생의 카페와 데일리 룩.",
     tone: 1,
-    image: "card-brisbane",
+    image: "country-02",
   },
   {
     id: "c05",
     name: "크리에이터 05",
-    country: "호주",
-    city: "퍼스",
+    country: "캐나다",
+    city: "밴쿠버",
     platform: "Instagram",
     followers: 62000,
-    tags: ["여행", "푸드"],
-    bio: "퍼스 해변과 로드트립을 한국어 자막으로 소개해요.",
+    tags: ["워홀", "푸드", "일상"],
+    bio: "밴쿠버 워홀러의 퇴근 후 산책과 저녁.",
     tone: 3,
-    image: "card-perth",
+    image: "country-03",
   },
   {
     id: "c06",
