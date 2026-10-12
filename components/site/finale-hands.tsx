@@ -34,7 +34,7 @@ export function FinaleHands({ src }: { src: string }) {
 
   return (
     <motion.div ref={ref} className="finale-hands relative mx-auto w-full" style={reduce ? undefined : { y }} aria-hidden>
-      <img src={src} alt="" className="block h-auto w-full select-none" draggable={false} decoding="async" />
+      <img src={src} alt="" className="block h-auto w-full select-none" draggable={false} decoding="async" loading="lazy" />
       {/* 선명한 베젤 — 사진 속 노트북 덮개 테두리(누끼라 가장자리가 흐림)를 또렷한 CSS 테두리로 덮는다. 실측: 1600×900 기준 426,106 → 1114,590 */}
       <div
         className="pointer-events-none absolute rounded-[1.1vw] bg-[#0b0c10] shadow-[0_0_0_1px_rgba(255,255,255,0.08)_inset,0_18px_40px_-20px_rgba(11,18,32,0.6)] ring-1 ring-[#2a2d34]"

@@ -142,7 +142,7 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
                   requestFilter({ keyword: p.keyword });
                 }
               }}
-              className="flex aspect-[3/4.4] w-[clamp(170px,15.5vw,224px)] shrink-0 cursor-pointer flex-col overflow-hidden rounded-[10px] shadow-card transition-transform duration-500 hover:-translate-y-1"
+              className="relative flex aspect-[3/4.4] w-[clamp(170px,15.5vw,224px)] shrink-0 cursor-pointer flex-col overflow-hidden rounded-[10px] shadow-card transition-transform duration-500 hover:-translate-y-1"
               style={{ backgroundColor: COLOR[p.color] }}
             >
               <div className="relative flex-1 p-4 text-white">

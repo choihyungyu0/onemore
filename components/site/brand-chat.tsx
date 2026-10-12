@@ -25,7 +25,7 @@ type Phase = "idle" | "youTyping" | "you" | "usTyping" | "us";
 
 export function BrandChat() {
   const reduce = useReducedMotion();
-  const [phases, setPhases] = useState<Phase[]>(() => empathy.items.map(() => (reduce ? "us" : "idle")));
+  const [phases, setPhases] = useState<Phase[]>(() => empathy.items.map(() => "idle"));
   const headRef = useRef<HTMLDivElement>(null);
   const [headIn, setHeadIn] = useState(false);
   useEffect(() => {
@@ -156,18 +156,23 @@ export function BrandChat() {
 
 function Exchange({ index, item, reduce, onPhase }: { index: number; item: (typeof empathy.items)[number]; reduce: boolean; onPhase: (p: Phase) => void }) {
   const root = useRef<HTMLLIElement>(null);
-  const [phase, setPhaseRaw] = useState<Phase>(reduce ? "us" : "idle");
+  const [phase, setPhaseRaw] = useState<Phase>("idle");
   const onPhaseRef = useRef(onPhase);
   onPhaseRef.current = onPhase;
   const setPhase = (p: Phase) => {
     setPhaseRaw(p);
     onPhaseRef.current(p);
   };
-  const [typed, setTyped] = useState(reduce ? item.quote.length : 0);
+  const [typed, setTyped] = useState(0);
   const im = images[AVATARS[index]];
 
   useEffect(() => {
-    if (reduce) return;
+    if (reduce) {
+      // 감속 모션: 완성 상태로 (첫 렌더는 서버와 같게 두고 effect에서 바꾼다)
+      setTyped(item.quote.length);
+      setPhase("us");
+      return;
+    }
     const el = root.current;
     if (!el) return;
     let alive = true;

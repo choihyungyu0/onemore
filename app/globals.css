@@ -202,6 +202,11 @@
 }
 
 /* ── 섹션 로컬 그레인 (다크 섹션 질감) ── */
+@media (max-width: 1023px) {
+  .grain-local {
+    display: none;
+  }
+}
 .grain-local {
   pointer-events: none;
   opacity: 0.08;

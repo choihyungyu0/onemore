@@ -50,10 +50,10 @@ export function HowStatement() {
       {/* 손글씨 — 텍스트 뒤 */}
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute left-[-4vw] top-[7rem] z-0 w-[112vw] select-none lg:left-[-5rem] lg:top-[17rem] lg:w-[80rem]"
+        className="pointer-events-none absolute left-[-3vw] top-[9rem] z-0 w-[112vw] select-none sm:top-[7rem] lg:left-[-5rem] lg:top-[17rem] lg:w-[80rem]"
         style={reduce ? undefined : { y }}
       >
-        <span className="scribble font-brush block origin-left -rotate-[14deg] whitespace-nowrap text-[clamp(6rem,23vw,21rem)] leading-none text-brand">
+        <span className="scribble font-brush block origin-left -rotate-[14deg] whitespace-nowrap text-[clamp(4.5rem,23vw,21rem)] opacity-80 lg:opacity-100 leading-none text-brand">
           {how.statement.scribble}
         </span>
       </motion.div>

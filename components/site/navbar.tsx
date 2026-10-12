@@ -52,7 +52,7 @@ export function Navbar() {
         className={cn(
           "transition-[background-color,border-color,backdrop-filter] duration-300",
           solid
-            ? "border-b border-line bg-white/85 backdrop-blur-xl"
+            ? "border-b border-line bg-white/95 lg:bg-white/85 lg:backdrop-blur-xl"
             : "border-b border-transparent bg-transparent"
         )}
       >

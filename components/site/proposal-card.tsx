@@ -33,7 +33,11 @@ const COUNTRY_IMAGE = Object.fromEntries(showcase.slides.map((s) => [s.country, 
 export function ProposalCard({ values, step, sent, className }: { values: ProposalValues; step: number; sent: boolean; className?: string }) {
   const p = campaign.proposal;
   const f = campaign.fields;
-  const today = new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
+  // 날짜는 브라우저에서만 계산 (서버 렌더와 달라지면 하이드레이션 불일치 → 전체 재렌더)
+  const [today, setToday] = useState("");
+  useEffect(() => {
+    setToday(new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }));
+  }, []);
   const keywords = values.keywords.split(/[,，\s]+/).map((k) => k.trim()).filter(Boolean).slice(0, 6);
   const bandIdx = values.sizes.map((l) => sizeBands.findIndex((b) => b.label === l)).filter((i) => i >= 0);
   const lo = bandIdx.length ? Math.min(...bandIdx) : -1;
