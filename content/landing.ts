@@ -92,7 +92,7 @@ export const seo = {
   ogTitle: "첫 시딩부터, 메가를 향한 성장까지.",
   ogDescription: "해외 한국인 크리에이터를 찾고, 선택하고, 협업을 제안하세요.",
   /** 배포 도메인 확정 후 교체 */
-  url: "https://onemore.vercel.app",
+  url: "https://onemore-seven.vercel.app",
 };
 
 /** 오프닝 인트로 (세션당 1회) */
