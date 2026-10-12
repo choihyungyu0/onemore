@@ -56,6 +56,10 @@ export function Footer() {
             <a href="https://unsplash.com/?utm_source=onemore&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
               Unsplash
             </a>
+            {" · "}하늘 영상:{" "}
+            <a href="https://mixkit.co/free-stock-video/clouds-moving-smoothly-in-the-sky-31459/" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
+              Mixkit
+            </a>
           </p>
         )}
       </div>

@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { images, type posters as postersType } from "@/content/landing";
 import { requestFilter } from "@/lib/filter-events";
 import { Placeholder } from "./placeholder";
+import { SkyVideo } from "./sky-video";
 import { Lines } from "./reveal";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
@@ -108,9 +109,10 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
 
   return (
     <div ref={stage} className="zoom-stage relative bg-mist">
-      {/* 하늘 배경 — 첫 화면이 카드로 물러나면 드러나는 "바깥" (여행 느낌). 줌아웃 동안 살짝 당겨진다 */}
+      {/* 하늘 배경 — 첫 화면이 카드로 물러나면 드러나는 "바깥" (여행 느낌). 구름이 천천히 흐르는 루프 영상(Mixkit),
+          모바일·감속 모션에서는 첫 프레임 이미지. 줌아웃 동안 살짝 당겨진다 */}
       <div className="zoom-sky absolute inset-0 overflow-hidden" aria-hidden>
-        <Placeholder fill tone={1} src={images["stage-sky"].src} alt="" sizes="100vw" />
+        <SkyVideo src="/video/sky.mp4" poster="/images/sky-poster.webp" className="absolute inset-0" />
         <div className="absolute inset-0 bg-white/10" />
       </div>
       <div ref={wrap} className="zoom-hero relative origin-center overflow-hidden bg-paper">
