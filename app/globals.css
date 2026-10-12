@@ -476,23 +476,34 @@ html.lenis body {
    포스터는 CSS 기본값으로 화면 밖에 두어, GSAP 초기화 전(인트로 재생 중)에도 겹치지 않는다. */
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .zoom-stage {
-    height: 100vh;
+    height: 100vh; /* 실제 높이는 zoom-stage.tsx가 포스터·카드 치수로 계산해 덮어쓴다 */
     overflow: hidden;
   }
   .zoom-hero {
     position: absolute;
-    inset: 0;
-    box-shadow: 0 2px 4px rgba(11, 18, 32, 0.05), 0 28px 56px -22px rgba(11, 18, 32, 0.26);
-  }
-  .zoom-posters {
-    position: absolute;
+    top: 0;
     left: 0;
     right: 0;
-    top: calc(76px + 2vh);
-    justify-content: center;
-    gap: 1.25rem;
+    height: 100vh;
+    box-shadow: 0 2px 4px rgba(11, 18, 32, 0.05), 0 28px 56px -22px rgba(11, 18, 32, 0.26);
+  }
+  /* 포스터 4열 전폭 — realevate 실측: 여백 3.125vw, 간격 1.875vw, 카드 비율 0.616, 모서리 0 */
+  .zoom-posters {
+    position: absolute;
+    left: 3.125vw;
+    right: 3.125vw;
+    top: 3.125vw;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.875vw;
     overflow: visible;
-    padding: 0 3rem;
+    padding: 0;
+  }
+  .zoom-posters > li {
+    width: auto;
+    aspect-ratio: 0.616;
+    border-radius: 0;
+    box-shadow: none;
   }
   .zoom-posters > li:nth-child(-n + 2) {
     transform: translateX(-100vw);
@@ -500,6 +511,29 @@ html.lenis body {
   .zoom-posters > li:nth-child(n + 3) {
     transform: translateX(100vw);
   }
+}
+
+/* 포스터 제목 — 옆으로 눕힌 세로쓰기(한글 포함), 180° 돌려 아래→위로 읽힘 */
+.poster-title {
+  writing-mode: vertical-rl;
+  text-orientation: sideways;
+  transform: rotate(180deg);
+}
+
+/* 줌 스테이지에 있는 동안: 상단 내비 숨김, 히어로 카드 안 헤더 표시 */
+.hero-head {
+  display: none;
+}
+html[data-nav-hidden] .hero-head {
+  display: flex;
+}
+.site-header {
+  transition: transform 0.6s var(--ease-expo), opacity 0.3s linear;
+}
+html[data-nav-hidden] .site-header {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* WebGL 레이어는 마운트 후 부드럽게 나타남 (첫 프레임 글리치 마스킹) */

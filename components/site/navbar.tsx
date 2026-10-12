@@ -51,7 +51,7 @@ export function Navbar() {
   const solid = scrolled && !open;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
+    <header className="site-header fixed inset-x-0 top-0 z-50">
       <div
         className={cn(
           "transition-[background-color,border-color,backdrop-filter] duration-300",

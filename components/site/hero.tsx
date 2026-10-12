@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
-import { hero, images } from "@/content/landing";
+import { brand, hero, images, nav } from "@/content/landing";
 import { ButtonLink, btnClass } from "./button";
 import { DistortImage } from "./distort-image";
 import { Magnetic } from "./magnetic";
+import { Logo } from "./navbar";
 import { Placeholder } from "./placeholder";
 import { Lines } from "./reveal";
 
@@ -30,12 +31,28 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="hero relative grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[1fr_auto_auto] overflow-hidden bg-paper px-5 pb-14 pt-14 sm:px-8 lg:px-12"
+      className="hero relative grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[1fr_auto_auto] overflow-hidden bg-paper px-5 pb-14 pt-14 sm:px-8 lg:px-12 lg:pt-0"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-brand/10 blur-3xl"
       />
+
+      {/* 카드 안 헤더(realevate: About · 로고 · Contact) — 스테이지에서 상단 내비를 대신한다 */}
+      <div
+        className="hero-head rise absolute inset-x-0 top-0 z-20 items-center justify-between px-12 py-7"
+        style={delay(0.15)}
+      >
+        <a href={nav.links[0].href} className="text-[13px] font-semibold text-ink/75 transition-colors hover:text-ink">
+          {nav.links[0].label}
+        </a>
+        <a href="#top" aria-label={brand.name}>
+          <Logo />
+        </a>
+        <a href={nav.primary.href} className="text-[13px] font-semibold text-ink/75 transition-colors hover:text-ink">
+          {nav.primary.label}
+        </a>
+      </div>
 
       <div />
 
