@@ -499,7 +499,12 @@ html.lenis body {
     overflow: visible;
     padding: 0;
   }
+  /* 포스터 줄은 투명한 전폭 레이어라 첫 화면 위를 덮는다 → 카드만 포인터를 받게 */
+  .zoom-posters {
+    pointer-events: none;
+  }
   .zoom-posters > li {
+    pointer-events: auto;
     width: auto;
     aspect-ratio: 0.616;
     border-radius: 0;
