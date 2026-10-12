@@ -67,7 +67,7 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
         scrollTrigger: {
           trigger: el,
           start: "top top",
-          end: () => "+=170%",
+          end: () => "+=250%",
           pin: true,
           scrub: 0.6,
           anticipatePin: 1,
@@ -82,6 +82,8 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
       }
       // 안쪽 카드가 먼저, 바깥 카드가 뒤따르게 — 이동 중 서로 겹치지 않는다
       tl.to(cards, { x: 0, duration: 0.7, stagger: { each: 0.07, from: "center" } }, 0.18);
+      // 포스터가 다 도착한 뒤 한 화면 분량쯤 머무른다 — 카드를 볼 시간
+      tl.to({}, { duration: 0.8 });
       tl.eventCallback("onUpdate", () => {
         hero.toggleAttribute("data-zooming", tl.progress() > 0.001);
       });
