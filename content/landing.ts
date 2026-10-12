@@ -698,6 +698,18 @@ export const creatorJoin = {
   /** 크리에이터 참여 신청 링크 확정 후 href 교체 */
   cta: { label: "크리에이터로 참여하기", href: "#creators" },
   note: "참여 신청이 모든 캠페인의 매칭을 보장하지는 않습니다.\n협업 제안을 확인한 뒤 참여 여부를 선택할 수 있습니다.",
+  /* 제목에서 형광펜으로 강조할 구절 */
+  titleAccent: "지금의 당신",
+  ctaHint: "약 3분 · 콘텐츠 링크만 있으면 돼요",
+  /* 오른쪽 프로필 카드 무대 */
+  stage: {
+    label: "당신의 프로필",
+    stamp: "브랜드 제안 도착",
+    proposal: "선케어 브랜드 · 릴스 1편 제안",
+    proposalHint: "팔로워 2,800명에서 시작된 첫 협업",
+    timeline: ["3천", "1만", "5만", "10만"],
+    timelineLabel: "지금 숫자에서 시작해, 함께 갑니다.",
+  },
 };
 
 export const faq = {

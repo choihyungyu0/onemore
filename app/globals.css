@@ -1171,3 +1171,13 @@ html[data-nav-hidden] .site-header {
     left: 100%;
   }
 }
+
+/* 크리에이터 참여 — 프로필 카드 무대 */
+.join-back {
+  transform: translateX(calc(var(--dir) * (38px + var(--mx, 0) * 26px))) translateY(10px) rotate(calc(var(--dir) * (7deg + var(--mx, 0) * 3deg))) scale(0.94);
+  transition: transform 0.2s linear;
+}
+/* 어두운 배경용 형광펜 */
+.marker--dark {
+  background-image: linear-gradient(transparent 58%, rgba(255, 90, 60, 0.45) 58% 94%, transparent 94%);
+}
