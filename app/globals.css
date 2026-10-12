@@ -1054,3 +1054,62 @@ html[data-nav-hidden] .site-header {
     opacity: 0;
   }
 }
+
+/* 캠페인 신청 — 실시간 제안서 */
+.proposal-flash {
+  animation: proposal-flash 1s var(--ease-expo);
+  border-radius: 10px;
+}
+@keyframes proposal-flash {
+  0% {
+    background: rgba(255, 90, 60, 0.16);
+    box-shadow: 0 0 0 6px rgba(255, 90, 60, 0.16);
+  }
+  100% {
+    background: transparent;
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+.proposal-pop {
+  animation: chat-pop 0.45s var(--ease-expo) both;
+}
+.proposal-blink {
+  animation: proposal-blink 1.6s ease-in-out infinite;
+}
+@keyframes proposal-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.proposal-range {
+  transition: left 0.6s var(--ease-expo), width 0.6s var(--ease-expo);
+}
+.proposal-stamp--sent {
+  animation: proposal-stamp 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+@keyframes proposal-stamp {
+  from {
+    transform: rotate(-8deg) scale(2.2);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(-8deg) scale(1);
+    opacity: 1;
+  }
+}
+.proposal-sent {
+  animation: chat-pop 0.5s var(--ease-expo) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .proposal-flash,
+  .proposal-pop,
+  .proposal-blink,
+  .proposal-stamp--sent,
+  .proposal-sent {
+    animation: none;
+  }
+}

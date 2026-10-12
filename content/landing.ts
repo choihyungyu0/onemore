@@ -652,6 +652,27 @@ export const campaign = {
     },
   },
   submit: "크리에이터 매칭 요청하기",
+  sending: "보내는 중…",
+  /* 3단계 폼 */
+  steps: [
+    { label: "브랜드", title: "어떤 브랜드인가요?", note: "필수 항목은 이 단계까지예요." },
+    { label: "크리에이터", title: "어떤 크리에이터를 찾으시나요?", note: "비워도 괜찮아요. 정해진 것만 알려주세요." },
+    { label: "캠페인", title: "어떤 캠페인인가요?", note: "개요만 있으면 보낼 수 있어요." },
+  ],
+  nav: { prev: "이전", next: "다음" },
+  errors: { required: "필수 항목이에요.", email: "이메일 형식을 확인해 주세요." },
+  /* 왼쪽 실시간 제안서 */
+  proposal: {
+    kicker: "협업 제안서",
+    draft: "DRAFT",
+    sent: "SENT",
+    blankBrand: "브랜드명",
+    titleSuffix: "의 협업 제안",
+    rows: { from: "보내는 사람", countries: "희망 국가", keywords: "콘텐츠 키워드", sizes: "팔로워 규모", to: "받는 크리에이터", overview: "캠페인 개요", schedule: "일정", budget: "예산" },
+    toCount: "{n}명에게",
+    emptyTo: "탐색에서 고른 후보가 여기에 표시됩니다",
+    progress: "작성 {n} / {t}",
+  },
   notes: [
     "요청 내용을 확인한 뒤 입력하신 이메일로 안내드립니다.",
     "신청만으로 결제되거나 협업이 확정되지는 않습니다.",
