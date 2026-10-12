@@ -1113,3 +1113,9 @@ html[data-nav-hidden] .site-header {
     animation: none;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .finale-accent {
+    color: var(--brand);
+  }
+}

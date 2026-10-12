@@ -736,6 +736,9 @@ export const faq = {
 };
 
 export const finale = {
+  kicker: "마지막 제안",
+  /* 제목에서 마지막에 코랄로 물드는 구절 */
+  titleAccent: "먼저 만나면",
   title: "다음에 크게 성장할 크리에이터,\n우리 브랜드와 먼저 만나면\n어떨까요?",
   description:
     "해외에서 자신만의 이야기를 만드는 한국인 크리에이터.\n지금 브랜드와 잘 맞는 사람을 찾고, 첫 협업을 제안해 보세요.",

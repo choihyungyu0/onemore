@@ -44,8 +44,6 @@ export const SLOTS = [
   // 매칭 방식 오프너(노리스 ON/OFF TRACK) — 흰 배경 스튜디오 측면 인물 2명(누끼용). 왼쪽=브랜드 담당자(오른쪽을 봄), 오른쪽=크리에이터(왼쪽을 봄)
   { name: "split-brand", ratio: "4/5", allowFaces: true, allowBlue: true, queries: ["korean man side profile", "asian man side profile portrait studio", "asian businessman profile standing shirt", "asian man profile face white background", "japanese man side profile portrait"], take: 32 },
   { name: "split-creator", ratio: "4/5", allowFaces: true, allowBlue: true, queries: ["korean girl side profile standing", "asian model side profile standing studio", "asian woman profile face left white wall", "chinese woman side profile portrait standing"], take: 32 },
-  // 마지막 제안 CTA — 노트북을 받쳐 든 두 손(코타 Let's get started) 후보
-  { name: "hands-laptop", ratio: "16/9", allowBlue: true, queries: ["hands holding laptop white background", "two hands holding open laptop isolated", "hands presenting laptop computer studio", "open hands palms up white background"], take: 24 },
   // 줌아웃 스테이지 배경 — 밝고 부드러운 하늘·구름(블루 허용)
   { name: "stage-sky", ratio: "16/9", allowBlue: true, queries: ["soft clouds blue sky daylight", "above the clouds aerial soft light"], take: 8 },
   // 콘텐츠 쇼케이스 슬라이드(가로) — 밝은 자연광, 사람·얼굴 허용
