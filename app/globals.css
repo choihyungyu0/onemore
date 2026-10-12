@@ -269,6 +269,24 @@
   animation-play-state: paused;
 }
 
+/* ── 진입 모션이 한 번 끝난 뒤에는 완료 상태로 고정 ──
+   ScrollTrigger 재계산은 핀된 첫 화면을 잠깐 떼었다 붙이는데, 그러면 안의 CSS 애니메이션이 처음부터 다시 재생돼
+   글·버튼이 사라졌다 다시 떠오른다("다시 로딩되는" 현상). html.entered 이후에는 애니메이션을 끄고 최종값을 둔다. */
+html.entered .rise,
+html.entered .rise-line {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+html.entered .marker {
+  animation: none;
+  background-size: 100% 100%;
+}
+html.entered .sweep-line {
+  animation: none;
+  background-position: 0 0;
+}
+
 /* ── 글자 단위 리빌 (히어로 헤드라인) ── */
 @keyframes rise-char {
   from {

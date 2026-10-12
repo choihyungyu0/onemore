@@ -4,6 +4,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleRefresh } from "@/lib/scroll-refresh";
 import { ChevronRight } from "lucide-react";
 import { finale } from "@/content/landing";
 import { cn } from "@/lib/utils";
@@ -86,11 +87,7 @@ export function Finale() {
         scrollTrigger: { trigger: el, start: "top 90%", end: "bottom 48%", scrub: 0.5 },
       });
       words.forEach((w, i) => tl.to(w, { color: w.dataset.accent ? brand : "#0b1220", duration: 0.25 }, (i / words.length) * 0.8));
-      const t = window.setTimeout(() => {
-        ScrollTrigger.sort();
-        ScrollTrigger.refresh();
-      }, 400);
-      return () => window.clearTimeout(t);
+      scheduleRefresh();
     });
     return () => {
       io.disconnect();

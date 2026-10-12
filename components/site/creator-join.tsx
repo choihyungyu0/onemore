@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleRefresh } from "@/lib/scroll-refresh";
 import { Check, ChevronRight, Clock } from "lucide-react";
 import { creatorJoin, creators, images } from "@/content/landing";
 import { cn } from "@/lib/utils";
@@ -67,11 +68,7 @@ export function CreatorJoin() {
       tl.to(stamp, { autoAlpha: 1, scale: 1, rotate: -8, duration: 0.14, ease: "back.out(2)" }, 0.5);
       if (line) tl.to(line, { scaleX: 1, duration: 0.4 }, 0.55);
       dots.forEach((d, i) => tl.to(d, { scale: 1, opacity: 1, duration: 0.06, ease: "back.out(2.5)" }, 0.58 + i * 0.1));
-      const t = window.setTimeout(() => {
-        ScrollTrigger.sort();
-        ScrollTrigger.refresh();
-      }, 400);
-      return () => window.clearTimeout(t);
+      scheduleRefresh();
     });
     return () => mm.revert();
   }, []);

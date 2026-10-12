@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleRefresh } from "@/lib/scroll-refresh";
 import { growth } from "@/content/landing";
 import { cn } from "@/lib/utils";
 import { Lines } from "./reveal";
@@ -67,11 +68,7 @@ export function GrowthJourney() {
       });
       tl2.to(rule, { scaleX: 1, duration: 0.2, ease: "power2.out" }, 0.8);
 
-      const t = window.setTimeout(() => {
-        ScrollTrigger.sort();
-        ScrollTrigger.refresh();
-      }, 400);
-      return () => window.clearTimeout(t);
+      scheduleRefresh();
     });
     return () => mm.revert();
   }, []);

@@ -67,7 +67,7 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: el,
-          start: "top top",
+          start: "top+=1 top", // 스크롤 0에서는 핀이 비활성 → 로드 직후 재계산이 첫 화면을 떼었다 붙이지 않는다
           end: () => "+=250%",
           pin: true,
           scrub: 0.6,

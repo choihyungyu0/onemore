@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { scheduleRefresh } from "@/lib/scroll-refresh";
 import { useLenis } from "lenis/react";
 import { growth, images } from "@/content/landing";
 import { cn } from "@/lib/utils";
@@ -195,13 +196,8 @@ function DesktopScene({ im, lines }: { im: { src: string; alt: string }; lines: 
       tl.to(paras, { autoAlpha: 1, y: 0, duration: 0.1, stagger: 0.06, ease: "power2.out" }, SHUTTER_AT + 0.3);
       tl.to({}, { duration: 0.1 });
 
-      const refresh = () => {
-        ScrollTrigger.sort();
-        ScrollTrigger.refresh();
-      };
-      const t = window.setTimeout(refresh, 400);
+      scheduleRefresh();
       return () => {
-        window.clearTimeout(t);
         stRef.current = null;
       };
     });
