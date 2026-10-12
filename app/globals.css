@@ -48,7 +48,8 @@
   --font-sans-stack: var(--font-pretendard), "Pretendard Variable", Pretendard,
     ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-  --font-display-stack: var(--font-syne), var(--font-sans-stack);
+  --font-display-stack: var(--font-mona), var(--font-sans-stack);
+  --font-serif-accent-stack: var(--font-instrument), "Times New Roman", Georgia, serif;
 }
 
 @layer base {
@@ -111,10 +112,19 @@
   /* 섹션 캡션 — Syne 숫자 + 작은 대문자 트래킹 */
   .kicker {
     font-family: var(--font-display-stack);
+    font-stretch: 112%;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
+  }
+
+  /* 편집 디자인 세리프 이탤릭 액센트 (Instrument Serif) */
+  .font-serif-accent {
+    font-family: var(--font-serif-accent-stack);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
 
   /* 큰 디스플레이 타이포 — Pretendard 800, 타이트 행간 */
@@ -330,4 +340,42 @@ html.lenis body {
   .how-grid {
     display: grid !important;
   }
+}
+
+/* ── 오프닝 인트로 ── */
+.intro-contours {
+  animation: contour-drift 18s ease-in-out infinite alternate;
+  transform-origin: 50% 52%;
+}
+@keyframes contour-drift {
+  from {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.08) translate3d(-1.5%, 1%, 0);
+  }
+}
+.intro-photo img {
+  filter: saturate(0.55) contrast(1.08) brightness(0.92) sepia(0.12);
+}
+.intro-signature path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: signature-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.9s forwards;
+  filter: drop-shadow(0 0 14px rgba(255, 90, 60, 0.35));
+}
+@keyframes signature-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.intro-marquee-left {
+  animation: marquee-left 28s linear infinite;
+}
+.intro-marquee-right {
+  animation: marquee-right 34s linear infinite;
+}
+/* 숫자는 넓은 폭으로 — Mona Sans wdth 축 */
+.font-display {
+  font-stretch: 118%;
 }

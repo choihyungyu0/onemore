@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { Syne } from "next/font/google";
+import { Mona_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { brand, seo } from "@/content/landing";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
-import { Preloader } from "@/components/site/preloader";
+import { Intro } from "@/components/site/intro";
 import { Cursor } from "@/components/site/cursor";
 import { ScrollProgress } from "@/components/site/scroll-progress";
 
@@ -17,11 +17,20 @@ const pretendard = localFont({
   preload: true,
 });
 
-// 영문 디스플레이·캡션·숫자: Syne
-const syne = Syne({
+// 영문 디스플레이·캡션·숫자: Mona Sans (GitHub, OFL) — 가변 굵기 + 폭(wdth) 축
+const mona = Mona_Sans({
   subsets: ["latin"],
-  weight: ["500", "700", "800"],
-  variable: "--font-syne",
+  axes: ["wdth"],
+  variable: "--font-mona",
+  display: "swap",
+});
+
+// 편집 디자인 느낌의 세리프 이탤릭 액센트: Instrument Serif (OFL)
+const instrument = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument",
   display: "swap",
 });
 
@@ -54,16 +63,20 @@ export const viewport: Viewport = {
 };
 
 /**
- * 첫 페인트 전에 실행 — 프리로더가 뜰 상황(세션 첫 방문·감속 모션 아님)이면
+ * 첫 페인트 전에 실행 — 인트로가 뜰 상황(세션 첫 방문·감속 모션 아님)이면
  * html.preloading 을 붙여 히어로 CSS 진입 모션을 커튼이 걷힐 때까지 멈춰 둔다.
  */
-const PRELOAD_SCRIPT = `try{if(!sessionStorage.getItem('onemore-preloader')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('preloading')}}catch(e){}`;
+const PRELOAD_SCRIPT = `try{if(!sessionStorage.getItem('onemore-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('preloading')}}catch(e){}`;
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ko" className={`${pretendard.variable} ${syne.variable}`} suppressHydrationWarning>
+    <html
+      lang="ko"
+      className={`${pretendard.variable} ${mona.variable} ${instrument.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: PRELOAD_SCRIPT }} />
       </head>
@@ -75,7 +88,7 @@ export default function RootLayout({
           본문으로 건너뛰기
         </a>
         <SmoothScroll>
-          <Preloader />
+          <Intro />
           {children}
         </SmoothScroll>
         <Cursor />

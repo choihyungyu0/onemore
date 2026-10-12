@@ -89,6 +89,16 @@ export const seo = {
   url: "https://onemore.vercel.app",
 };
 
+/** 오프닝 인트로 (세션당 1회) */
+export const intro = {
+  label: "MESSAGE FROM ONE MORE",
+  /** 세리프 이탤릭 줄 (영문) */
+  serifLine: "From the first seeding to mega",
+  /** 굵은 산세리프 줄 (한글) */
+  sansLine: "첫 시딩부터, 메가를 향한 성장까지.",
+  skip: "CLICK OR SCROLL TO SKIP",
+};
+
 export const nav = {
   links: [
     { label: "크리에이터 찾기", href: "#discover" },
