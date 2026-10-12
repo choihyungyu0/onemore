@@ -11,6 +11,8 @@ import { Lines } from "./reveal";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
+const STEP = 0.5; // 슬라이드 한 장당 스크롤 배분 (화면 높이 단위)
+
 /**
  * 콘텐츠 쇼케이스(columbus-travel "Services" 구도) — 핀 고정 한 화면.
  * 1) 큰 헤드라인 마퀴 위에 아치형 창처럼 뚫린 사진이 스크롤에 따라 카드 전체로 커지고
@@ -48,7 +50,6 @@ export function Showcase() {
       gsap.set(ui, { opacity: 0, y: 24 });
       gsap.set(bar, { scaleX: 1 / n });
 
-      const STEP = 0.6; // 슬라이드 한 장당 스크롤 배분
       const total = 1.3 + (n - 1) * STEP + 0.3;
       const tl = gsap.timeline({
         defaults: { ease: "none" },
@@ -91,7 +92,7 @@ export function Showcase() {
     if (!tl) return 0;
     const t = tl.progress() * tl.duration();
     let idx = 0;
-    for (let i = 1; i < n; i++) if (t >= 1.3 + (i - 1) * 0.6 + 0.4) idx = i;
+    for (let i = 1; i < n; i++) if (t >= 1.3 + (i - 1) * STEP + 0.4) idx = i;
     return idx;
   };
   const findByCountry = (i: number) => requestFilter({ country: slides[i].country });

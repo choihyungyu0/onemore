@@ -1,4 +1,5 @@
 import { how } from "@/content/landing";
+import { HowRing } from "./how-ring";
 import { HowScrub } from "./how-scrub";
 import { SkyVideo } from "./sky-video";
 import { Vignette } from "./how-vignettes";
@@ -43,9 +44,10 @@ export function How() {
         </ol>
       </Section>
 
-      {/* 데스크톱: 고정 + 스크럽 */}
+      {/* 데스크톱: 1단계 = 전폭 3D 링(고정·스크롤 회전) → 2~4단계 = 고정 스크럽 */}
       <div className="bg-mist">
-        <HowScrub />
+        <HowRing />
+        <HowScrub from={1} />
       </div>
 
       <Section className="bg-mist pt-10 lg:pt-16">

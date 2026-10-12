@@ -8,12 +8,12 @@ import { Intro } from "@/components/site/intro";
 import { Cursor } from "@/components/site/cursor";
 import { ScrollProgress } from "@/components/site/scroll-progress";
 
-// 한글 본문·헤드라인: Pretendard Variable (self-hosted, OFL)
+// 한글 본문·헤드라인: Pretendard Variable (self-hosted, OFL) — KS X 1001 2,350자+사이트 카피 서브셋. 첫 화면 폰트 교체 깜빡임을 막기 위해 block
 const pretendard = localFont({
-  src: "../public/fonts/PretendardVariable.woff2",
+  src: "../public/fonts/PretendardVariable.subset.woff2",
   weight: "45 920",
   variable: "--font-pretendard",
-  display: "swap",
+  display: "block",
   preload: true,
 });
 

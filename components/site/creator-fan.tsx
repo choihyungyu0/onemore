@@ -24,11 +24,12 @@ const at = (t: number[], u: number) => {
   const j = Math.min(t.length - 1, i + 1);
   return t[i] + (t[j] - t[i]) * (u - i);
 };
-function slot(k: number) {
+function slot(k: number, n: number) {
   const u = Math.abs(k) * 2;
+  const squeeze = Math.min(1, 7 / n); // 8장 이상이면 좌우 간격을 줄여 컨테이너 안에 담는다
   return {
-    x: Math.sign(k) * at(X, u),
-    y: at(Y, u),
+    x: Math.sign(k) * at(X, u) * squeeze,
+    y: at(Y, u) * squeeze,
     r: 7 * k,
     s: Math.pow(0.93, Math.abs(k)),
     z: 10 - Math.round(Math.abs(k) * 2),
@@ -85,7 +86,7 @@ export function CreatorFan({
     <div ref={root} className="creator-fan relative mx-auto hidden h-[clamp(390px,56vh,480px)] w-full lg:block">
       {list.map((c, i) => {
         const k = i - center;
-        const p = slot(k);
+        const p = slot(k, n);
         const im = images[c.image];
         const selected = isSelected(c.id);
         return (

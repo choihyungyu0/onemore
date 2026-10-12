@@ -4,7 +4,7 @@
  * 줄바꿈이 필요한 문장은 "\n"으로 표시합니다(컴포넌트가 줄 단위로 렌더링).
  */
 
-export type Country = "호주" | "일본" | "캐나다" | "기타 국가";
+export type Country = "호주" | "일본" | "캐나다" | "뉴질랜드" | "영국" | "독일" | "프랑스" | "기타 국가";
 
 export type Creator = {
   id: string;
@@ -47,6 +47,14 @@ export const images = {
   "country-02": img("country-02", "낮의 도쿄 거리"),
   "country-03": img("country-03", "산이 보이는 밴쿠버 도심"),
   "country-04": img("country-04", "여름 유럽 구시가지 거리"),
+  "country-05": img("country-05", "맑은 날의 오클랜드 항구"),
+  "country-06": img("country-06", "햇살 좋은 런던 거리"),
+  "country-07": img("country-07", "여름 베를린 거리"),
+  "country-08": img("country-08", "파리 노천 카페가 있는 거리"),
+  "card-auckland": img("card-auckland", "오클랜드 근교 해안"),
+  "card-london": img("card-london", "런던 동네 골목의 집들"),
+  "card-berlin": img("card-berlin", "베를린 노천 카페"),
+  "card-paris": img("card-paris", "파리 테라스 카페"),
   "show-01": img("show-01", "아침 햇살이 드는 창가에서 커피를 마시는 모습"),
   "show-02": img("show-02", "카페 창가에서 웃으며 이야기하는 친구들"),
   "show-03": img("show-03", "해안 도로를 달리는 여름 로드트립"),
@@ -168,7 +176,11 @@ export const showcase = {
     { key: "au", title: "호주", country: "호주" as Country, description: "시드니·멜버른·브리즈번,\n워홀러의 하루가 시작되는 곳", image: "country-01" as ImageKey },
     { key: "jp", title: "일본", country: "일본" as Country, description: "도쿄·오사카의 거리와 카페,\n가까운 나라의 다른 하루", image: "country-02" as ImageKey },
     { key: "ca", title: "캐나다", country: "캐나다" as Country, description: "밴쿠버·토론토,\n유학과 워홀이 만나는 도시", image: "country-03" as ImageKey },
-    { key: "etc", title: "유럽·그 외", country: "기타 국가" as Country, description: "유럽에서 동남아까지,\n새로 시작하는 도시들", image: "country-04" as ImageKey },
+    { key: "nz", title: "뉴질랜드", country: "뉴질랜드" as Country, description: "오클랜드·퀸스타운,\n자연 속에서 일하고 쉬는 하루", image: "country-05" as ImageKey },
+    { key: "uk", title: "영국", country: "영국" as Country, description: "런던의 마켓과 펍,\n유럽 여행의 출발점", image: "country-06" as ImageKey },
+    { key: "de", title: "독일", country: "독일" as Country, description: "베를린·뮌헨,\n일과 삶의 균형을 배우는 도시", image: "country-07" as ImageKey },
+    { key: "fr", title: "프랑스", country: "프랑스" as Country, description: "파리의 카페와 약국 화장품,\n뷰티·패션 콘텐츠의 무대", image: "country-08" as ImageKey },
+    { key: "etc", title: "그 외 국가", country: "기타 국가" as Country, description: "아일랜드·네덜란드에서 동남아까지,\n새로 시작하는 도시들", image: "country-04" as ImageKey },
   ],
 };
 
@@ -227,7 +239,7 @@ export const discover = {
     country: {
       label: "활동 국가",
       all: "전체",
-      options: ["호주", "일본", "캐나다", "기타 국가"] as Country[],
+      options: ["호주", "일본", "캐나다", "뉴질랜드", "영국", "독일", "프랑스", "기타 국가"] as Country[],
     },
     keyword: {
       label: "콘텐츠 키워드",
@@ -363,9 +375,58 @@ export const creators: Creator[] = [
     tone: 5,
     image: "card-goldcoast",
   },
+  {
+    id: "c07",
+    name: "크리에이터 07",
+    country: "뉴질랜드",
+    city: "오클랜드",
+    platform: "Instagram",
+    followers: 3300,
+    tags: ["워홀", "여행", "일상"],
+    bio: "오클랜드 카페 알바와 주말 트레킹 기록.",
+    tone: 2,
+    image: "card-auckland",
+  },
+  {
+    id: "c08",
+    name: "크리에이터 08",
+    country: "영국",
+    city: "런던",
+    platform: "Instagram",
+    followers: 21000,
+    tags: ["패션", "카페", "일상"],
+    bio: "런던 빈티지 마켓과 동네 카페 산책.",
+    tone: 4,
+    image: "card-london",
+  },
+  {
+    id: "c09",
+    name: "크리에이터 09",
+    country: "독일",
+    city: "베를린",
+    platform: "Instagram",
+    followers: 5600,
+    tags: ["일상", "푸드", "워홀"],
+    bio: "베를린 워홀러의 장보기와 주말 브런치.",
+    tone: 0,
+    image: "card-berlin",
+  },
+  {
+    id: "c10",
+    name: "크리에이터 10",
+    country: "프랑스",
+    city: "파리",
+    platform: "Instagram",
+    followers: 9800,
+    tags: ["뷰티", "여행", "카페"],
+    bio: "파리 약국 화장품과 테라스 카페 일기.",
+    tone: 1,
+    image: "card-paris",
+  },
 ];
 
 export const how = {
+  ringHint: "스크롤하거나 ← → 키로 돌려보세요. 정면 카드를 누르면 그 나라의 크리에이터를 찾아봅니다.",
   kicker: "매칭 방식",
   title: "마음에 드는 크리에이터를 고르세요.\n그다음 연결은 저희가 이어갑니다.",
   description:
@@ -471,7 +532,7 @@ export const campaign = {
     countries: {
       label: "희망 활동 국가",
       hint: "어떤 국가에서 활동하는 크리에이터를 찾으시나요?",
-      options: ["호주", "일본", "캐나다", "기타 국가"] as Country[],
+      options: ["호주", "일본", "캐나다", "뉴질랜드", "영국", "독일", "프랑스", "기타 국가"] as Country[],
     },
     keywords: { label: "관심 콘텐츠 키워드", placeholder: "예: 뷰티, 여행, 카페, 현지 일상" },
     sizes: { label: "희망 팔로워 규모", hint: "여러 구간 선택 가능" },

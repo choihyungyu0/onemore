@@ -3,21 +3,22 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { creators, how } from "@/content/landing";
-import { CreatorRing } from "./creator-ring";
+import { how } from "@/content/landing";
 import { Vignette } from "./how-vignettes";
 import { Lines } from "./reveal";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
 /**
- * 매칭 4단계 — 데스크톱에서는 섹션을 화면에 고정(pin)하고
+ * 매칭 단계(from번째부터) — 데스크톱에서는 섹션을 화면에 고정(pin)하고
  * 스크롤 양에 비례해 왼쪽 단계 글과 오른쪽 UI 비네트가 함께 교차된다.
+ * 1단계(찾아보기)는 앞의 HowRing(전폭 3D 링)이 맡으므로 보통 from={1}.
  * 비네트 안의 [data-pop] 요소는 단계가 켜질 때 차례로 떠오른다.
  * 감속 모션에서는 핀 없이 정적으로 보여준다.
  */
-export function HowScrub() {
+export function HowScrub({ from = 0 }: { from?: number }) {
   const root = useRef<HTMLDivElement>(null);
+  const steps = how.steps.slice(from);
 
   useLayoutEffect(() => {
     const el = root.current;
@@ -78,13 +79,13 @@ export function HowScrub() {
       <div className="mx-auto grid w-full max-w-[80rem] grid-cols-[1fr_1.05fr] items-center gap-14 px-12 xl:gap-20">
         {/* 왼쪽: 단계 글 스택 */}
         <div className="relative h-[52vh] min-h-[320px]">
-          {how.steps.map((s, i) => (
+          {steps.map((s, i) => (
             <div key={s.title} data-panel className="absolute inset-0 flex flex-col justify-center">
               <p className="kicker text-brand">
-                STEP {i + 1} / {how.steps.length}
+                STEP {from + i + 1} / {how.steps.length}
               </p>
               <span className="font-display mt-4 block text-[clamp(3.5rem,7vw,6rem)] font-extrabold leading-none tracking-[-0.06em] text-ink">
-                0{i + 1}
+                0{from + i + 1}
               </span>
               <h3 className="display-md mt-4 text-[clamp(1.9rem,3.2vw,2.8rem)] text-ink">{s.title}</h3>
               <p className="mt-5 max-w-md text-[16.5px] leading-[1.75] text-muted">
@@ -96,16 +97,9 @@ export function HowScrub() {
 
         {/* 오른쪽: UI 비네트 카드 스택 */}
         <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px]" style={{ maxHeight: "68vh" }}>
-          {how.steps.map((s, i) => (
+          {steps.map((s, i) => (
             <div key={s.title} data-vignette className="absolute inset-0">
-              {i === 0 ? (
-                /* 찾아보기 = 크리에이터 3D 링이 천천히 돈다 (정면 카드를 누르면 그 나라로 찾기) */
-                <div className="relative h-full w-full overflow-hidden rounded-[22px] bg-cream shadow-lift ring-1 ring-ink/[0.05]">
-                  <CreatorRing variant="auto" list={creators} cardWidth={300} />
-                </div>
-              ) : (
-                <Vignette step={i} />
-              )}
+              <Vignette step={from + i} />
             </div>
           ))}
         </div>

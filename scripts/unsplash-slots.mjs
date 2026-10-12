@@ -31,6 +31,16 @@ export const SLOTS = [
   { name: "country-02", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["tokyo street daytime", "osaka street daytime people"], take: 8 },
   { name: "country-03", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["vancouver city mountains sunny", "toronto street summer people"], take: 8 },
   { name: "country-04", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["european old town street summer", "lisbon street tram sunny"], take: 8 },
+  // 쇼케이스 국가 슬라이드 추가(뉴질랜드·영국·독일·프랑스) — 밝은 낮, 도시·거리, 얼굴 허용
+  { name: "country-05", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["auckland harbour sunny day", "queenstown lake mountains sunny"], take: 8 },
+  { name: "country-06", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["london street sunny day people", "london thames daytime summer"], take: 8 },
+  { name: "country-07", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["berlin street summer sunny", "munich old town sunny day"], take: 8 },
+  { name: "country-08", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["paris street cafe sunny day", "paris seine daytime people"], take: 8 },
+  // 새 국가 크리에이터 카드(세로)
+  { name: "card-auckland", ratio: "4/5", allowBlue: true, queries: ["auckland cafe", "new zealand beach walk"], take: 6 },
+  { name: "card-london", ratio: "4/5", queries: ["london cafe window", "notting hill street"], take: 6 },
+  { name: "card-berlin", ratio: "4/5", queries: ["berlin cafe", "berlin street summer"], take: 6 },
+  { name: "card-paris", ratio: "4/5", queries: ["paris cafe terrace", "paris street morning"], take: 6 },
   // 줌아웃 스테이지 배경 — 밝고 부드러운 하늘·구름(블루 허용)
   { name: "stage-sky", ratio: "16/9", allowBlue: true, queries: ["soft clouds blue sky daylight", "above the clouds aerial soft light"], take: 8 },
   // 콘텐츠 쇼케이스 슬라이드(가로) — 밝은 자연광, 사람·얼굴 허용

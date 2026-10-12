@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -13,7 +13,7 @@ import { Placeholder } from "./placeholder";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
-const PX_PER_CARD = 280; // 핀 고정 중 카드 한 장을 넘기는 데 쓰는 스크롤 양
+const PX_PER_CARD = 200; // 핀 고정 중 카드 한 장을 넘기는 데 쓰는 스크롤 양
 const AUTO_DEG_PER_FRAME = 0.16; // 자동 회전 속도 (≈10°/s)
 const CARD_RATIO = 0.75; // 카드 4:3
 const NAV_H = 76;
@@ -21,7 +21,7 @@ const NAV_H = 76;
 /**
  * 크리에이터 3D 링 (imersion.io "Currently on" 구도)
  * - 원근 1600px 장면 안에 카드가 원형으로 서 있고(rotateY(k·step) translateZ(r)), 링은 -r 만큼 물러나 정면 카드가 z=0
- * - variant "pinned": 장면이 화면에 닿으면 고정되고, 스크롤에 따라 돌며 마지막 카드까지 보여준 뒤 풀린다
+ * - variant "pinned": 헤더(header)와 전폭 장면이 함께 화면에 고정되고, 스크롤에 따라 돌며 마지막 카드까지 보여준 뒤 풀린다
  * - variant "auto": 핀 없이 천천히 자동 회전 (매칭 1단계 "찾아보기" 시각물)
  * - 마우스 위치로 살짝 기울고, ←→ 키(핀)나 옆 카드 클릭으로 한 칸씩
  * - 정면 카드를 누르면 onView(없으면 그 국가로 크리에이터 찾기), +로 선택(onToggle이 있을 때)
@@ -36,6 +36,7 @@ export function CreatorRing({
   variant = "pinned",
   cardWidth,
   className,
+  header,
 }: {
   list: Creator[];
   isSelected?: (id: string) => boolean;
@@ -44,9 +45,13 @@ export function CreatorRing({
   variant?: "pinned" | "auto";
   cardWidth?: number;
   className?: string;
+  /** 핀 변형의 상단 내용(단계 카피 등). 없으면 기본 라벨 행 */
+  header?: ReactNode;
 }) {
   const auto = variant === "auto";
   const reduce = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const n = list.length;
@@ -58,7 +63,8 @@ export function CreatorRing({
   // 치수 — 카드 폭 = min(680px, 53vw, 내비 아래 화면 높이에 들어가는 폭) 또는 지정값, 반지름은 이웃 카드가 겹치지 않는 최소 × 1.12
   useEffect(() => {
     const calc = () => {
-      const fitH = (window.innerHeight - NAV_H - 96 - 24) / CARD_RATIO;
+      const headH = headRef.current?.offsetHeight ?? 0;
+      const fitH = (window.innerHeight - NAV_H - headH - 64 - 24) / CARD_RATIO;
       const w = cardWidth ?? Math.round(Math.max(360, Math.min(680, window.innerWidth * 0.53, fitH)));
       const r = Math.round((w / (2 * Math.sin(Math.PI / Math.max(n, 3)))) * 1.12);
       setDims({ w, r });
@@ -75,7 +81,7 @@ export function CreatorRing({
     const mm = gsap.matchMedia();
     mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
       const trigger = ScrollTrigger.create({
-        trigger: scene,
+        trigger: rootRef.current ?? scene,
         start: `top ${NAV_H}px`,
         end: () => `+=${(n - 1) * PX_PER_CARD}`,
         pin: true,
@@ -181,22 +187,26 @@ export function CreatorRing({
   const h = Math.round(dims.w * CARD_RATIO);
 
   return (
-    <div className={cn("creator-ring", auto ? "h-full w-full" : "hidden lg:block", className)}>
+    <div ref={rootRef} className={cn("creator-ring", auto ? "h-full w-full" : "hidden w-full lg:block", className)}>
       {!auto && (
-        <div className="flex items-center justify-between">
-          <span className="kicker flex items-center gap-4 text-[11px] text-ink/60">
-            <span aria-hidden className="h-px w-12 bg-ink/40" />
-            {discover.ring.label}
-          </span>
-          <span className="text-[12.5px] text-muted">{discover.ring.hint}</span>
+        <div ref={headRef} className="mx-auto w-full max-w-[80rem] px-12">
+          {header ?? (
+            <div className="flex items-center justify-between pb-6">
+              <span className="kicker flex items-center gap-4 text-[11px] text-ink/60">
+                <span aria-hidden className="h-px w-12 bg-ink/40" />
+                {discover.ring.label}
+              </span>
+              <span className="text-[12.5px] text-muted">{discover.ring.hint}</span>
+            </div>
+          )}
         </div>
       )}
 
-      {/* 장면 — 가장자리에서 잘린다(imersion처럼 옆 카드가 바깥으로 이어짐) */}
+      {/* 장면 — 화면 전폭, 가장자리에서 잘린다(imersion처럼 옆 카드가 바깥으로 이어짐) */}
       <div
         ref={sceneRef}
-        className={cn("ring-scene relative overflow-hidden", auto ? "h-full w-full" : "mt-6 lg:-mx-12")}
-        style={auto ? undefined : { height: h + 96 }}
+        className={cn("ring-scene relative overflow-hidden", auto ? "h-full w-full" : "w-full")}
+        style={auto ? undefined : { height: h + 64 }}
         onPointerMove={onMove}
         onPointerLeave={onLeave}
       >
