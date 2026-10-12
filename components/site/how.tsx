@@ -1,8 +1,7 @@
 import { how } from "@/content/landing";
 import { HowScrub } from "./how-scrub";
 import { HowSplit } from "./how-split";
-import { Vignette } from "./how-vignettes";
-import { TabletDemo } from "./tablet-demo";
+import { DeviceDemo } from "./device-demo";
 import { Lines, Reveal, RevealLines } from "./reveal";
 import { Section } from "./section";
 
@@ -18,8 +17,8 @@ export function How() {
           {how.steps.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.08} className="h-full">
               <li className="flex h-full flex-col rounded-[24px] bg-white p-6 shadow-card ring-1 ring-ink/[0.05]">
-                <div className="mb-6 aspect-[4/3]">
-                  {i === 0 ? <TabletDemo /> : <Vignette step={i} />}
+                <div className="mb-6">
+                  <DeviceDemo step={i} />
                 </div>
                 <span className="font-display text-[40px] font-extrabold leading-none tracking-tight text-brand">
                   0{i + 1}
