@@ -26,6 +26,8 @@ export const SLOTS = [
   { name: "fit-03", ratio: "4/5", queries: ["holding product cafe"], take: 6 },
   { name: "creator-01", ratio: "4/5", queries: ["young person laptop cafe"], take: 6 },
   { name: "final-01", ratio: "21/9", queries: ["sydney sunset skyline"], take: 6 },
+  // 줌아웃 스테이지 배경 — 밝고 부드러운 하늘·구름(블루 허용)
+  { name: "stage-sky", ratio: "16/9", allowBlue: true, queries: ["soft clouds blue sky daylight", "above the clouds aerial soft light"], take: 8 },
   // 콘텐츠 쇼케이스 슬라이드(가로) — 밝은 자연광, 사람·얼굴 허용
   { name: "show-01", ratio: "16/9", allowFaces: true, queries: ["woman morning coffee window apartment sunlight", "young woman cooking kitchen sunlight smiling"], take: 8 },
   { name: "show-02", ratio: "16/9", allowFaces: true, queries: ["friends laughing cafe table sunlight", "woman cafe window latte smiling"], take: 8 },

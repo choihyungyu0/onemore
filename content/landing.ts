@@ -42,6 +42,7 @@ export const images = {
   "hero-02": img("hero-02", "크림색 건물의 카페 창가"),
   "hero-03": img("hero-03", "여행지에서 삼각대에 올린 스마트폰"),
   "hero-04": img("hero-04", "카메라를 들고 촬영하는 뒷모습"),
+  "stage-sky": img("stage-sky", "부드러운 구름이 떠 있는 밝은 하늘"),
   "show-01": img("show-01", "아침 햇살이 드는 창가에서 커피를 마시는 모습"),
   "show-02": img("show-02", "카페 창가에서 웃으며 이야기하는 친구들"),
   "show-03": img("show-03", "해안 도로를 달리는 여름 로드트립"),
@@ -243,8 +244,14 @@ export const discover = {
     view: "프로필 보기",
     select: "선택하기",
     selected: "선택됨",
+    deselect: "선택 해제",
     example: "예시 프로필",
     followers: "팔로워 {n}명",
+  },
+  /** 3D 링(데스크톱 결과 보기) */
+  ring: {
+    label: "CURRENTLY ON ONE MORE",
+    hint: "옆 카드를 누르거나 ← → 키로 돌려보세요. 정면 카드를 누르면 프로필이 열립니다.",
   },
   /** 프로필 상세 (모달) */
   detail: {

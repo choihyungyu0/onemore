@@ -73,6 +73,11 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
         },
       });
       tl.to(hero, { scale: () => metrics().scale, y: () => metrics().y, duration: 1 }, 0);
+      const sky = el.querySelector<HTMLElement>(".zoom-sky");
+      if (sky) {
+        gsap.set(sky, { scale: 1.12 });
+        tl.to(sky, { scale: 1, duration: 1 }, 0);
+      }
       // 안쪽 카드가 먼저, 바깥 카드가 뒤따르게 — 이동 중 서로 겹치지 않는다
       tl.to(cards, { x: 0, duration: 0.7, stagger: { each: 0.07, from: "center" } }, 0.18);
       tl.eventCallback("onUpdate", () => {
@@ -102,6 +107,11 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
 
   return (
     <div ref={stage} className="zoom-stage relative bg-mist">
+      {/* 하늘 배경 — 첫 화면이 카드로 물러나면 드러나는 "바깥" (여행 느낌). 줌아웃 동안 살짝 당겨진다 */}
+      <div className="zoom-sky absolute inset-0 overflow-hidden" aria-hidden>
+        <Placeholder fill tone={1} src={images["stage-sky"].src} alt="" sizes="100vw" />
+        <div className="absolute inset-0 bg-white/10" />
+      </div>
       <div ref={wrap} className="zoom-hero relative origin-center overflow-hidden bg-paper">
         {children}
       </div>

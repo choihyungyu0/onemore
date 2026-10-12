@@ -8,6 +8,7 @@ import { creators, discover, images, sizeBands, type Country, type Creator } fro
 import { cn } from "@/lib/utils";
 import { ButtonLink, Button, btnClass } from "./button";
 import { CreatorCard, formatFollowers } from "./creator-card";
+import { CreatorRing } from "./creator-ring";
 import { Placeholder } from "./placeholder";
 import { EASE, Lines, Reveal } from "./reveal";
 import { Section, SectionHeader } from "./section";
@@ -178,7 +179,7 @@ export function Discover() {
         </Reveal>
       </div>
 
-      {/* 카드 그리드 / 빈 결과 */}
+      {/* 결과: 3D 링(데스크톱) · 그리드(모바일) / 빈 결과 */}
       <div className="mt-8">
         <AnimatePresence mode="wait" initial={false}>
           {list.length > 0 ? (
@@ -188,8 +189,12 @@ export function Discover() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 xl:grid-cols-6"
             >
+              {/* 데스크톱: imersion식 3D 링 — 스크롤로 돌고, 정면 카드를 누르면 상세 */}
+              <CreatorRing list={list} isSelected={sel.isSelected} onToggle={sel.toggle} onView={setDetail} />
+
+              {/* 모바일·태블릿: 카드 그리드 */}
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 lg:hidden">
               {list.map((c, i) => (
                 <motion.div
                   key={c.id}
@@ -207,6 +212,7 @@ export function Discover() {
                   />
                 </motion.div>
               ))}
+              </div>
             </motion.div>
           ) : (
             <motion.div
