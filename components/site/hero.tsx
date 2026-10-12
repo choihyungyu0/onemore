@@ -60,7 +60,7 @@ export function Hero() {
         </div>
       </div>
 
-      <p className="rise relative mt-10 text-center text-[13px] font-semibold text-brand md:text-[14px]" style={delay(0.2)}>
+      <p className="rise relative mt-20 text-center text-[13px] font-semibold text-brand md:text-[14px]" style={delay(0.2)}>
         {hero.eyebrow}
       </p>
       <p
