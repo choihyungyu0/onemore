@@ -39,7 +39,7 @@ export function LaptopShell({ children, className, dark }: { children: ReactNode
       <div className="relative mx-auto w-[88%]">
         <div className={cn("laptop-lid relative aspect-[16/10] rounded-t-[2.4%] rounded-b-[0.6%] bg-[#0a0b0e] p-[2.2%] pb-[3%] ring-1", dark ? "shadow-[0_60px_120px_-40px_rgba(0,0,0,0.9)] ring-[#2a2d33]" : "shadow-[0_40px_70px_-30px_rgba(16,18,24,0.5)] ring-[#33363d]")}>
           <span className="absolute left-1/2 top-[0.9%] h-[0.9%] w-[0.9%] -translate-x-1/2 rounded-full bg-[#1d2027] ring-1 ring-[#3a3e47]" aria-hidden />
-          <div ref={screenRef} className="relative h-full w-full overflow-hidden rounded-[4px] bg-white">
+          <div ref={screenRef} data-screen-box className="relative h-full w-full overflow-hidden rounded-[4px] bg-white">
             <div className="absolute left-0 top-0 origin-top-left" style={{ width: W, height: H, transform: `scale(${scale})` }}>
               {children}
             </div>
@@ -192,55 +192,93 @@ function Card({ c, badge, selected, pop }: { c: (typeof creators)[number]; badge
 
 /* ---------- 01 찾아보기 (자동 데모) ---------- */
 type Phase = "idle" | "typing" | "typed" | "country" | "keyword" | "filtered" | "clearing";
+type DemoState = { phase: Phase; typed: string };
+
+/* 검색 데모 상태 — 루프 하나가 모든 화면(배경·돋보기·마지막 제안·모바일 카드)을 동기화한다.
+   화면에 보이는 구독자가 하나라도 있으면 돌고, 모두 사라지면 멈춘다. */
+const demo = {
+  state: { phase: "idle", typed: "" } as DemoState,
+  subs: new Set<(s: DemoState) => void>(),
+  inView: new Set<object>(),
+  stop: null as null | (() => void),
+};
+function demoSet(state: DemoState) {
+  demo.state = state;
+  demo.subs.forEach((f) => f(state));
+}
+function demoStart(query: string) {
+  if (demo.stop) return;
+  let alive = true;
+  const timers: number[] = [];
+  const wait = (ms: number) => new Promise<void>((r) => timers.push(window.setTimeout(r, ms)));
+  (async () => {
+    while (alive) {
+      demoSet({ phase: "idle", typed: "" });
+      await wait(1400);
+      for (let i = 1; i <= query.length; i++) {
+        if (!alive) return;
+        demoSet({ phase: "typing", typed: query.slice(0, i) });
+        await wait(95);
+      }
+      demoSet({ phase: "typed", typed: query });
+      await wait(550);
+      demoSet({ phase: "country", typed: query });
+      await wait(520);
+      demoSet({ phase: "keyword", typed: query });
+      await wait(520);
+      demoSet({ phase: "filtered", typed: query });
+      await wait(3000);
+      demoSet({ phase: "clearing", typed: query });
+      await wait(500);
+    }
+  })();
+  demo.stop = () => {
+    alive = false;
+    timers.forEach((t) => window.clearTimeout(t));
+    demo.stop = null;
+  };
+}
+function useSearchDemo(rootRef: React.RefObject<HTMLDivElement | null>, still: boolean): DemoState {
+  const [state, setState] = useState<DemoState>(demo.state);
+  useEffect(() => {
+    if (still) return;
+    demo.subs.add(setState);
+    setState(demo.state);
+    return () => {
+      demo.subs.delete(setState);
+    };
+  }, [still]);
+  useEffect(() => {
+    if (still) return;
+    const el = rootRef.current;
+    if (!el) return;
+    const key = {};
+    const sync = () => {
+      if (demo.inView.size && !demo.stop) demoStart(how.demo.query);
+      if (!demo.inView.size && demo.stop) demo.stop();
+    };
+    const io = new IntersectionObserver(
+      (es) => {
+        if (es.some((e) => e.isIntersecting)) demo.inView.add(key);
+        else demo.inView.delete(key);
+        sync();
+      },
+      { threshold: 0.3 }
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      demo.inView.delete(key);
+      sync();
+    };
+  }, [rootRef, still]);
+  return still ? { phase: "filtered", typed: how.demo.query } : state;
+}
 
 function ScreenSearch({ rootRef, still }: { rootRef: React.RefObject<HTMLDivElement | null>; still?: boolean }) {
   const d = how.demo;
   const reduce = useReducedMotion() || !!still; // still: 데모 루프 없이 걸러진 결과 상태로 고정
-  const [inView, setInView] = useState(false);
-  const [phase, setPhase] = useState<Phase>(reduce ? "filtered" : "idle");
-  const [typed, setTyped] = useState(reduce ? d.query : "");
-
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver((es) => setInView(es.some((e) => e.isIntersecting)), { threshold: 0.4 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [rootRef]);
-
-  useEffect(() => {
-    if (reduce || !inView) return;
-    let alive = true;
-    const timers: number[] = [];
-    const wait = (ms: number) => new Promise<void>((r) => timers.push(window.setTimeout(r, ms)));
-    (async () => {
-      while (alive) {
-        setPhase("idle");
-        setTyped("");
-        await wait(1400);
-        setPhase("typing");
-        for (let i = 1; i <= d.query.length; i++) {
-          if (!alive) return;
-          setTyped(d.query.slice(0, i));
-          await wait(95);
-        }
-        setPhase("typed");
-        await wait(550);
-        setPhase("country");
-        await wait(520);
-        setPhase("keyword");
-        await wait(520);
-        setPhase("filtered");
-        await wait(3000);
-        setPhase("clearing");
-        await wait(500);
-      }
-    })();
-    return () => {
-      alive = false;
-      timers.forEach((t) => window.clearTimeout(t));
-    };
-  }, [reduce, inView, d.query]);
+  const { phase, typed } = useSearchDemo(rootRef, reduce);
 
   const countryOn = phase === "country" || phase === "keyword" || phase === "filtered";
   const keywordOn = phase === "keyword" || phase === "filtered";
