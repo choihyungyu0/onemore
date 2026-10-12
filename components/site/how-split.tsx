@@ -56,10 +56,10 @@ export function HowSplit() {
 
       {/* 두 인물 — 바닥에 붙고, 등은 화면 밖으로 살짝 잘린다 */}
       <div className="split-fig split-fig--l pointer-events-none absolute bottom-0 left-[-14vw] z-0 h-[34vh] lg:left-[-6vw] lg:h-[min(86vh,40vw)]">
-        <img src={left.src} alt={left.alt} className="h-full w-auto max-w-none" loading="lazy" decoding="async" />
+        <img src={left.src} alt={left.alt} className="h-full w-auto max-w-none" decoding="async" />
       </div>
       <div className="split-fig split-fig--r pointer-events-none absolute bottom-0 right-[-14vw] z-0 h-[34vh] lg:right-[-6vw] lg:h-[min(86vh,40vw)]">
-        <img src={right.src} alt={right.alt} className="h-full w-auto max-w-none" loading="lazy" decoding="async" />
+        <img src={right.src} alt={right.alt} className="h-full w-auto max-w-none" decoding="async" />
       </div>
 
       {/* 가운데 두 열 */}
