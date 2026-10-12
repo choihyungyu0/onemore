@@ -17,7 +17,7 @@ export function Finale() {
       <div className="relative mx-auto max-w-[1500px]">
         {/* 손 + 노트북 — 모바일은 넓게 잘라 가운데만 */}
         <div className="relative mx-auto w-[150%] -translate-x-[16.7%] sm:w-[120%] sm:-translate-x-[8.3%] lg:w-full lg:translate-x-0">
-          <FinaleHands src="/images/hands-laptop-cut.webp" />
+          <FinaleHands src="/images/hands-laptop-cut-v2.webp" />
         </div>
 
         {/* 제목·버튼 — 노트북 받침에 걸친다 */}
@@ -25,7 +25,7 @@ export function Finale() {
           <RevealLines
             as="h2"
             text={head.join("\n")}
-            className="display-md block text-[clamp(2rem,5.2vw,5.4rem)] leading-[1.04] tracking-[-0.04em] text-ink"
+            className="display-md block text-[clamp(2rem,5.2vw,5.4rem)] leading-[1.04] tracking-[-0.04em] text-ink [text-shadow:0_0_28px_rgba(255,255,255,0.9),0_0_6px_rgba(255,255,255,0.8)]"
           />
           <Reveal delay={0.12}>
             <p className="mx-auto mt-6 max-w-2xl text-[15.5px] leading-[1.7] text-muted md:text-[17px]">
