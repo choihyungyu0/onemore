@@ -130,6 +130,8 @@ export const hero = {
   insetFrames: ["card-perth", "marquee-04", "card-goldcoast", "hero-02"] as ImageKey[],
   /** 첫 화면을 가로지르는 거대 마퀴 문장 */
   marquee: "첫 시딩부터, 메가를 향한 성장까지.",
+  /** 마퀴에서 코랄로 강조할 단어 */
+  marqueeAccent: "메가",
   /** 버튼 아래 작은 필 */
   pill: "브랜드가 고르고, 크리에이터도 선택하는 협업",
   /** 첫 화면 하단 모서리 */

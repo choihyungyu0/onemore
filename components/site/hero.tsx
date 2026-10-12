@@ -1,12 +1,12 @@
 "use client";
 
+import { Fragment } from "react";
 import { ChevronRight } from "lucide-react";
 import { brand, hero, nav } from "@/content/landing";
 import { ButtonLink, btnClass } from "./button";
 import { Magnetic } from "./magnetic";
 import { Logo } from "./navbar";
 import { HeroInset } from "./hero-inset";
-import { Lines } from "./reveal";
 
 /*
  * 첫 화면(realevate 구조) — 화면 정중앙을 가로지르는 마퀴 문장 한가운데 4:5 사진 인셋,
@@ -15,9 +15,41 @@ import { Lines } from "./reveal";
  */
 const delay = (s: number) => ({ animationDelay: `${s}s` });
 
+/** 설명 줄 — 줄마다 연한 회색에서 잉크색으로 왼쪽→오른쪽 채워진다 (인트로 뒤 CSS 타이밍) */
+function SweepLines({ text, from = 1.1, step = 0.3 }: { text: string; from?: number; step?: number }) {
+  const lines = text.split("\n");
+  return (
+    <>
+      {lines.map((line, i) => (
+        <Fragment key={i}>
+          <span className="sweep-line" style={{ animationDelay: `${(from + i * step).toFixed(2)}s` }}>
+            {line}
+          </span>
+          {i < lines.length - 1 && <br />}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
+/** 마퀴 한 줄 — 강조 단어만 코랄 */
+function MarqueeRow() {
+  const [a, b] = hero.marquee.split(hero.marqueeAccent);
+  return (
+    <>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <span key={i}>
+          {a}
+          <span className="text-brand">{hero.marqueeAccent}</span>
+          {b}
+          {"   ·   "}
+        </span>
+      ))}
+    </>
+  );
+}
+
 export function Hero() {
-  const line = `${hero.marquee}   ·   `;
-  const row = line.repeat(3);
 
   return (
     <section
@@ -52,28 +84,34 @@ export function Hero() {
         <h1 className="hero-row marquee-mask w-full overflow-hidden text-ink" aria-label={hero.marquee}>
           <div className="marquee-track hero-marquee">
             <span className="display-light whitespace-nowrap text-[clamp(4rem,10.5vw,11rem)]" aria-hidden>
-              {row}
+              <MarqueeRow />
             </span>
             <span className="display-light whitespace-nowrap text-[clamp(4rem,10.5vw,11rem)]" aria-hidden>
-              {row}
+              <MarqueeRow />
             </span>
           </div>
         </h1>
 
-        <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(120px,min(14vw,22vh),210px)] -translate-x-1/2 -translate-y-1/2">
-          <HeroInset />
+        <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(150px,min(16vw,28vh),250px)] -translate-x-1/2 -translate-y-1/2">
+          {/* 호버: 살짝 커지며 라벨, 클릭: 크리에이터 찾기로 */}
+          <a href={hero.cornerRight.href} className="pointer-events-auto relative block" aria-label={hero.cornerRight.label}>
+            <HeroInset />
+            <span className="hero-inset-label pointer-events-none absolute inset-x-0 bottom-3 z-[2] text-center font-display text-[10px] font-bold uppercase tracking-[0.18em] text-white [text-shadow:0_1px_8px_rgba(0,0,0,.45)]">
+              {hero.cornerRight.label}
+            </span>
+          </a>
         </div>
       </div>
 
       {/* 아래 블록 — 부제·버튼·필 */}
       <div className="relative flex min-w-0 flex-col items-center pt-10 text-center lg:pt-[clamp(1.5rem,6vh,6rem)]">
         <p className="rise text-[13px] font-semibold text-brand md:text-[14px]" style={delay(0.2)}>
-          {hero.eyebrow}
+          <span className="marker">{hero.eyebrow}</span>
         </p>
-        <p className="rise mt-3 max-w-xl text-[16px] leading-[1.7] text-muted md:text-[17px]" style={delay(0.3)}>
-          <Lines text={hero.description} />
+        <p className="rise mt-3 max-w-xl text-[16px] leading-[1.6] md:text-[17px]" style={delay(0.3)}>
+          <SweepLines text={hero.description} />
         </p>
-        <div className="rise mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row" style={delay(0.42)}>
+        <div className="rise mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row" style={delay(0.42)}>
           <Magnetic>
             <ButtonLink href={hero.primary.href} variant="solid" size="lg">
               {hero.primary.label}
@@ -86,10 +124,8 @@ export function Hero() {
             </ButtonLink>
           </Magnetic>
         </div>
-        <span
-          className="rise mt-6 rounded-full border border-ink/15 px-4 py-1.5 text-[12px] font-semibold tracking-[0.02em] text-ink/70"
-          style={delay(0.55)}
-        >
+        <span className="rise mt-5 inline-flex items-center gap-2 text-[13px] font-semibold text-ink/60" style={delay(0.55)}>
+          <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-brand" />
           {hero.pill}
         </span>
       </div>
