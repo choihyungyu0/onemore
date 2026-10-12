@@ -41,3 +41,6 @@ next-env.d.ts
 
 # unsplash 작업 파일(후보·썸네일)
 /scripts/.unsplash/
+
+# font subset scratch
+scripts/.font-chars.txt
