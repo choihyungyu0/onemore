@@ -218,7 +218,7 @@ function DesktopScene({ im, lines }: { im: { src: string; alt: string }; lines: 
   };
 
   return (
-    <div ref={root} className="growth-camera hidden lg:block motion-reduce:hidden">
+    <div ref={root} data-variant="desktop" className="growth-camera hidden lg:block motion-reduce:hidden">
       <div data-stage className="relative h-screen overflow-hidden bg-ink text-white">
         <div className="grain-local absolute inset-0" aria-hidden />
         <div className="pointer-events-none absolute -left-32 top-1/3 h-[420px] w-[420px] rounded-full bg-brand/15 blur-3xl" aria-hidden />
@@ -313,7 +313,7 @@ function MobileScene({ im, lines }: { im: { src: string; alt: string }; lines: s
     window.setTimeout(() => setFlash(false), 420);
   };
   return (
-    <div className="growth-camera relative bg-ink px-5 pb-12 pt-20 text-white sm:px-8 lg:hidden motion-reduce:block motion-reduce:lg:px-12">
+    <div data-variant="mobile" className="growth-camera relative bg-ink px-5 pb-12 pt-20 text-white sm:px-8 lg:hidden motion-reduce:block motion-reduce:lg:px-12">
       <div className="grain-local absolute inset-0" aria-hidden />
       <div className="relative mx-auto max-w-[80rem]">
         <Reveal>

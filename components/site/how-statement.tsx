@@ -127,21 +127,36 @@ function CountryMarquee() {
     let cx = 0;
     let cy = 0;
     let raf = 0;
+    let armed = false; // 처음 들어올 때는 커서 자리에서 바로 시작 (화면 구석에서 날아오지 않게)
     const onMove = (e: PointerEvent) => {
-      const r = w.getBoundingClientRect();
-      tx = e.clientX - r.left;
-      ty = e.clientY - r.top;
+      tx = e.clientX;
+      ty = e.clientY;
+      if (!armed) {
+        armed = true;
+        cx = tx;
+        cy = ty;
+      }
+    };
+    const onLeave = () => {
+      armed = false;
     };
     const loop = () => {
       cx += (tx - cx) * 0.16;
       cy += (ty - cy) * 0.16;
-      p.style.transform = `translate3d(${(cx + 24).toFixed(1)}px, ${(cy - 190).toFixed(1)}px, 0) rotate(${((cx - tx) * 0.04).toFixed(2)}deg)`;
+      // 커서 오른쪽 위에 띄우되 화면 위로 나가면 아래쪽으로
+      const w2 = p.offsetWidth || 240;
+      const h2 = p.offsetHeight || 220;
+      const x = Math.min(window.innerWidth - w2 - 12, cx + 24);
+      const y = cy - h2 - 16 < 12 ? cy + 24 : cy - h2 - 16;
+      p.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${((cx - tx) * 0.04).toFixed(2)}deg)`;
       raf = requestAnimationFrame(loop);
     };
     w.addEventListener("pointermove", onMove);
+    w.addEventListener("pointerleave", onLeave);
     raf = requestAnimationFrame(loop);
     return () => {
       w.removeEventListener("pointermove", onMove);
+      w.removeEventListener("pointerleave", onLeave);
       cancelAnimationFrame(raf);
     };
   }, [reduce]);
@@ -166,7 +181,7 @@ function CountryMarquee() {
       <div
         ref={preview}
         className={cn(
-          "country-peek pointer-events-none absolute left-0 top-0 z-20 hidden w-[240px] origin-bottom-left rounded-[14px] bg-white p-2 shadow-[0_30px_60px_-20px_rgba(11,18,32,0.45)] transition-[opacity,scale] duration-300 lg:block",
+          "country-peek pointer-events-none fixed left-0 top-0 z-[60] hidden w-[240px] origin-bottom-left rounded-[14px] bg-white p-2 shadow-[0_30px_60px_-20px_rgba(11,18,32,0.45)] transition-[opacity,scale] duration-300 lg:block",
           current ? "scale-100 opacity-100" : "scale-90 opacity-0"
         )}
         aria-hidden
