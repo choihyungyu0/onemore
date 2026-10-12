@@ -22,13 +22,10 @@ import { EASE } from "./reveal";
 const W = 640;
 const H = 400;
 
-export function DeviceDemo({ step, className }: { step?: number; className?: string }) {
-  const reduce = useReducedMotion();
-  const root = useRef<HTMLDivElement>(null);
+/** 노트북 껍데기 — 덮개(얇은 베젤·카메라)·알루미늄 받침. 화면 안 640×400 설계를 베젤 안쪽 폭에 맞춰 scale */
+export function LaptopShell({ children, className, dark }: { children: ReactNode; className?: string; dark?: boolean }) {
   const screenRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const scrub = step === undefined;
-
   useEffect(() => {
     const el = screenRef.current;
     if (!el) return;
@@ -36,6 +33,41 @@ export function DeviceDemo({ step, className }: { step?: number; className?: str
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+  return (
+    <div className={className}>
+      {/* 덮개 */}
+      <div className="relative mx-auto w-[88%]">
+        <div className={cn("laptop-lid relative aspect-[16/10] rounded-t-[2.4%] rounded-b-[0.6%] bg-[#0a0b0e] p-[2.2%] pb-[3%] ring-1", dark ? "shadow-[0_60px_120px_-40px_rgba(0,0,0,0.9)] ring-[#2a2d33]" : "shadow-[0_40px_70px_-30px_rgba(16,18,24,0.5)] ring-[#33363d]")}>
+          <span className="absolute left-1/2 top-[0.9%] h-[0.9%] w-[0.9%] -translate-x-1/2 rounded-full bg-[#1d2027] ring-1 ring-[#3a3e47]" aria-hidden />
+          <div ref={screenRef} className="relative h-full w-full overflow-hidden rounded-[4px] bg-white">
+            <div className="absolute left-0 top-0 origin-top-left" style={{ width: W, height: H, transform: `scale(${scale})` }}>
+              {children}
+            </div>
+            <span className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.18] via-transparent to-transparent" aria-hidden />
+          </div>
+        </div>
+      </div>
+      {/* 받침 (알루미늄) */}
+      <div className={cn("laptop-base relative mx-auto h-[clamp(9px,1.5vw,16px)] w-full rounded-b-[10px] bg-gradient-to-b from-[#e6e8ed] via-[#c7cad2] to-[#9a9ea8]", dark ? "shadow-[0_30px_50px_-16px_rgba(0,0,0,0.9)]" : "shadow-[0_18px_30px_-12px_rgba(16,18,24,0.45)]")}>
+        <span className="absolute inset-x-0 top-0 h-px bg-white/70" aria-hidden />
+        <span className="absolute left-1/2 top-0 h-[40%] w-[14%] -translate-x-1/2 rounded-b-[5px] bg-[#7f848e]/70" aria-hidden />
+      </div>
+    </div>
+  );
+}
+
+/** 단계별 화면 */
+export function DemoScreen({ step, rootRef, still }: { step: number; rootRef: React.RefObject<HTMLDivElement | null>; still?: boolean }) {
+  if (step === 0) return <ScreenSearch rootRef={rootRef} still={still} />;
+  if (step === 1) return <ScreenSelect />;
+  if (step === 2) return <ScreenPropose />;
+  return <ScreenConnect />;
+}
+
+export function DeviceDemo({ step, className }: { step?: number; className?: string }) {
+  const reduce = useReducedMotion();
+  const root = useRef<HTMLDivElement>(null);
+  const scrub = step === undefined;
 
   // 마우스 기울기 + 시차
   const mx = useMotionValue(0);
@@ -97,27 +129,13 @@ export function DeviceDemo({ step, className }: { step?: number; className?: str
         style={{ transformStyle: "preserve-3d" }}
       >
         <motion.div style={scrub ? { rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" } : undefined}>
-          {/* 덮개 */}
-          <div className="relative mx-auto w-[88%]">
-            <div className="laptop-lid relative aspect-[16/10] rounded-t-[2.4%] rounded-b-[0.6%] bg-[#0a0b0e] p-[2.2%] pb-[3%] shadow-[0_40px_70px_-30px_rgba(16,18,24,0.5)] ring-1 ring-[#33363d]">
-              <span className="absolute left-1/2 top-[0.9%] h-[0.9%] w-[0.9%] -translate-x-1/2 rounded-full bg-[#1d2027] ring-1 ring-[#3a3e47]" aria-hidden />
-              <div ref={screenRef} className="relative h-full w-full overflow-hidden rounded-[4px] bg-white">
-                <div className="absolute left-0 top-0 origin-top-left" style={{ width: W, height: H, transform: `scale(${scale})` }}>
-                  {shown.map((s, i) => (
-                    <div key={i} data-screen={scrub ? i : undefined} className="absolute inset-0">
-                      {s}
-                    </div>
-                  ))}
-                </div>
-                <span className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.18] via-transparent to-transparent" aria-hidden />
+          <LaptopShell>
+            {shown.map((s, i) => (
+              <div key={i} data-screen={scrub ? i : undefined} className="absolute inset-0">
+                {s}
               </div>
-            </div>
-          </div>
-          {/* 받침 (알루미늄) */}
-          <div className="laptop-base relative mx-auto h-[clamp(9px,1.5vw,16px)] w-full rounded-b-[10px] bg-gradient-to-b from-[#e6e8ed] via-[#c7cad2] to-[#9a9ea8] shadow-[0_18px_30px_-12px_rgba(16,18,24,0.45)]">
-            <span className="absolute inset-x-0 top-0 h-px bg-white/70" aria-hidden />
-            <span className="absolute left-1/2 top-0 h-[40%] w-[14%] -translate-x-1/2 rounded-b-[5px] bg-[#7f848e]/70" aria-hidden />
-          </div>
+            ))}
+          </LaptopShell>
         </motion.div>
       </motion.div>
     </div>
@@ -175,9 +193,9 @@ function Card({ c, badge, selected, pop }: { c: (typeof creators)[number]; badge
 /* ---------- 01 찾아보기 (자동 데모) ---------- */
 type Phase = "idle" | "typing" | "typed" | "country" | "keyword" | "filtered" | "clearing";
 
-function ScreenSearch({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | null> }) {
+function ScreenSearch({ rootRef, still }: { rootRef: React.RefObject<HTMLDivElement | null>; still?: boolean }) {
   const d = how.demo;
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotion() || !!still; // still: 데모 루프 없이 걸러진 결과 상태로 고정
   const [inView, setInView] = useState(false);
   const [phase, setPhase] = useState<Phase>(reduce ? "filtered" : "idle");
   const [typed, setTyped] = useState(reduce ? d.query : "");

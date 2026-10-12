@@ -1,5 +1,5 @@
 import { how } from "@/content/landing";
-import { HowScrub } from "./how-scrub";
+import { HowScenes } from "./how-scenes";
 import { HowSplit } from "./how-split";
 import { DeviceDemo } from "./device-demo";
 import { Lines, Reveal, RevealLines } from "./reveal";
@@ -33,10 +33,8 @@ export function How() {
         </ol>
       </Section>
 
-      {/* 데스크톱: 고정 스크럽 4단계 (1단계 = 태블릿 데모) */}
-      <div className="bg-mist">
-        <HowScrub />
-      </div>
+      {/* 데스크톱: 코타식 장면 4개 — 고정 장면 + 가운데 렌즈 + 호 진행 */}
+      <HowScenes />
 
       <Section className="bg-mist pt-10 lg:pt-16">
         <div className="grid gap-8 border-t border-ink/10 pt-14 lg:grid-cols-[1.2fr_1fr] lg:gap-16 lg:pt-20">
