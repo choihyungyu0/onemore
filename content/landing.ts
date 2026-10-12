@@ -42,6 +42,10 @@ export const images = {
   "hero-02": img("hero-02", "크림색 건물의 카페 창가"),
   "hero-03": img("hero-03", "여행지에서 삼각대에 올린 스마트폰"),
   "hero-04": img("hero-04", "카메라를 들고 촬영하는 뒷모습"),
+  "show-01": img("show-01", "아침 햇살이 드는 창가에서 커피를 마시는 모습"),
+  "show-02": img("show-02", "카페 창가에서 웃으며 이야기하는 친구들"),
+  "show-03": img("show-03", "해안 도로를 달리는 여름 로드트립"),
+  "show-04": img("show-04", "햇살 좋은 낯선 도시 거리를 걷는 모습"),
   "inset-01": img("inset-01", "돌기둥 아치 발코니에서 바다와 절벽을 내려다보는 뒷모습"),
   "card-sydney": img("card-sydney", "노을 진 시드니 하버 브리지 앞 부두"),
   "card-bondi": img("card-bondi", "노을 진 본다이 바다와 서퍼"),
@@ -145,6 +149,19 @@ export const posters = [
   { tag: "#여행", title: "여행", description: "주말 로드트립과\n바다", image: "card-goldcoast" as ImageKey, color: "forest" as const },
   { tag: "#워홀", title: "워홀", description: "낯선 도시에서의\n첫 해 기록", image: "marquee-09" as ImageKey, color: "char" as const },
 ];
+
+/** 콘텐츠 쇼케이스(핀 고정 슬라이드) — 포스터 4개 카테고리를 가로 사진으로 */
+export const showcase = {
+  headline: "현지에서 만드는 콘텐츠",
+  hint: "(Scroll)",
+  more: { label: "크리에이터 찾기", href: "#discover" },
+  slides: posters.map((p, i) => ({
+    key: p.tag,
+    title: p.title,
+    description: p.description,
+    image: `show-0${i + 1}` as ImageKey,
+  })),
+};
 
 export const marquee = {
   label: "해외에서 활동하는 한국인 크리에이터 · 콘텐츠 예시",

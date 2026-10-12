@@ -31,7 +31,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="hero relative grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[1fr_auto_auto] overflow-hidden bg-paper px-5 pb-14 pt-14 sm:px-8 lg:px-12 lg:pt-0"
+      className="hero relative grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[auto_1fr_auto] overflow-hidden bg-paper px-5 pb-14 pt-14 sm:px-8 lg:px-12 lg:pt-0"
     >
       <div
         aria-hidden
@@ -54,10 +54,10 @@ export function Hero() {
         </a>
       </div>
 
-      <div />
+      <div className="lg:h-20" aria-hidden />
 
-      {/* 마퀴 + 사진 인셋 — 화면 정중앙 */}
-      <div className="relative -mx-5 min-w-0 sm:-mx-8 lg:-mx-12">
+      {/* 마퀴 + 사진 인셋 — 헤더와 아래 블록 사이 정중앙 (짧은 화면에서도 헤더와 겹치지 않게 vh로 제한) */}
+      <div className="relative -mx-5 min-w-0 self-center sm:-mx-8 lg:-mx-12">
         <h1 className="hero-row marquee-mask w-full overflow-hidden text-ink" aria-label={hero.marquee}>
           <div className="marquee-track hero-marquee">
             <span className="display-light whitespace-nowrap text-[clamp(4rem,10.5vw,11rem)]" aria-hidden>
@@ -69,7 +69,7 @@ export function Hero() {
           </div>
         </h1>
 
-        <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(130px,14vw,210px)] -translate-x-1/2 -translate-y-1/2">
+        <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(120px,min(14vw,22vh),210px)] -translate-x-1/2 -translate-y-1/2">
           <div id="hero-inset" className="hero-inset-inner pointer-events-auto relative overflow-hidden rounded-[6px] shadow-lift">
             <Placeholder ratio="4/5" tone={1} src={im.src} alt={im.alt} sizes="260px" priority>
               {!reduce && fine && <DistortImage src={im.src} className="absolute inset-0 z-[1]" />}
@@ -79,7 +79,7 @@ export function Hero() {
       </div>
 
       {/* 아래 블록 — 부제·버튼·필 */}
-      <div className="relative flex min-w-0 flex-col items-center pt-20 text-center lg:pt-24">
+      <div className="relative flex min-w-0 flex-col items-center pt-10 text-center lg:pt-[clamp(1.5rem,6vh,6rem)]">
         <p className="rise text-[13px] font-semibold text-brand md:text-[14px]" style={delay(0.2)}>
           {hero.eyebrow}
         </p>

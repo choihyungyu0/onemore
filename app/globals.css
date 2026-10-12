@@ -513,6 +513,19 @@ html.lenis body {
   }
 }
 
+/* 콘텐츠 쇼케이스 — 헤드라인 마퀴, 감속 모션이면 핀 스테이지 대신 목록 */
+.show-marquee {
+  animation: marquee-left 60s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .show-stage {
+    display: none !important;
+  }
+  .show-list {
+    display: block !important;
+  }
+}
+
 /* 포스터 제목 — 옆으로 눕힌 세로쓰기(한글 포함), 180° 돌려 아래→위로 읽힘 */
 .poster-title {
   writing-mode: vertical-rl;

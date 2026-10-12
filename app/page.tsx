@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/site/navbar";
 import { Hero } from "@/components/site/hero";
-import { Marquee } from "@/components/site/marquee";
+import { Showcase } from "@/components/site/showcase";
 import { Discover } from "@/components/site/discover";
 import { How } from "@/components/site/how";
 import { Growth } from "@/components/site/growth";
@@ -23,7 +23,7 @@ export default function Home() {
         <ZoomStage posters={posters}>
           <Hero />
         </ZoomStage>
-        <Marquee />
+        <Showcase />
         <Discover />
         <How />
         <Growth />

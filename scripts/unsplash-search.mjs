@@ -44,7 +44,7 @@ function warmth(hex) {
 
 function score(p, slot) {
   const text = `${p.description ?? ""} ${p.alt_description ?? ""} ${(p.tags ?? []).map((t) => t.title).join(" ")}`;
-  if (FACE_RE.test(text)) return null;
+  if (!slot.allowFaces && FACE_RE.test(text)) return null;
   if (LOGO_RE.test(text)) return null;
   const [r, , b] = hexToRgb(p.color || "#808080");
   if (!slot.allowBlue && b > r + 24) return null; // 뚜렷한 블루 톤 제외 (allowBlue 슬롯은 예외)
@@ -105,9 +105,12 @@ async function main() {
         .map((p) => ({ p, s: score(p, slot) }))
         .filter((x) => x.s !== null)
         .sort((a, b) => b.s - a.s);
+      const perQuery = Math.ceil(slot.take / slot.queries.length);
+      let n = 0;
       for (const { p, s } of scored) {
-        if (picked.length >= slot.take) break;
+        if (picked.length >= slot.take || n >= perQuery) break;
         if (picked.some((x) => x.id === p.id)) continue;
+        n++;
         picked.push({
           id: p.id,
           score: Number(s.toFixed(2)),

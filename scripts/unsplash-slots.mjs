@@ -26,17 +26,23 @@ export const SLOTS = [
   { name: "fit-03", ratio: "4/5", queries: ["holding product cafe"], take: 6 },
   { name: "creator-01", ratio: "4/5", queries: ["young person laptop cafe"], take: 6 },
   { name: "final-01", ratio: "21/9", queries: ["sydney sunset skyline"], take: 6 },
+  // 콘텐츠 쇼케이스 슬라이드(가로) — 밝은 자연광, 사람·얼굴 허용
+  { name: "show-01", ratio: "16/9", allowFaces: true, queries: ["woman morning coffee window apartment sunlight", "young woman cooking kitchen sunlight smiling"], take: 8 },
+  { name: "show-02", ratio: "16/9", allowFaces: true, queries: ["friends laughing cafe table sunlight", "woman cafe window latte smiling"], take: 8 },
+  { name: "show-03", ratio: "16/9", allowFaces: true, allowBlue: true, queries: ["road trip friends car coast summer", "woman beach travel joy sunny"], take: 8 },
+  { name: "show-04", ratio: "16/9", allowFaces: true, queries: ["young woman walking city street sunny backpack", "woman bicycle city summer smiling"], take: 8 },
   // 히어로 인셋·인트로 중앙 사진 — 바다 전망 테라스에 앉은 사람(측면/뒷모습), 따뜻한 빛. 바다라서 블루 허용
   {
     name: "inset-01",
     ratio: "4/5",
     allowBlue: true,
+    allowFaces: true,
     queries: [
-      "woman sitting balcony sea view",
-      "terrace overlooking mediterranean sea",
-      "woman villa terrace ocean summer",
-      "balcony sea view morning coffee",
+      "woman white dress balcony sea sunny",
+      "woman terrace mediterranean sea smiling",
+      "woman sitting balcony sea view summer",
+      "breakfast balcony sea view woman",
     ],
-    take: 16,
+    take: 24,
   },
 ];
