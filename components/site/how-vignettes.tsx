@@ -2,6 +2,7 @@ import { Check, Plus, Search, Send } from "lucide-react";
 import { creators, discover, images } from "@/content/landing";
 import { cn } from "@/lib/utils";
 import { Placeholder } from "./placeholder";
+import { BrandMark } from "./brand-mark";
 
 /**
  * 매칭 4단계 비네트 — 실제 서비스 UI를 축소한 삽화 카드.
@@ -169,9 +170,7 @@ export function VignetteConnect() {
   return (
     <Frame label="CONNECT">
       <div data-pop className="flex items-center justify-center gap-4 py-2">
-        <span className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-brand font-display text-[14px] font-extrabold text-white">
-          +1
-        </span>
+        <BrandMark className="h-12 w-12 rounded-full ring-2 ring-white shadow-card" />
         <span className="relative h-px w-16 bg-ink/15">
           <span className="connect-dot absolute -top-[3px] left-0 h-[7px] w-[7px] rounded-full bg-brand" />
         </span>

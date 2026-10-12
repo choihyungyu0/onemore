@@ -9,16 +9,12 @@ import { useLenis } from "lenis/react";
 import { btnClass } from "./button";
 import { Magnetic } from "./magnetic";
 import { EASE } from "./reveal";
+import { BrandMark } from "./brand-mark";
 
 export function Logo({ className, invert }: { className?: string; invert?: boolean }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <span className="relative inline-flex h-6 w-6 items-center justify-center" aria-hidden>
-        <span className="absolute inset-0 rounded-[8px] bg-brand" />
-        <span className="relative font-display text-[11px] font-extrabold leading-none text-white">
-          +1
-        </span>
-      </span>
+      <BrandMark className="h-7 w-7" />
       <span className={cn("text-[17px] font-extrabold tracking-[-0.03em]", invert ? "text-white" : "text-ink")}>
         {brand.name}
       </span>

@@ -8,6 +8,7 @@ import { requestFilter } from "@/lib/filter-events";
 import { Placeholder } from "./placeholder";
 import { SkyVideo } from "./sky-video";
 import { Lines } from "./reveal";
+import { BrandMark } from "./brand-mark";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
@@ -145,9 +146,7 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
               style={{ backgroundColor: COLOR[p.color] }}
             >
               <div className="relative flex-1 p-4 text-white">
-                <span className="inline-flex h-5 w-5 items-center justify-center rounded-[6px] bg-white/15 font-display text-[9px] font-extrabold">
-                  +1
-                </span>
+                <BrandMark className="h-6 w-6 rounded-full ring-1 ring-white/40" />
                 {/* 제목: 옆으로 눕힌 세로쓰기, 아래→위로 읽힘 (realevate) */}
                 <span className="poster-title absolute bottom-4 right-4 text-[clamp(1.3rem,2.27vw,2.9rem)] font-medium leading-none tracking-[-0.02em]">
                   {p.title}

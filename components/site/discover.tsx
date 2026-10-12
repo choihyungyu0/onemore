@@ -16,6 +16,7 @@ import { Placeholder } from "./placeholder";
 import { EASE, Lines, Reveal, SweepLines } from "./reveal";
 import { Kicker, Section } from "./section";
 import { useSelection } from "./selection-context";
+import { BrandMark } from "./brand-mark";
 
 function Chip({
   active,
@@ -301,9 +302,7 @@ export function Discover() {
       {/* 결과 제목 — 노리스 "What's up on socials"식 중앙 정렬: 마크 · 굵은 줄 + 가벼운 줄 */}
       <div className="text-center">
         <Reveal>
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-brand font-display text-[11px] font-extrabold text-white" aria-hidden>
-            +1
-          </span>
+          <BrandMark className="mx-auto h-12 w-12 rounded-full shadow-card ring-4 ring-white" />
         </Reveal>
         <Reveal delay={0.05}>
           <h3 className="mt-4 text-[clamp(2rem,3.8vw,3.2rem)] leading-[1.04] tracking-[-0.04em] text-ink">

@@ -5,6 +5,7 @@ import { useReducedMotion } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { brand, hero, images, intro as copy } from "@/content/landing";
 import { Placeholder } from "./placeholder";
+import { BrandMark } from "./brand-mark";
 
 const AUTO_MS = 3200;
 const LEAVE_MS = 1050;
@@ -175,9 +176,7 @@ export function Intro() {
           style={{ animationDelay: "0.2s" }}
         >
           <span className="flex items-center gap-2.5 text-[15px] font-extrabold tracking-tight">
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded-[6px] bg-brand font-display text-[9px] font-extrabold">
-              +1
-            </span>
+            <BrandMark className="h-6 w-6" />
             {brand.name}
           </span>
           <span className="kicker text-white/50">{copy.label}</span>
