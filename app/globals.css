@@ -482,3 +482,8 @@ html.lenis body {
     transform: translateX(100vw);
   }
 }
+
+/* WebGL 레이어는 마운트 후 부드럽게 나타남 (첫 프레임 글리치 마스킹) */
+.distort-in {
+  animation: intro-in 0.8s var(--ease-expo) both;
+}

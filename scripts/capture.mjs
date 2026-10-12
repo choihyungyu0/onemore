@@ -18,6 +18,7 @@ if (!url || !out) {
   process.exit(1);
 }
 const width = Number(widthArg || 1440);
+const height = 900;
 const CHROME =
   process.env.CHROME || "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const port = 9300 + Math.floor(Math.random() * 300);
@@ -116,8 +117,15 @@ try {
   await scrollTo(0);
   await sleep(1200);
 
-  // dev 배지 제거 후 전체 높이로 캡처
+  // dev 배지 제거, 뷰포트 높이(100vh)에 묶인 섹션은 고정 높이로 바꾼 뒤 전체 높이로 캡처
   await evaluate("document.querySelector('nextjs-portal')?.remove(); true");
+  await evaluate(
+    "(()=>{const st=document.createElement('style');st.textContent='.hero{min-height:" +
+      height +
+      "px!important}.zoom-stage{height:auto!important}.how-scrub{height:" +
+      height +
+      "px!important}';document.head.appendChild(st);return true})()"
+  );
   const h2 = await evaluate("document.documentElement.scrollHeight");
   await send("Emulation.setDeviceMetricsOverride", {
     width,

@@ -101,7 +101,7 @@ function Plane({ src }: { src: string }) {
 export function DistortImage({ src, className }: { src: string; className?: string }) {
   if (!src) return null;
   return (
-    <div className={className} aria-hidden>
+    <div className={`distort-in ${className ?? ""}`} aria-hidden>
       <Canvas
         orthographic
         camera={{ position: [0, 0, 5], zoom: 1 }}
