@@ -52,7 +52,7 @@ export function Hero() {
           </div>
         </h1>
 
-        <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(150px,17vw,260px)] -translate-x-1/2 -translate-y-1/2">
+        <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(130px,14vw,210px)] -translate-x-1/2 -translate-y-1/2">
           <div id="hero-inset" className="hero-inset-inner pointer-events-auto relative overflow-hidden rounded-[6px] shadow-lift">
             <Placeholder ratio="4/5" tone={1} src={im.src} alt={im.alt} sizes="260px" priority>
               {!reduce && fine && <DistortImage src={im.src} className="absolute inset-0 z-[1]" />}
@@ -62,7 +62,7 @@ export function Hero() {
       </div>
 
       {/* 아래 블록 — 부제·버튼·필 */}
-      <div className="relative flex min-w-0 flex-col items-center pt-14 text-center">
+      <div className="relative flex min-w-0 flex-col items-center pt-20 text-center lg:pt-24">
         <p className="rise text-[13px] font-semibold text-brand md:text-[14px]" style={delay(0.2)}>
           {hero.eyebrow}
         </p>

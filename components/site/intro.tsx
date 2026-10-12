@@ -8,8 +8,8 @@ import { Placeholder } from "./placeholder";
 
 const AUTO_MS = 3200;
 const LEAVE_MS = 1050;
-const PHOTO_W = 220;
-const PHOTO_H = 275;
+const PHOTO_W = 190;
+const PHOTO_H = 238;
 
 /**
  * 오프닝 — 1막: 노리스식 다크 인트로(등고선·코랄 세리프 마퀴·흰 한글 마퀴·중앙 사진·서명·카운터).
