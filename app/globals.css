@@ -366,8 +366,11 @@ html.lenis body {
 .intro-signature path {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: signature-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.9s forwards;
   filter: drop-shadow(0 0 14px rgba(255, 90, 60, 0.35));
+}
+/* 하이드레이션 후 카운터와 함께 그려진다 (0.5초 뒤 시작, 1.6초 동안) */
+.intro-play .intro-signature path {
+  animation: signature-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.5s forwards;
 }
 @keyframes signature-draw {
   to {

@@ -15,7 +15,7 @@ const PHOTO_H = 238;
  * 오프닝 — 1막: 노리스식 다크 인트로(등고선·코랄 세리프 마퀴·흰 한글 마퀴·중앙 사진·서명·카운터).
  * 2막: realevate식 전환 — 카운터가 99에 닿으면 중앙 사진이 히어로 인셋 자리로 날아가 안착하고,
  * 그 사이 커튼과 나머지 요소가 녹아 사라진다. 사진이 도착하는 순간 히어로의 인셋이 그 자리를 이어받는다.
- * 세션당 1회, 클릭·스크롤·키로 건너뜀. 감속 모션이면 생략.
+ * 페이지를 열 때마다 재생. 클릭·스크롤·키로 건너뜀. 감속 모션이면 생략.
  */
 
 function useContours() {
@@ -71,11 +71,7 @@ export function Intro() {
 
   useEffect(() => {
     const html = document.documentElement;
-    let seen = false;
-    try {
-      seen = sessionStorage.getItem("onemore-intro") === "1";
-    } catch {}
-    if (reduce || seen) {
+    if (reduce) {
       html.classList.remove("preloading");
       setPhase("done");
       window.dispatchEvent(new Event("onemore:intro-done"));
@@ -83,7 +79,7 @@ export function Intro() {
     }
 
     setPhase("playing");
-    html.classList.add("preloading");
+    html.classList.add("preloading", "intro-play");
     document.body.style.overflow = "hidden";
     // 새로고침 시 브라우저가 이전 스크롤 위치를 복원하면 인트로가 엉뚱한 곳에서 끝난다 → 항상 맨 위에서 시작
     try {
@@ -132,13 +128,10 @@ export function Intro() {
       leaveTimer = window.setTimeout(() => {
         window.removeEventListener("wheel", block);
         window.removeEventListener("touchmove", block);
-        html.classList.remove("intro-leaving");
+        html.classList.remove("intro-leaving", "intro-play");
         document.body.style.overflow = "";
         lenis?.start();
         setPhase("done");
-        try {
-          sessionStorage.setItem("onemore-intro", "1");
-        } catch {}
         window.dispatchEvent(new Event("onemore:intro-done"));
       }, LEAVE_MS);
     };
@@ -162,7 +155,7 @@ export function Intro() {
       window.removeEventListener("touchstart", skip);
       window.removeEventListener("keydown", skip);
       window.removeEventListener("pointerdown", skip);
-      html.classList.remove("preloading", "intro-leaving");
+      html.classList.remove("preloading", "intro-leaving", "intro-play");
       document.body.style.overflow = "";
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

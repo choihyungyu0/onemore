@@ -63,10 +63,10 @@ export const viewport: Viewport = {
 };
 
 /**
- * 첫 페인트 전에 실행 — 인트로가 뜰 상황(세션 첫 방문·감속 모션 아님)이면
+ * 첫 페인트 전에 실행 — 감속 모션이 아니면
  * html.preloading 을 붙여 히어로 CSS 진입 모션을 커튼이 걷힐 때까지 멈춰 둔다.
  */
-const PRELOAD_SCRIPT = `try{if(!sessionStorage.getItem('onemore-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('preloading')}}catch(e){}`;
+const PRELOAD_SCRIPT = `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('preloading')}}catch(e){}`;
 
 export default function RootLayout({
   children,
