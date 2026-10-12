@@ -82,7 +82,7 @@ export function CreatorFan({
   const center = (n - 1) / 2;
 
   return (
-    <div ref={root} className="creator-fan relative mx-auto hidden h-[clamp(400px,58vh,500px)] w-full lg:block">
+    <div ref={root} className="creator-fan relative mx-auto hidden h-[clamp(390px,56vh,480px)] w-full lg:block">
       {list.map((c, i) => {
         const k = i - center;
         const p = slot(k);

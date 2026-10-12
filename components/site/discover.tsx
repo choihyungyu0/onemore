@@ -9,6 +9,7 @@ import { FILTER_EVENT, type FilterRequest } from "@/lib/filter-events";
 import { cn } from "@/lib/utils";
 import { ButtonLink, Button, btnClass } from "./button";
 import { CreatorCard, formatFollowers } from "./creator-card";
+import { Contours } from "./contours";
 import { CreatorFan } from "./creator-fan";
 import { DiscoverPreview } from "./discover-preview";
 import { Placeholder } from "./placeholder";
@@ -169,7 +170,7 @@ export function Discover() {
   };
 
   return (
-    <Section id="discover" className="overflow-x-clip bg-paper">
+    <Section id="discover" className="overflow-x-clip bg-paper !pb-0">
       <div
         ref={headRef}
         className={cn("sweep-hold grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center", headInView && "in-view")}
@@ -293,8 +294,12 @@ export function Discover() {
 
       </div>
 
+      {/* 결과 무대 — 전폭 크림 띠(흰 검색 영역 → 크림 무대 → 회색 매칭 섹션의 리듬) + 옅은 등고선 텍스처 */}
+      <div className="results-stage relative mt-14 overflow-hidden bg-cream pb-10 pt-14 lg:pb-14 lg:pt-20" style={{ marginInline: "calc(50% - 50vw)" }}>
+        <Contours className="pointer-events-none absolute left-1/2 top-0 h-[140%] w-[140%] -translate-x-1/2 -translate-y-[12%] text-ink/[0.07]" />
+        <div className="relative mx-auto w-full max-w-[80rem] px-5 sm:px-8 lg:px-12">
       {/* 결과 제목 — 노리스 "What's up on socials"식 중앙 정렬: 마크 · 굵은 줄 + 가벼운 줄 */}
-      <div className="mt-12 border-t border-line pt-10 text-center">
+      <div className="text-center">
         <Reveal>
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-brand font-display text-[11px] font-extrabold text-white" aria-hidden>
             +1
@@ -310,11 +315,11 @@ export function Discover() {
           <p className="mt-3 text-[15px] text-muted">{discover.results.description}</p>
         </Reveal>
         <Reveal delay={0.15} className="mt-5 flex flex-wrap items-center justify-center gap-3 text-[13px] text-muted">
-          <span className="tnum rounded-full bg-mist px-3 py-1 font-semibold text-ink/70">
+          <span className="tnum rounded-full bg-white px-3 py-1 font-semibold text-ink/70 ring-1 ring-ink/[0.06]">
             {discover.results.count.replace("{n}", String(list.length))}
           </span>
           <span>{discover.results.exampleNote}</span>
-          <div className="hidden items-center rounded-full bg-mist p-1 lg:inline-flex" role="group" aria-label={discover.view.label}>
+          <div className="hidden items-center rounded-full bg-white p-1 ring-1 ring-ink/[0.06] lg:inline-flex" role="group" aria-label={discover.view.label}>
             {(["ring", "grid"] as const).map((v) => (
               <button
                 key={v}
@@ -334,8 +339,8 @@ export function Discover() {
         </Reveal>
       </div>
 
-      {/* 결과: 3D 링(데스크톱) · 그리드(모바일) / 빈 결과 */}
-      <div className="mt-8">
+      {/* 결과: 부채꼴(데스크톱) · 그리드(모바일) / 빈 결과 */}
+      <div className="mt-4">
         <AnimatePresence mode="wait" initial={false}>
           {list.length > 0 ? (
             <motion.div
@@ -383,7 +388,7 @@ export function Discover() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4, ease: EASE }}
-              className="rounded-[24px] bg-cream px-6 py-16 text-center md:py-24"
+              className="rounded-[24px] bg-white px-6 py-16 text-center ring-1 ring-ink/[0.06] md:py-24"
             >
               <h4 className="display-md text-[clamp(1.5rem,3vw,2.25rem)]">
                 <Lines text={discover.empty.title} />
@@ -401,6 +406,9 @@ export function Discover() {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+        </div>
       </div>
 
       <SelectionBar />
