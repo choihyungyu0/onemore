@@ -239,7 +239,8 @@ function demoStart(query: string) {
   };
 }
 function useSearchDemo(rootRef: React.RefObject<HTMLDivElement | null>, still: boolean): DemoState {
-  const [state, setState] = useState<DemoState>(demo.state);
+  // 첫 렌더는 서버와 같은 고정값 — 다른 화면이 먼저 하이드레이션돼 루프가 돌기 시작한 뒤 이 화면이 하이드레이션되면 타이핑 텍스트가 달라져 #418이 난다
+  const [state, setState] = useState<DemoState>({ phase: "idle", typed: "" });
   useEffect(() => {
     if (still) return;
     demo.subs.add(setState);
