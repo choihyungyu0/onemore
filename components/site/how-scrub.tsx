@@ -3,7 +3,8 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { how } from "@/content/landing";
+import { creators, how } from "@/content/landing";
+import { CreatorRing } from "./creator-ring";
 import { Vignette } from "./how-vignettes";
 import { Lines } from "./reveal";
 
@@ -97,7 +98,14 @@ export function HowScrub() {
         <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px]" style={{ maxHeight: "68vh" }}>
           {how.steps.map((s, i) => (
             <div key={s.title} data-vignette className="absolute inset-0">
-              <Vignette step={i} />
+              {i === 0 ? (
+                /* 찾아보기 = 크리에이터 3D 링이 천천히 돈다 (정면 카드를 누르면 그 나라로 찾기) */
+                <div className="relative h-full w-full overflow-hidden rounded-[22px] bg-cream shadow-lift ring-1 ring-ink/[0.05]">
+                  <CreatorRing variant="auto" list={creators} cardWidth={300} />
+                </div>
+              ) : (
+                <Vignette step={i} />
+              )}
             </div>
           ))}
         </div>

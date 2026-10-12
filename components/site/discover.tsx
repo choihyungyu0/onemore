@@ -2,14 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
-import { ChevronRight, LayoutGrid, Orbit, Search, X } from "lucide-react";
+import { ChevronRight, LayoutGrid, Layers, Search, X } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { creators, discover, images, sizeBands, type Country, type Creator } from "@/content/landing";
 import { FILTER_EVENT, type FilterRequest } from "@/lib/filter-events";
 import { cn } from "@/lib/utils";
 import { ButtonLink, Button, btnClass } from "./button";
 import { CreatorCard, formatFollowers } from "./creator-card";
-import { CreatorRing } from "./creator-ring";
+import { CreatorFan } from "./creator-fan";
 import { DiscoverPreview } from "./discover-preview";
 import { Placeholder } from "./placeholder";
 import { EASE, Lines, Reveal, SweepLines } from "./reveal";
@@ -293,15 +293,23 @@ export function Discover() {
 
       </div>
 
-      {/* 결과 툴바 — 섹션 제목과 겹치지 않게 한 줄 리드 + 인원·예시 표기·보기 전환 */}
-      <div className="mt-10 flex flex-col gap-4 border-t border-line pt-6 md:flex-row md:items-center md:justify-between">
+      {/* 결과 제목 — 노리스 "What's up on socials"식 중앙 정렬: 마크 · 굵은 줄 + 가벼운 줄 */}
+      <div className="mt-12 border-t border-line pt-10 text-center">
         <Reveal>
-          <p className="text-[18px] font-bold tracking-tight text-ink md:text-[19px]">
-            {discover.results.title.replace("\n", " ")}
-          </p>
-          <p className="mt-1 text-[14px] text-muted">{discover.results.description}</p>
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-brand font-display text-[11px] font-extrabold text-white" aria-hidden>
+            +1
+          </span>
         </Reveal>
-        <Reveal delay={0.1} className="flex flex-wrap items-center gap-3 text-[13px] text-muted">
+        <Reveal delay={0.05}>
+          <h3 className="mt-4 text-[clamp(2rem,3.8vw,3.2rem)] leading-[1.04] tracking-[-0.04em] text-ink">
+            <span className="display block">{discover.results.title.split("\n")[0]}</span>
+            <span className="display-light block text-ink/80">{discover.results.title.split("\n")[1]}</span>
+          </h3>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <p className="mt-3 text-[15px] text-muted">{discover.results.description}</p>
+        </Reveal>
+        <Reveal delay={0.15} className="mt-5 flex flex-wrap items-center justify-center gap-3 text-[13px] text-muted">
           <span className="tnum rounded-full bg-mist px-3 py-1 font-semibold text-ink/70">
             {discover.results.count.replace("{n}", String(list.length))}
           </span>
@@ -318,7 +326,7 @@ export function Discover() {
                   view === v ? "bg-ink text-white" : "text-ink/60 hover:text-ink"
                 )}
               >
-                {v === "ring" ? <Orbit className="h-3.5 w-3.5" /> : <LayoutGrid className="h-3.5 w-3.5" />}
+                {v === "ring" ? <Layers className="h-3.5 w-3.5" /> : <LayoutGrid className="h-3.5 w-3.5" />}
                 {discover.view[v]}
               </button>
             ))}
@@ -337,9 +345,9 @@ export function Discover() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {/* 데스크톱 기본: imersion식 3D 링 — 고정된 채 스크롤로 돌고, 정면 카드를 누르면 상세 */}
+              {/* 데스크톱 기본: 노리스식 부채꼴 — 카드를 누르면 상세, +로 선택 */}
               {view === "ring" && (
-                <CreatorRing list={list} isSelected={sel.isSelected} onToggle={sel.toggle} onView={setDetail} />
+                <CreatorFan list={list} isSelected={sel.isSelected} onToggle={sel.toggle} onView={setDetail} />
               )}
 
               {/* 모바일·태블릿은 항상 그리드, 데스크톱은 "카드로 한번에 보기"일 때 */}

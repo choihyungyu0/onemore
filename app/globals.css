@@ -562,6 +562,31 @@ html.lenis body {
   }
 }
 
+/* 크리에이터 부채꼴 (landonorris) — 자리값(--fx/--fy/--fr/--fs) × 펼침(--spread) + 마우스 시차(--mx/--my) */
+.fan-card {
+  transform: translate(
+      calc(-50% + var(--fx) * var(--spread, 1) + var(--mx, 0) * 14px),
+      calc(var(--fy) * var(--spread, 1) + var(--my, 0) * 8px)
+    )
+    rotate(calc(var(--fr) * var(--spread, 1) + var(--mx, 0) * 3deg))
+    scale(calc(1 - (1 - var(--fs)) * var(--spread, 1)));
+  will-change: transform;
+}
+.fan-card:hover {
+  z-index: 20 !important;
+}
+.fan-inner {
+  transition: transform 0.45s var(--ease-expo), box-shadow 0.45s var(--ease-expo);
+}
+.fan-card:hover .fan-inner {
+  transform: translateY(-28px) scale(1.08);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fan-card:hover .fan-inner {
+    transform: none;
+  }
+}
+
 /* 크리에이터 3D 링 (imersion) — 원근 1600px, 링·셀은 preserve-3d, 뒷면은 180° 돌린 같은 카드 */
 .ring-scene {
   perspective: 1600px;

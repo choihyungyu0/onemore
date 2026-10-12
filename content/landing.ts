@@ -257,7 +257,7 @@ export const discover = {
     followers: "팔로워 {n}명",
   },
   /** 결과 보기 방식 전환 (데스크톱) */
-  view: { label: "보기 방식", ring: "3D로 둘러보기", grid: "카드로 한번에 보기" },
+  view: { label: "보기 방식", ring: "펼쳐 보기", grid: "카드로 한번에 보기" },
   /** 3D 링(데스크톱 결과 보기) */
   ring: {
     label: "CURRENTLY ON ONE MORE",
