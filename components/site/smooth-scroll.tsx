@@ -23,12 +23,18 @@ function LenisBridge() {
       ScrollTrigger.refresh();
     };
     window.addEventListener("onemore:intro-done", onIntroDone);
+    // 폰트·이미지가 늦게 와서 레이아웃이 바뀌어도 핀 위치가 어긋나지 않게 몇 번 더 재계산
+    document.fonts?.ready.then(onIntroDone).catch(() => {});
+    window.addEventListener("load", onIntroDone);
+    const later = [1500, 4000, 8000].map((ms) => window.setTimeout(onIntroDone, ms));
     const tick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
     return () => {
       lenis.off("scroll", onScroll);
       window.removeEventListener("onemore:intro-done", onIntroDone);
+      window.removeEventListener("load", onIntroDone);
+      later.forEach((t) => window.clearTimeout(t));
       gsap.ticker.remove(tick);
     };
   }, [lenis]);

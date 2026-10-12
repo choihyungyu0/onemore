@@ -87,7 +87,7 @@ export function HowScrub({ from = 0 }: { from?: number }) {
         <Contours className="absolute left-1/2 top-1/2 h-[150%] w-[150%] -translate-x-1/2 -translate-y-1/2 text-ink/[0.05]" />
         <div className="absolute left-1/2 top-1/2 h-[70%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,90,60,0.22),transparent)] blur-2xl" />
       </div>
-      <div className="relative mx-auto grid w-full max-w-[80rem] grid-cols-[1fr_1.05fr] items-center gap-14 px-12 xl:gap-20">
+      <div className="relative mx-auto grid w-full max-w-[84rem] grid-cols-[0.78fr_1.32fr] items-center gap-10 px-12 xl:gap-14">
         {/* 왼쪽: 단계 글 스택 */}
         <div className="relative h-[52vh] min-h-[320px]">
           {steps.map((s, i) => (
@@ -95,19 +95,19 @@ export function HowScrub({ from = 0 }: { from?: number }) {
               <p className="kicker text-brand">
                 STEP {from + i + 1} / {how.steps.length}
               </p>
-              <span className="font-display mt-4 block text-[clamp(3.5rem,7vw,6rem)] font-extrabold leading-none tracking-[-0.06em] text-ink">
+              <span className="font-display mt-4 block text-[clamp(3rem,5.5vw,4.75rem)] font-extrabold leading-none tracking-[-0.06em] text-ink">
                 0{from + i + 1}
               </span>
-              <h3 className="display-md mt-4 text-[clamp(1.9rem,3.2vw,2.8rem)] text-ink">{s.title}</h3>
-              <p className="mt-5 max-w-md text-[16.5px] leading-[1.75] text-muted">
+              <h3 className="display-md mt-3 text-[clamp(1.8rem,2.8vw,2.5rem)] text-ink">{s.title}</h3>
+              <p className="mt-4 max-w-sm text-[15.5px] leading-[1.7] text-muted">
                 <Lines text={s.description} />
               </p>
             </div>
           ))}
         </div>
 
-        {/* 오른쪽: 노트북 한 대, 화면만 단계별로 교차 */}
-        <div className="relative mx-auto w-full max-w-[600px]">
+        {/* 오른쪽: 노트북 한 대, 화면만 단계별로 교차 — 폭은 열 안에서 최대, 높이는 화면의 72%를 넘지 않게 */}
+        <div className="relative ml-auto w-[min(100%,calc(72vh*4/3))] max-w-[820px]">
           <DeviceDemo />
         </div>
       </div>
