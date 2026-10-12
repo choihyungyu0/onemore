@@ -88,8 +88,8 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
                   +1
                 </span>
                 <span
-                  className="absolute bottom-4 right-4 text-[clamp(1.3rem,2vw,1.9rem)] font-bold tracking-tight"
-                  style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+                  className="absolute right-4 top-4 text-[clamp(1.3rem,2vw,1.9rem)] font-bold tracking-tight"
+                  style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.08em" }}
                 >
                   {p.title}
                 </span>

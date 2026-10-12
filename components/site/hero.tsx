@@ -11,10 +11,9 @@ import { Placeholder } from "./placeholder";
 import { Lines } from "./reveal";
 
 /*
- * 첫 화면 — 화면을 가로지르는 거대 마퀴 문장 한가운데 4:5 사진이 끼워진 구성.
- * 마퀴 행(.hero-row)과 사진(.hero-inset-wrap)은 인트로 동안 오버레이 위로 올라와
- * 흰색·축소 상태로 보이다가, 커튼이 사라질 때 잉크색·원래 크기로 돌아온다(같은 요소).
- * 나머지 텍스트는 CSS .rise 로 그 뒤에 올라온다.
+ * 첫 화면(realevate 구조) — 화면 정중앙을 가로지르는 마퀴 문장 한가운데 4:5 사진 인셋,
+ * 그 아래 부제·버튼·필, 하단 모서리 라벨. 마퀴는 중간 굵기·넓은 여백으로 가볍게.
+ * 인셋(#hero-inset)은 인트로의 사진이 날아와 안착하는 목적지. 진입 텍스트는 CSS .rise.
  */
 const delay = (s: number) => ({ animationDelay: `${s}s` });
 
@@ -24,73 +23,74 @@ export function Hero() {
   useEffect(() => {
     setFine(window.matchMedia("(pointer: fine)").matches);
   }, []);
-  const im = images[hero.cards[0].image];
-  const line = `${hero.marquee}  ·  `;
+  const im = images[hero.insetImage];
+  const line = `${hero.marquee}   ·   `;
   const row = line.repeat(3);
 
   return (
     <section
       id="top"
-      className="hero relative flex min-h-screen flex-col justify-center overflow-hidden bg-paper px-5 pb-24 pt-24 sm:px-8 lg:px-12 lg:pb-20 lg:pt-20"
+      className="hero relative grid min-h-screen grid-cols-[minmax(0,1fr)] grid-rows-[1fr_auto_auto] overflow-hidden bg-paper px-5 pb-14 pt-14 sm:px-8 lg:px-12"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-brand/10 blur-3xl"
       />
 
-      {/* 거대 마퀴 + 사진 인셋 */}
-      <div className="relative -mx-5 sm:-mx-8 lg:-mx-12">
+      <div />
+
+      {/* 마퀴 + 사진 인셋 — 화면 정중앙 */}
+      <div className="relative -mx-5 min-w-0 sm:-mx-8 lg:-mx-12">
         <h1 className="hero-row marquee-mask w-full overflow-hidden text-ink" aria-label={hero.marquee}>
           <div className="marquee-track hero-marquee">
-            <span className="display whitespace-nowrap text-[clamp(4.4rem,12.5vw,13rem)]" aria-hidden>
+            <span className="display-light whitespace-nowrap text-[clamp(4rem,10.5vw,11rem)]" aria-hidden>
               {row}
             </span>
-            <span className="display whitespace-nowrap text-[clamp(4.4rem,12.5vw,13rem)]" aria-hidden>
+            <span className="display-light whitespace-nowrap text-[clamp(4rem,10.5vw,11rem)]" aria-hidden>
               {row}
             </span>
           </div>
         </h1>
 
-        <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(140px,16vw,250px)] -translate-x-1/2 -translate-y-1/2">
-          <div className="hero-inset-inner pointer-events-auto relative overflow-hidden rounded-[6px] shadow-lift">
-            <Placeholder ratio="4/5" tone={0} src={im.src} alt={im.alt} sizes="250px" priority className="hero-inset-photo">
+        <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(150px,17vw,260px)] -translate-x-1/2 -translate-y-1/2">
+          <div id="hero-inset" className="hero-inset-inner pointer-events-auto relative overflow-hidden rounded-[6px] shadow-lift">
+            <Placeholder ratio="4/5" tone={1} src={im.src} alt={im.alt} sizes="260px" priority>
               {!reduce && fine && <DistortImage src={im.src} className="absolute inset-0 z-[1]" />}
             </Placeholder>
           </div>
         </div>
       </div>
 
-      <p className="rise relative mt-20 text-center text-[13px] font-semibold text-brand md:text-[14px]" style={delay(0.2)}>
-        {hero.eyebrow}
-      </p>
-      <p
-        className="rise relative mx-auto mt-3 max-w-xl text-center text-[16px] leading-[1.7] text-muted md:text-[17px]"
-        style={delay(0.3)}
-      >
-        <Lines text={hero.description} />
-      </p>
-
-      <div className="rise relative mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row" style={delay(0.42)}>
-        <Magnetic>
-          <ButtonLink href={hero.primary.href} variant="solid" size="lg">
-            {hero.primary.label}
-            <ChevronRight className="h-4 w-4" />
-          </ButtonLink>
-        </Magnetic>
-        <Magnetic>
-          <ButtonLink href={hero.secondary.href} variant="ghost" size="lg">
-            {hero.secondary.label}
-          </ButtonLink>
-        </Magnetic>
-      </div>
-
-      <div className="rise relative mt-6 flex justify-center" style={delay(0.55)}>
-        <span className="rounded-full border border-ink/15 px-4 py-1.5 font-display text-[11px] font-bold uppercase tracking-[0.16em] text-ink/70">
+      {/* 아래 블록 — 부제·버튼·필 */}
+      <div className="relative flex min-w-0 flex-col items-center pt-[max(3.5rem,7vh)] text-center">
+        <p className="rise text-[13px] font-semibold text-brand md:text-[14px]" style={delay(0.2)}>
+          {hero.eyebrow}
+        </p>
+        <p className="rise mt-3 max-w-xl text-[16px] leading-[1.7] text-muted md:text-[17px]" style={delay(0.3)}>
+          <Lines text={hero.description} />
+        </p>
+        <div className="rise mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row" style={delay(0.42)}>
+          <Magnetic>
+            <ButtonLink href={hero.primary.href} variant="solid" size="lg">
+              {hero.primary.label}
+              <ChevronRight className="h-4 w-4" />
+            </ButtonLink>
+          </Magnetic>
+          <Magnetic>
+            <ButtonLink href={hero.secondary.href} variant="ghost" size="lg">
+              {hero.secondary.label}
+            </ButtonLink>
+          </Magnetic>
+        </div>
+        <span
+          className="rise mt-6 rounded-full border border-ink/15 px-4 py-1.5 text-[12px] font-semibold tracking-[0.02em] text-ink/70"
+          style={delay(0.55)}
+        >
           {hero.pill}
         </span>
       </div>
 
-      {/* 하단 모서리 — 좌: 브랜드 연도 / 우: 선택 보기 */}
+      {/* 하단 모서리 */}
       <p
         className="rise absolute bottom-6 left-5 hidden font-display text-[11px] font-bold tracking-[0.14em] text-ink/50 sm:left-8 lg:left-12 lg:block"
         style={delay(0.7)}

@@ -3,15 +3,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { useLenis } from "lenis/react";
-import { brand, intro as copy } from "@/content/landing";
+import { brand, hero, images, intro as copy } from "@/content/landing";
+import { Placeholder } from "./placeholder";
 
-const AUTO_MS = 3000;
-const LEAVE_MS = 950;
+const AUTO_MS = 3200;
+const LEAVE_MS = 1050;
+const PHOTO_W = 220;
+const PHOTO_H = 275;
 
 /**
- * 오프닝 인트로 — 잉크 커튼 위에 등고선, 코랄 세리프 마퀴, 코랄 서명, 카운터.
- * 히어로의 한글 마퀴 행과 사진은 커튼 "위"로 올라와(흰색·축소) 같은 자리에 있고,
- * 끝날 때 커튼이 녹아 사라지며 그 요소들이 잉크색·원래 크기로 돌아온다(요소 교체 없음).
+ * 오프닝 — 1막: 노리스식 다크 인트로(등고선·코랄 세리프 마퀴·흰 한글 마퀴·중앙 사진·서명·카운터).
+ * 2막: realevate식 전환 — 카운터가 99에 닿으면 중앙 사진이 히어로 인셋 자리로 날아가 안착하고,
+ * 그 사이 커튼과 나머지 요소가 녹아 사라진다. 사진이 도착하는 순간 히어로의 인셋이 그 자리를 이어받는다.
  * 세션당 1회, 클릭·스크롤·키로 건너뜀. 감속 모션이면 생략.
  */
 
@@ -62,8 +65,9 @@ export function Intro() {
   const lenis = useLenis();
   const [phase, setPhase] = useState<Phase>("idle");
   const [pct, setPct] = useState(0);
-  const serifRef = useRef<HTMLDivElement>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
   const rings = useContours();
+  const im = images[hero.insetImage];
 
   useEffect(() => {
     const html = document.documentElement;
@@ -83,18 +87,11 @@ export function Intro() {
     document.body.style.overflow = "hidden";
     lenis?.stop();
 
-    // 세리프 줄을 히어로 마퀴 행 바로 위에 붙인다
-    const row = document.querySelector<HTMLElement>(".hero-row");
-    if (row && serifRef.current) {
-      const r = row.getBoundingClientRect();
-      serifRef.current.style.top = `${Math.max(72, r.top)}px`;
-    }
-
     let raf = 0;
     let finished = false;
     const start = performance.now();
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / (AUTO_MS - 500));
+      const t = Math.min(1, (now - start) / (AUTO_MS - 400));
       setPct(Math.round((1 - Math.pow(1 - t, 3)) * 99));
       if (t < 1) raf = requestAnimationFrame(tick);
     };
@@ -106,6 +103,19 @@ export function Intro() {
       finished = true;
       cancelAnimationFrame(raf);
       setPct(99);
+
+      // 사진을 히어로 인셋 자리로 (FLIP: 현재 위치 → 목표 rect)
+      const photo = photoRef.current;
+      const target = document.getElementById("hero-inset");
+      if (photo && target) {
+        const r = target.getBoundingClientRect();
+        photo.classList.add("intro-photo-fly");
+        photo.style.left = `${r.left}px`;
+        photo.style.top = `${r.top}px`;
+        photo.style.width = `${r.width}px`;
+        photo.style.height = `${r.height}px`;
+      }
+
       setPhase("leaving");
       html.classList.add("intro-leaving");
       html.classList.remove("preloading");
@@ -142,12 +152,14 @@ export function Intro() {
 
   if (phase === "done") return null;
   const leaving = phase === "leaving";
+  const leaveCls = leaving ? "intro-leave" : "";
   const serifRow = Array(4).fill(copy.serifLine).join("  ·  ");
+  const sansRow = Array(4).fill(copy.sansLine).join("  ·  ");
 
   return (
     <>
-      {/* 잉크 커튼 (z 150) — 히어로 마퀴 행·사진(z 160)은 이 위에 보인다 */}
-      <div className={`intro fixed inset-0 z-[150] overflow-hidden bg-ink text-white ${leaving ? "intro-leave" : ""}`} aria-hidden>
+      {/* 1막: 잉크 커튼 */}
+      <div className={`intro fixed inset-0 z-[150] overflow-hidden bg-ink text-white ${leaveCls}`} aria-hidden>
         <svg
           className="intro-contours pointer-events-none absolute inset-0 h-full w-full"
           viewBox="0 0 1200 800"
@@ -158,7 +170,10 @@ export function Intro() {
           ))}
         </svg>
 
-        <div className="intro-in absolute inset-x-0 top-0 flex items-center justify-between px-5 py-6 sm:px-8 lg:px-12" style={{ animationDelay: "0.2s" }}>
+        <div
+          className="intro-in absolute inset-x-0 top-0 flex items-center justify-between px-5 py-6 sm:px-8 lg:px-12"
+          style={{ animationDelay: "0.2s" }}
+        >
           <span className="flex items-center gap-2.5 text-[15px] font-extrabold tracking-tight">
             <span className="inline-flex h-5 w-5 items-center justify-center rounded-[6px] bg-brand font-display text-[9px] font-extrabold">
               +1
@@ -168,20 +183,35 @@ export function Intro() {
           <span className="kicker text-white/50">{copy.label}</span>
         </div>
 
-        {/* 코랄 세리프 영문 줄 — 히어로 한글 행 바로 위 */}
-        <div ref={serifRef} className="intro-in marquee-mask absolute inset-x-0 w-full -translate-y-full overflow-hidden" style={{ top: "38%", animationDelay: "0.45s" }}>
-          <div className="marquee-track intro-marquee-right">
-            <span className="font-serif-accent whitespace-nowrap pr-10 text-[clamp(2.6rem,9vw,9rem)] uppercase leading-[1] text-brand">
-              {serifRow}
-            </span>
-            <span className="font-serif-accent whitespace-nowrap pr-10 text-[clamp(2.6rem,9vw,9rem)] uppercase leading-[1] text-brand">
-              {serifRow}
-            </span>
+        {/* 중앙: 세리프 영문 줄 + 볼드 한글 줄 (사진 뒤) */}
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2">
+          <div className="intro-in marquee-mask w-full overflow-hidden" style={{ animationDelay: "0.45s" }}>
+            <div className="marquee-track intro-marquee-right">
+              <span className="font-serif-accent whitespace-nowrap pr-10 text-[clamp(3rem,10.5vw,10.5rem)] uppercase leading-[0.92] text-brand">
+                {serifRow}
+              </span>
+              <span className="font-serif-accent whitespace-nowrap pr-10 text-[clamp(3rem,10.5vw,10.5rem)] uppercase leading-[0.92] text-brand">
+                {serifRow}
+              </span>
+            </div>
+          </div>
+          <div className="intro-in marquee-mask -mt-1 w-full overflow-hidden" style={{ animationDelay: "0.65s" }}>
+            <div className="marquee-track intro-marquee-left">
+              <span className="display-light whitespace-nowrap pr-10 text-[clamp(2.4rem,8.5vw,8.5rem)] leading-[1] text-white/95">
+                {sansRow}
+              </span>
+              <span className="display-light whitespace-nowrap pr-10 text-[clamp(2.4rem,8.5vw,8.5rem)] leading-[1] text-white/95">
+                {sansRow}
+              </span>
+            </div>
           </div>
         </div>
 
         {/* 하단: 카운터 + 안내 */}
-        <div className="intro-in absolute inset-x-0 bottom-0 flex items-end justify-between px-5 pb-7 sm:px-8 lg:px-12" style={{ animationDelay: "0.9s" }}>
+        <div
+          className="intro-in absolute inset-x-0 bottom-0 flex items-end justify-between px-5 pb-7 sm:px-8 lg:px-12"
+          style={{ animationDelay: "0.9s" }}
+        >
           <span className="kicker text-white/40">{brand.latin}</span>
           <span className="tnum font-display text-[clamp(1.4rem,3vw,2.2rem)] font-bold tracking-tight text-white">
             {String(pct).padStart(2, "0")}
@@ -190,9 +220,25 @@ export function Intro() {
         </div>
       </div>
 
-      {/* 코랄 서명 — 커튼·사진·글자 모두의 위 (z 165) */}
+      {/* 중앙 사진 — 커튼 위(z 160). 2막에서 히어로 인셋 자리로 날아간다 */}
+      <div
+        ref={photoRef}
+        className="intro-photo intro-in-photo fixed z-[160] overflow-hidden rounded-[6px] shadow-lift"
+        style={{
+          left: `calc(50% - ${PHOTO_W / 2}px)`,
+          top: `calc(50% - ${PHOTO_H / 2 + 16}px)`,
+          width: PHOTO_W,
+          height: PHOTO_H,
+          animationDelay: "0.35s",
+        }}
+        aria-hidden
+      >
+        <Placeholder fill tone={1} src={im.src} alt="" sizes="260px" priority />
+      </div>
+
+      {/* 코랄 서명 — 모든 것의 위 (z 165) */}
       <svg
-        className={`intro-signature pointer-events-none fixed left-1/2 top-1/2 z-[165] w-[min(92vw,900px)] -translate-x-1/2 -translate-y-[46%] -rotate-[8deg] ${leaving ? "intro-leave" : ""}`}
+        className={`intro-signature pointer-events-none fixed left-1/2 top-1/2 z-[165] w-[min(92vw,900px)] -translate-x-1/2 -translate-y-[46%] -rotate-[8deg] ${leaveCls}`}
         viewBox="0 0 640 320"
         fill="none"
         aria-hidden

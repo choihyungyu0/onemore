@@ -135,6 +135,14 @@
     letter-spacing: -0.035em;
   }
 
+  /* 중간 굵기 디스플레이 — realevate식 가벼운 거대 타이포 */
+  .display-light {
+    font-family: var(--font-sans-stack);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+
   .display-md {
     font-family: var(--font-sans-stack);
     font-weight: 800;
@@ -405,44 +413,40 @@ html.lenis body {
   animation: intro-in-photo 1.1s var(--ease-expo) both;
 }
 
-/* ── 인트로 ↔ 히어로 연속 전환 ──
-   커튼(.intro)은 html.preloading / html.intro-leaving 일 때만 표시.
-   히어로 마퀴 행·사진은 그 동안 커튼 위(z 160)로 올라오고(흰색·축소), 커튼이 녹을 때 복귀. */
+/* ── 인트로 ──
+   커튼(.intro)·사진(.intro-photo)·서명은 html.preloading / html.intro-leaving 일 때만 표시.
+   2막에서 사진은 히어로 인셋 rect 로 날아가고(FLIP), 도착하면 히어로 인셋이 자리를 이어받는다. */
 .intro,
+.intro-photo,
 .intro-signature {
   display: none;
 }
 .preloading .intro,
 .intro-leaving .intro,
+.preloading .intro-photo,
+.intro-leaving .intro-photo,
 .preloading .intro-signature,
 .intro-leaving .intro-signature {
   display: block;
 }
 .intro-leave {
   opacity: 0 !important;
-  transition: opacity 0.9s var(--ease-expo);
+  transition: opacity 0.85s var(--ease-expo);
 }
-.hero-row {
-  position: relative;
-  transition: color 0.9s var(--ease-expo);
+.intro-photo-fly {
+  transition:
+    left 1s var(--ease-expo),
+    top 1s var(--ease-expo),
+    width 1s var(--ease-expo),
+    height 1s var(--ease-expo);
+}
+/* 인트로 사진이 도착하기 전까지 히어로 인셋은 숨김 */
+.preloading .hero-inset-inner,
+.intro-leaving .hero-inset-inner {
+  opacity: 0;
 }
 .hero-inset-inner {
-  transition: transform 1s var(--ease-expo);
-  transform-origin: center;
-}
-.preloading .hero-row,
-.intro-leaving .hero-row {
-  z-index: 160;
-}
-.preloading .hero-row {
-  color: #fff;
-}
-.preloading .hero-inset-wrap,
-.intro-leaving .hero-inset-wrap {
-  z-index: 160;
-}
-.preloading .hero-inset-inner {
-  transform: scale(0.72);
+  transition: opacity 0.2s linear;
 }
 .hero-marquee {
   animation: marquee-left 70s linear infinite;
