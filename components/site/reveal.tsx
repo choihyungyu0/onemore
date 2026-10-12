@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export const EASE = [0.16, 1, 0.3, 1] as const;
@@ -99,5 +99,22 @@ export function Lines({ text, className }: { text: string; className?: string })
         </span>
       ))}
     </span>
+  );
+}
+
+/** 설명 줄 — 줄마다 연한 회색에서 잉크색으로 왼쪽→오른쪽 채워진다 (.sweep-line, 타이밍은 CSS·인라인 지연) */
+export function SweepLines({ text, from = 1.1, step = 0.3 }: { text: string; from?: number; step?: number }) {
+  const lines = text.split("\n");
+  return (
+    <>
+      {lines.map((line, i) => (
+        <Fragment key={i}>
+          <span className="sweep-line" style={{ animationDelay: `${(from + i * step).toFixed(2)}s` }}>
+            {line}
+          </span>
+          {i < lines.length - 1 && <br />}
+        </Fragment>
+      ))}
+    </>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
-import { Fragment } from "react";
 import { ChevronRight } from "lucide-react";
 import { brand, hero, nav } from "@/content/landing";
 import { ButtonLink, btnClass } from "./button";
 import { Magnetic } from "./magnetic";
 import { Logo } from "./navbar";
 import { HeroInset } from "./hero-inset";
+import { SweepLines } from "./reveal";
 
 /*
  * 첫 화면(realevate 구조) — 화면 정중앙을 가로지르는 마퀴 문장 한가운데 4:5 사진 인셋,
@@ -14,23 +14,6 @@ import { HeroInset } from "./hero-inset";
  * 인셋(#hero-inset)은 인트로의 사진이 날아와 안착하는 목적지. 진입 텍스트는 CSS .rise.
  */
 const delay = (s: number) => ({ animationDelay: `${s}s` });
-
-/** 설명 줄 — 줄마다 연한 회색에서 잉크색으로 왼쪽→오른쪽 채워진다 (인트로 뒤 CSS 타이밍) */
-function SweepLines({ text, from = 1.1, step = 0.3 }: { text: string; from?: number; step?: number }) {
-  const lines = text.split("\n");
-  return (
-    <>
-      {lines.map((line, i) => (
-        <Fragment key={i}>
-          <span className="sweep-line" style={{ animationDelay: `${(from + i * step).toFixed(2)}s` }}>
-            {line}
-          </span>
-          {i < lines.length - 1 && <br />}
-        </Fragment>
-      ))}
-    </>
-  );
-}
 
 /** 마퀴 한 줄 — 강조 단어만 코랄 */
 function MarqueeRow() {

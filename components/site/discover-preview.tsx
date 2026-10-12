@@ -54,6 +54,7 @@ export function DiscoverPreview({ list, label }: { list: Creator[]; label: strin
 
   return (
     <div ref={root} className="preview-stack relative hidden h-[320px] w-full lg:block" aria-label={label}>
+      <div aria-hidden className="preview-glow pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full" />
       <AnimatePresence mode="popLayout">
         {shown.map((c, i) => {
           const s = SLOTS[i];

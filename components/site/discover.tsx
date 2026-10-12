@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { ChevronRight, LayoutGrid, Orbit, Search, X } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { creators, discover, images, sizeBands, type Country, type Creator } from "@/content/landing";
@@ -12,8 +12,8 @@ import { CreatorCard, formatFollowers } from "./creator-card";
 import { CreatorRing } from "./creator-ring";
 import { DiscoverPreview } from "./discover-preview";
 import { Placeholder } from "./placeholder";
-import { EASE, Lines, Reveal } from "./reveal";
-import { Section, SectionHeader } from "./section";
+import { EASE, Lines, Reveal, SweepLines } from "./reveal";
+import { Kicker, Section } from "./section";
 import { useSelection } from "./selection-context";
 
 function Chip({
@@ -114,6 +114,8 @@ export function Discover() {
   const [detail, setDetail] = useState<Creator | null>(null);
   const [view, setView] = useState<"ring" | "grid">("ring");
   const [peek, setPeek] = useState<Creator[] | null>(null);
+  const headRef = useRef<HTMLDivElement>(null);
+  const headInView = useInView(headRef, { once: true, margin: "-15% 0px" });
   const [focused, setFocused] = useState(false);
   const lenis = useLenis();
 
@@ -168,13 +170,42 @@ export function Discover() {
 
   return (
     <Section id="discover" className="bg-paper">
-      <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        <SectionHeader
-          index="01"
-          kicker={discover.kicker}
-          title={discover.title}
-          description={discover.description}
-        />
+      <div
+        ref={headRef}
+        className={cn("sweep-hold grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center", headInView && "in-view")}
+      >
+        <div className="max-w-3xl">
+          <Reveal>
+            <Kicker index="01" label={discover.kicker} />
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2 className="display-light mt-5 text-[clamp(2.3rem,3.9vw,3.4rem)] text-ink">
+              {discover.title.split("\n").map((line, i, arr) => {
+                const acc = discover.titleAccent;
+                const at = acc ? line.indexOf(acc) : -1;
+                return (
+                  <span key={i}>
+                    {at < 0 ? (
+                      line
+                    ) : (
+                      <>
+                        {line.slice(0, at)}
+                        <span className="marker">{acc}</span>
+                        {line.slice(at + acc.length)}
+                      </>
+                    )}
+                    {i < arr.length - 1 && <br />}
+                  </span>
+                );
+              })}
+            </h2>
+          </Reveal>
+          <Reveal delay={0.12}>
+            <p className="mt-6 max-w-xl text-[17px] leading-[1.7] md:text-lg">
+              <SweepLines text={discover.description} from={0.5} step={0.3} />
+            </p>
+          </Reveal>
+        </div>
         {/* 필터에 반응하는 사진 프리뷰 — 누르기 전에도 누가 있는지 보인다 */}
         <DiscoverPreview list={peek ?? list} label={discover.results.title.replace("\n", " ")} />
       </div>

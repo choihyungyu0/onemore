@@ -214,6 +214,8 @@ export const sizeBands: SizeBand[] = [
 export const discover = {
   kicker: "크리에이터 찾기",
   title: "어느 나라에서, 어떤 이야기로\n우리 브랜드를 소개하고 싶으세요?",
+  /** 제목에서 코랄 형광펜으로 강조할 구절 */
+  titleAccent: "어떤 이야기로",
   description:
     "활동 국가를 고르고, 콘텐츠 키워드를 더하고,\n원하는 팔로워 규모로 후보를 좁혀보세요.",
   search: {
