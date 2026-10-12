@@ -118,6 +118,13 @@ export const hero = {
   primary: { label: "우리 브랜드와 맞는 크리에이터 찾기", href: "#discover" },
   secondary: { label: "캠페인 상담하기", href: "#campaign" },
   tagline: ["찾는 건 구체적으로.", "선택은 브랜드가.", "연결은 워홀원모어가."],
+  /** 첫 화면을 가로지르는 거대 마퀴 문장 (인트로의 한글 줄과 같은 요소) */
+  marquee: "첫 시딩부터, 메가를 향한 성장까지.",
+  /** 버튼 아래 작은 필 */
+  pill: "브랜드가 고르고, 크리에이터도 선택하는 협업",
+  /** 첫 화면 하단 모서리 */
+  cornerLeft: "워홀원모어® 2026",
+  cornerRight: { label: "크리에이터 보기", href: "#discover" },
   flow: ["발견", "선택", "매칭", "성장"],
   /** 첫 화면 오른쪽에 떠 있는 콘텐츠 카드 4장 (4:5) */
   cards: [
@@ -127,6 +134,14 @@ export const hero = {
     { image: "hero-04" as ImageKey, tone: 1, chip: "호주 · 브리즈번", tag: "#워홀" },
   ],
 };
+
+/** 첫 화면이 축소되며 양옆에서 들어오는 포스터 카드 4장 — 콘텐츠 키워드 */
+export const posters = [
+  { tag: "#현지일상", title: "현지 일상", description: "일하고, 먹고, 쉬는\n보통의 하루", image: "marquee-04" as ImageKey, color: "ink" as const },
+  { tag: "#카페", title: "카페", description: "동네 단골집과\n플랫화이트 한 잔", image: "marquee-01" as ImageKey, color: "coral" as const },
+  { tag: "#여행", title: "여행", description: "주말 로드트립과\n바다", image: "card-goldcoast" as ImageKey, color: "forest" as const },
+  { tag: "#워홀", title: "워홀", description: "낯선 도시에서의\n첫 해 기록", image: "marquee-09" as ImageKey, color: "char" as const },
+];
 
 export const marquee = {
   label: "해외에서 활동하는 한국인 크리에이터 · 콘텐츠 예시",

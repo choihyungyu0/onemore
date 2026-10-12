@@ -12,13 +12,17 @@ import { Finale } from "@/components/site/finale";
 import { Footer } from "@/components/site/footer";
 import { MobileCta } from "@/components/site/mobile-cta";
 import { SelectionProvider } from "@/components/site/selection-context";
+import { ZoomStage } from "@/components/site/zoom-stage";
+import { posters } from "@/content/landing";
 
 export default function Home() {
   return (
     <SelectionProvider>
       <Navbar />
       <main id="main">
-        <Hero />
+        <ZoomStage posters={posters}>
+          <Hero />
+        </ZoomStage>
         <Marquee />
         <Discover />
         <How />
