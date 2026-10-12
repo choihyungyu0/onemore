@@ -369,6 +369,18 @@ html.lenis body {
   filter: drop-shadow(0 0 14px rgba(255, 90, 60, 0.35));
 }
 /* 하이드레이션 후 카운터와 함께 그려진다 (0.5초 뒤 시작, 1.6초 동안) */
+/* 인트로 진행선 — 커튼 맨 아래, 재생 시간(AUTO_MS)에 맞춰 좌→우로 차오름 */
+.intro-progress {
+  transform: scaleX(0);
+}
+.intro-play .intro-progress {
+  animation: intro-progress 2.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+}
+@keyframes intro-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
 .intro-play .intro-signature path {
   animation: signature-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.5s forwards;
 }

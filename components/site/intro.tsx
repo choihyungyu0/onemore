@@ -12,8 +12,8 @@ const PHOTO_W = 190;
 const PHOTO_H = 238;
 
 /**
- * 오프닝 — 1막: 노리스식 다크 인트로(등고선·코랄 세리프 마퀴·흰 한글 마퀴·중앙 사진·서명·카운터).
- * 2막: realevate식 전환 — 카운터가 99에 닿으면 중앙 사진이 히어로 인셋 자리로 날아가 안착하고,
+ * 오프닝 — 1막: 노리스식 다크 인트로(등고선·코랄 세리프 마퀴·흰 한글 마퀴·중앙 사진·서명·하단 진행선).
+ * 2막: realevate식 전환 — 진행선이 끝에 닿으면 중앙 사진이 히어로 인셋 자리로 날아가 안착하고,
  * 그 사이 커튼과 나머지 요소가 녹아 사라진다. 사진이 도착하는 순간 히어로의 인셋이 그 자리를 이어받는다.
  * 페이지를 열 때마다 재생. 클릭·스크롤·키로 건너뜀. 감속 모션이면 생략.
  */
@@ -64,7 +64,6 @@ export function Intro() {
   const reduce = useReducedMotion();
   const lenis = useLenis();
   const [phase, setPhase] = useState<Phase>("idle");
-  const [pct, setPct] = useState(0);
   const photoRef = useRef<HTMLDivElement>(null);
   const rings = useContours();
   const im = images[hero.insetImage];
@@ -89,15 +88,7 @@ export function Intro() {
     lenis?.scrollTo(0, { immediate: true, force: true });
     lenis?.stop();
 
-    let raf = 0;
     let finished = false;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / (AUTO_MS - 400));
-      setPct(Math.round((1 - Math.pow(1 - t, 3)) * 99));
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
 
     let leaveTimer = 0;
     const mountedAt = performance.now();
@@ -107,8 +98,6 @@ export function Intro() {
       if (reason !== "auto" && performance.now() - mountedAt < 600) return;
       finished = true;
       console.debug("[intro] finish via", reason, Math.round(performance.now() - mountedAt), "ms");
-      cancelAnimationFrame(raf);
-      setPct(99);
 
       // 사진을 히어로 인셋 자리로 (FLIP: 현재 위치 → 목표 rect)
       const photo = photoRef.current;
@@ -146,7 +135,6 @@ export function Intro() {
     window.addEventListener("keydown", skip);
     window.addEventListener("pointerdown", skip);
     return () => {
-      cancelAnimationFrame(raf);
       window.clearTimeout(auto);
       window.clearTimeout(leaveTimer);
       window.removeEventListener("wheel", block);
@@ -218,17 +206,15 @@ export function Intro() {
           </div>
         </div>
 
-        {/* 하단: 카운터 + 안내 */}
+        {/* 하단: 라벨 + 건너뛰기 안내, 맨 아래 가장자리에 코랄 진행선(인트로 남은 시간) */}
         <div
           className="intro-in absolute inset-x-0 bottom-0 flex items-end justify-between px-5 pb-7 sm:px-8 lg:px-12"
           style={{ animationDelay: "0.9s" }}
         >
           <span className="kicker text-white/40">{brand.latin}</span>
-          <span className="tnum font-display text-[clamp(1.4rem,3vw,2.2rem)] font-bold tracking-tight text-white">
-            {String(pct).padStart(2, "0")}
-          </span>
           <span className="kicker text-white/60">{copy.skip}</span>
         </div>
+        <div className="intro-progress absolute inset-x-0 bottom-0 h-[2px] origin-left bg-brand" aria-hidden />
       </div>
 
       {/* 중앙 사진 — 커튼 위(z 160). 2막에서 히어로 인셋 자리로 날아간다 */}

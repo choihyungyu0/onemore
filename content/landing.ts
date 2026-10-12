@@ -42,6 +42,7 @@ export const images = {
   "hero-02": img("hero-02", "크림색 건물의 카페 창가"),
   "hero-03": img("hero-03", "여행지에서 삼각대에 올린 스마트폰"),
   "hero-04": img("hero-04", "카메라를 들고 촬영하는 뒷모습"),
+  "inset-01": img("inset-01", "돌기둥 아치 발코니에서 바다와 절벽을 내려다보는 뒷모습"),
   "card-sydney": img("card-sydney", "노을 진 시드니 하버 브리지 앞 부두"),
   "card-bondi": img("card-bondi", "노을 진 본다이 바다와 서퍼"),
   "card-melbourne": img("card-melbourne", "멜버른 골목길"),
@@ -119,7 +120,7 @@ export const hero = {
   secondary: { label: "캠페인 상담하기", href: "#campaign" },
   tagline: ["찾는 건 구체적으로.", "선택은 브랜드가.", "연결은 워홀원모어가."],
   /** 첫 화면 마퀴 한가운데 사진 인셋 (인트로의 사진이 날아와 안착) */
-  insetImage: "hero-03" as ImageKey,
+  insetImage: "inset-01" as ImageKey,
   /** 첫 화면을 가로지르는 거대 마퀴 문장 */
   marquee: "첫 시딩부터, 메가를 향한 성장까지.",
   /** 버튼 아래 작은 필 */

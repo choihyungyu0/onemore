@@ -47,7 +47,7 @@ function score(p, slot) {
   if (FACE_RE.test(text)) return null;
   if (LOGO_RE.test(text)) return null;
   const [r, , b] = hexToRgb(p.color || "#808080");
-  if (b > r + 24) return null; // 뚜렷한 블루 톤 제외
+  if (!slot.allowBlue && b > r + 24) return null; // 뚜렷한 블루 톤 제외 (allowBlue 슬롯은 예외)
   const portrait = p.height >= p.width * 1.1;
   const square = Math.abs(p.height - p.width) < p.width * 0.1;
   let s = warmth(p.color) * 2;

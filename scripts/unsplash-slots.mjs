@@ -26,4 +26,17 @@ export const SLOTS = [
   { name: "fit-03", ratio: "4/5", queries: ["holding product cafe"], take: 6 },
   { name: "creator-01", ratio: "4/5", queries: ["young person laptop cafe"], take: 6 },
   { name: "final-01", ratio: "21/9", queries: ["sydney sunset skyline"], take: 6 },
+  // 히어로 인셋·인트로 중앙 사진 — 바다 전망 테라스에 앉은 사람(측면/뒷모습), 따뜻한 빛. 바다라서 블루 허용
+  {
+    name: "inset-01",
+    ratio: "4/5",
+    allowBlue: true,
+    queries: [
+      "woman sitting balcony sea view",
+      "terrace overlooking mediterranean sea",
+      "woman villa terrace ocean summer",
+      "balcony sea view morning coffee",
+    ],
+    take: 16,
+  },
 ];
