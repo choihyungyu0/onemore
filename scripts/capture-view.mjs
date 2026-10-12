@@ -35,7 +35,7 @@ try {
   for (let i = 0; i < 100; i++) { if (await evaluate("!!window.__lenis && !document.documentElement.classList.contains(\"preloading\") && !document.documentElement.classList.contains(\"intro-leaving\")")) break; await sleep(300); }
   await sleep(1500);
   await evaluate("(() => { const el = document.querySelector(" + JSON.stringify(selector) + "); if (!el) return false; const y = el.getBoundingClientRect().top + window.scrollY + " + offset + "; window.__lenis.scrollTo(y, { immediate: true, force: true }); return true; })()");
-  await sleep(2500);
+  await sleep(Number(process.env.WAIT || 2500)); // WAIT=ms 로 연출이 끝날 때까지 더 기다림
   const shot = await send("Page.captureScreenshot", { format: "png" });
   await fs.mkdir(path.dirname(out), { recursive: true });
   await fs.writeFile(out, Buffer.from(shot.data, "base64"));
