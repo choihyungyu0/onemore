@@ -877,3 +877,41 @@ html[data-nav-hidden] .site-header {
     transition: none;
   }
 }
+
+/* 함께 성장하기 — 카메라 뷰파인더 */
+.cam-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: rgba(255, 255, 255, 0.85);
+}
+.cam-focus {
+  width: clamp(96px, 18%, 160px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  will-change: left, top, transform;
+}
+.cam-focus .cam-corner {
+  width: 16px;
+  height: 16px;
+  border-color: rgb(255, 90, 60);
+}
+.cam-rec {
+  animation: cam-blink 1.1s steps(1) infinite;
+}
+@keyframes cam-blink {
+  50% {
+    opacity: 0.15;
+  }
+}
+.cam-card:hover .cam-shutter > span {
+  transform: scale(0.82);
+}
+.cam-card {
+  will-change: left, top, width, height;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cam-rec {
+    animation: none;
+  }
+}
