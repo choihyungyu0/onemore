@@ -1,0 +1,43 @@
+/**
+ * 뷰포트 캡처 (CDP): node scripts/capture-view.mjs <url> <selector> <out.png> [offsetY]
+ * 하이드레이션 후 selector 위치로 스크롤(Lenis 전역 핸들 사용)해 현재 뷰포트만 저장한다.
+ */
+import { spawn } from "node:child_process";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+
+const [url, selector, out, offsetArg] = process.argv.slice(2);
+const offset = Number(offsetArg || 0);
+const CHROME = process.env.CHROME || "C:/Program Files/Google/Chrome/Application/chrome.exe";
+const port = 9300 + Math.floor(Math.random() * 300);
+const profile = path.join(os.tmpdir(), "cdp-view-" + port);
+const chrome = spawn(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", "--no-first-run", "--no-default-browser-check", "--autoplay-policy=no-user-gesture-required", "--remote-debugging-port=" + port, "--user-data-dir=" + profile, "--window-size=1280,760", "about:blank"], { stdio: "ignore" });
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function ws() {
+  for (let i = 0; i < 60; i++) {
+    try { const list = await (await fetch("http://127.0.0.1:" + port + "/json/list")).json(); const p = list.find((t) => t.type === "page"); if (p) return p.webSocketDebuggerUrl; } catch {}
+    await sleep(200);
+  }
+  throw new Error("no devtools");
+}
+try {
+  const sock = new WebSocket(await ws());
+  await new Promise((r) => sock.addEventListener("open", r));
+  let seq = 0; const pending = new Map();
+  sock.addEventListener("message", (m) => { const d = JSON.parse(m.data); if (d.id && pending.has(d.id)) { const { res, rej } = pending.get(d.id); pending.delete(d.id); d.error ? rej(new Error(JSON.stringify(d.error))) : res(d.result); } });
+  const send = (method, params = {}) => new Promise((res, rej) => { const id = ++seq; pending.set(id, { res, rej }); sock.send(JSON.stringify({ id, method, params })); });
+  const evaluate = async (expression) => (await send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true })).result.value;
+  await send("Page.enable"); await send("Runtime.enable");
+  await send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 760, deviceScaleFactor: 1, mobile: false });
+  await send("Page.navigate", { url });
+  for (let i = 0; i < 100; i++) { if (await evaluate("!!window.__lenis && !document.documentElement.classList.contains(\"preloading\") && !document.documentElement.classList.contains(\"intro-leaving\")")) break; await sleep(300); }
+  await sleep(1500);
+  await evaluate("(() => { const el = document.querySelector(" + JSON.stringify(selector) + "); if (!el) return false; const y = el.getBoundingClientRect().top + window.scrollY + " + offset + "; window.__lenis.scrollTo(y, { immediate: true, force: true }); return true; })()");
+  await sleep(2500);
+  const shot = await send("Page.captureScreenshot", { format: "png" });
+  await fs.mkdir(path.dirname(out), { recursive: true });
+  await fs.writeFile(out, Buffer.from(shot.data, "base64"));
+  console.log("saved " + out);
+  sock.close();
+} finally { chrome.kill(); }
