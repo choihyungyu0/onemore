@@ -67,8 +67,8 @@ function Plane({ src }: { src: string }) {
     if (!u) return;
     // object-fit: cover 보정 — 캔버스 크기가 0인 첫 프레임에서 NaN이 되지 않도록 매 프레임 계산
     const img = tex.image as { width: number; height: number } | undefined;
-    const vw = state.viewport.width || 1;
-    const vh = state.viewport.height || 1;
+    const vw = state.size.width || 1;
+    const vh = state.size.height || 1;
     if (img && img.width && img.height) {
       const imgAspect = img.width / img.height;
       const planeAspect = vw / vh;

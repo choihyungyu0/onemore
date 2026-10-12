@@ -473,7 +473,7 @@ html.lenis body {
     position: absolute;
     left: 0;
     right: 0;
-    top: 6vh;
+    top: calc(76px + 2vh);
     justify-content: center;
     gap: 1.25rem;
     overflow: visible;
@@ -490,4 +490,10 @@ html.lenis body {
 /* WebGL 레이어는 마운트 후 부드럽게 나타남 (첫 프레임 글리치 마스킹) */
 .distort-in {
   animation: intro-in 0.8s var(--ease-expo) both;
+}
+
+/* 첫 화면이 카드로 축소되는 동안 WebGL 레이어는 숨김 (변형된 레이어 위 캔버스 어긋남 방지) */
+.zoom-hero[data-zooming] .distort-in {
+  opacity: 0 !important;
+  transition: opacity 0.2s linear;
 }

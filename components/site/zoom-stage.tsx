@@ -48,8 +48,12 @@ export function ZoomStage({ posters, children }: { posters: readonly Poster[]; c
             anticipatePin: 1,
           },
         });
-        tl.to(hero, { scale: 0.5, y: "26vh", borderRadius: 24, duration: 1 }, 0);
-        tl.to(cards, { x: 0, duration: 0.7, stagger: { each: 0.08, from: "edges" } }, 0.18);
+        tl.to(hero, { scale: 0.5, y: "27vh", borderRadius: 24, duration: 1 }, 0);
+        // 안쪽 카드가 먼저, 바깥 카드가 뒤따르게 — 이동 중 서로 겹치지 않는다
+        tl.to(cards, { x: 0, duration: 0.7, stagger: { each: 0.07, from: "center" } }, 0.18);
+        tl.eventCallback("onUpdate", () => {
+          hero.toggleAttribute("data-zooming", tl.progress() > 0.001);
+        });
       });
     };
     if (document.documentElement.classList.contains("preloading")) {
