@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 import { hero, images } from "@/content/landing";
@@ -19,6 +20,10 @@ const delay = (s: number) => ({ animationDelay: `${s}s` });
 
 export function Hero() {
   const reduce = useReducedMotion() ?? false;
+  const [fine, setFine] = useState(false);
+  useEffect(() => {
+    setFine(window.matchMedia("(pointer: fine)").matches);
+  }, []);
   const im = images[hero.cards[0].image];
   const line = `${hero.marquee}  ·  `;
   const row = line.repeat(3);
@@ -49,7 +54,7 @@ export function Hero() {
         <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(140px,16vw,250px)] -translate-x-1/2 -translate-y-1/2">
           <div className="hero-inset-inner pointer-events-auto relative overflow-hidden rounded-[6px] shadow-lift">
             <Placeholder ratio="4/5" tone={0} src={im.src} alt={im.alt} sizes="250px" priority className="hero-inset-photo">
-              {!reduce && <DistortImage src={im.src} className="absolute inset-0 z-[1]" />}
+              {!reduce && fine && <DistortImage src={im.src} className="absolute inset-0 z-[1]" />}
             </Placeholder>
           </div>
         </div>

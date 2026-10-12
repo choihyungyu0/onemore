@@ -52,25 +52,30 @@ function Plane({ src }: { src: string }) {
 
   const uniforms = useMemo(() => {
     tex.colorSpace = THREE.SRGBColorSpace;
-    const img = tex.image as { width: number; height: number };
-    const imgAspect = img.width / img.height;
-    const planeAspect = viewport.width / viewport.height;
-    const cover =
-      imgAspect > planeAspect
-        ? new THREE.Vector2(planeAspect / imgAspect, 1)
-        : new THREE.Vector2(1, imgAspect / planeAspect);
+    tex.needsUpdate = true;
     return {
       uTex: { value: tex },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
       uHover: { value: 0 },
       uTime: { value: 0 },
-      uCover: { value: cover },
+      uCover: { value: new THREE.Vector2(1, 1) },
     };
-  }, [tex, viewport.width, viewport.height]);
+  }, [tex]);
 
-  useFrame((_, dt) => {
+  useFrame((state, dt) => {
     const u = mat.current?.uniforms;
     if (!u) return;
+    // object-fit: cover 보정 — 캔버스 크기가 0인 첫 프레임에서 NaN이 되지 않도록 매 프레임 계산
+    const img = tex.image as { width: number; height: number } | undefined;
+    const vw = state.viewport.width || 1;
+    const vh = state.viewport.height || 1;
+    if (img && img.width && img.height) {
+      const imgAspect = img.width / img.height;
+      const planeAspect = vw / vh;
+      const c = u.uCover.value as THREE.Vector2;
+      if (imgAspect > planeAspect) c.set(planeAspect / imgAspect, 1);
+      else c.set(1, imgAspect / planeAspect);
+    }
     u.uTime.value += dt;
     u.uHover.value += (target.current - u.uHover.value) * 0.08;
     (u.uMouse.value as THREE.Vector2).lerp(mouse.current, 0.12);
