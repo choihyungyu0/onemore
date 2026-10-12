@@ -20,11 +20,14 @@ async function ws() {
   }
   throw new Error("no devtools");
 }
+const SAMPLE = process.env.SAMPLE || "";
 const OBSERVER = `(() => {
   window.__diag = { long: [], cls: [], console: [], t0: performance.now() };
   try { new PerformanceObserver((l) => { for (const e of l.getEntries()) window.__diag.long.push({ t: Math.round(e.startTime), d: Math.round(e.duration) }); }).observe({ type: "longtask", buffered: true }); } catch {}
   try { new PerformanceObserver((l) => { for (const e of l.getEntries()) if (!e.hadRecentInput) window.__diag.cls.push({ t: Math.round(e.startTime), v: +e.value.toFixed(4) }); }).observe({ type: "layout-shift", buffered: true }); } catch {}
   window.addEventListener("onemore:intro-done", () => { window.__diag.introDone = Math.round(performance.now()); });
+  const sel = ${JSON.stringify(SAMPLE)};
+  if (sel) { window.__diag.samples = []; setInterval(() => { const el = document.querySelector(sel); window.__diag.samples.push([Math.round(performance.now()), el ? getComputedStyle(el).opacity : "-", document.documentElement.className]); }, 100); }
 })();`;
 try {
   const sock = new WebSocket(await ws());
@@ -53,5 +56,6 @@ try {
   console.log("slow resources(>800ms):", JSON.stringify(d.res.slice(0, 12)));
   console.log("lcp:", JSON.stringify(d.lcp));
   console.log("console:", logs.length ? logs.join("\n  ") : "(none)");
+  if (d.samples) { const runs = []; for (const [t, o, c] of d.samples) { const last = runs[runs.length - 1]; if (last && last.o === o && last.c === c) last.end = t; else runs.push({ start: t, end: t, o, c }); } console.log("samples(" + SAMPLE + "):"); for (const r of runs) console.log("  " + r.start + "-" + r.end + "ms opacity=" + r.o + "  html=\"" + r.c + "\""); }
   sock.close();
 } finally { chrome.kill(); }
