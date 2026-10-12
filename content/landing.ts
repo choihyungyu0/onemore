@@ -55,6 +55,9 @@ export const images = {
   "card-london": img("card-london", "런던 동네 골목의 집들"),
   "card-berlin": img("card-berlin", "베를린 노천 카페"),
   "card-paris": img("card-paris", "파리 테라스 카페"),
+  // 매칭 방식 오프너 — 누끼 인물(scripts: rembg로 배경 제거, -cut.webp)
+  "split-brand": { src: "/images/split-brand-cut.webp", alt: "오른쪽을 바라보는 브랜드 담당자" },
+  "split-creator": { src: "/images/split-creator-cut.webp", alt: "왼쪽을 바라보는 크리에이터" },
   "show-01": img("show-01", "아침 햇살이 드는 창가에서 커피를 마시는 모습"),
   "show-02": img("show-02", "카페 창가에서 웃으며 이야기하는 친구들"),
   "show-03": img("show-03", "해안 도로를 달리는 여름 로드트립"),
@@ -428,6 +431,21 @@ export const creators: Creator[] = [
 export const how = {
   ringHint: "스크롤하거나 ← → 키로 돌려보세요. 정면 카드를 누르면 그 나라의 크리에이터를 찾아봅니다.",
   kicker: "매칭 방식",
+  /* 오프너(노리스 ON/OFF TRACK 구도) — 왼쪽 열은 브랜드, 오른쪽 열은 크리에이터 */
+  split: {
+    left: {
+      line1: "브랜드는",
+      line2: "고른다",
+      description: "국가·키워드·팔로워 규모로 후보를 찾고,\n마음에 드는 크리에이터를 고르세요.",
+      cta: { label: "크리에이터 찾기", href: "#discover" },
+    },
+    right: {
+      line1: "크리에이터는",
+      line2: "답한다",
+      description: "제안을 받은 크리에이터가 참여 의사를 밝히면\n워홀원모어가 연결을 이어갑니다.",
+      cta: { label: "크리에이터로 참여하기", href: "#creators" },
+    },
+  },
   title: "마음에 드는 크리에이터를 고르세요.\n그다음 연결은 저희가 이어갑니다.",
   description:
     "처음부터 협업 상대를 확정할 필요는 없어요.\n관심 있는 후보와 원하는 캠페인 조건을 알려주세요.",

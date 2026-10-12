@@ -9,10 +9,11 @@ import path from "node:path";
 
 const [url, selector, out, offsetArg] = process.argv.slice(2);
 const offset = Number(offsetArg || 0);
+const [VW, VH] = (process.env.VIEW || "1280x760").split("x").map(Number); // VIEW=375x812 로 모바일 캡처
 const CHROME = process.env.CHROME || "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const port = 9300 + Math.floor(Math.random() * 300);
 const profile = path.join(os.tmpdir(), "cdp-view-" + port);
-const chrome = spawn(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", "--no-first-run", "--no-default-browser-check", "--autoplay-policy=no-user-gesture-required", "--remote-debugging-port=" + port, "--user-data-dir=" + profile, "--window-size=1280,760", "about:blank"], { stdio: "ignore" });
+const chrome = spawn(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", "--no-first-run", "--no-default-browser-check", "--autoplay-policy=no-user-gesture-required", "--remote-debugging-port=" + port, "--user-data-dir=" + profile, "--window-size=" + VW + "," + VH, "about:blank"], { stdio: "ignore" });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function ws() {
   for (let i = 0; i < 60; i++) {
@@ -29,7 +30,7 @@ try {
   const send = (method, params = {}) => new Promise((res, rej) => { const id = ++seq; pending.set(id, { res, rej }); sock.send(JSON.stringify({ id, method, params })); });
   const evaluate = async (expression) => (await send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true })).result.value;
   await send("Page.enable"); await send("Runtime.enable");
-  await send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 760, deviceScaleFactor: 1, mobile: false });
+  await send("Emulation.setDeviceMetricsOverride", { width: VW, height: VH, deviceScaleFactor: 1, mobile: VW < 768 });
   await send("Page.navigate", { url });
   for (let i = 0; i < 100; i++) { if (await evaluate("!!window.__lenis && !document.documentElement.classList.contains(\"preloading\") && !document.documentElement.classList.contains(\"intro-leaving\")")) break; await sleep(300); }
   await sleep(1500);

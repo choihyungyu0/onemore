@@ -61,9 +61,6 @@ export function Footer() {
               Mixkit
             </a>
             {", "}
-            <a href="https://mixkit.co/free-stock-video/beautiful-coast-with-motorboats-and-a-pier-seen-from-the-5363/" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
-              Mixkit
-            </a>
           </p>
         )}
       </div>

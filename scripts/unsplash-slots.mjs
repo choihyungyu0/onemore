@@ -41,6 +41,9 @@ export const SLOTS = [
   { name: "card-london", ratio: "4/5", queries: ["london cafe window", "notting hill street"], take: 6 },
   { name: "card-berlin", ratio: "4/5", queries: ["berlin cafe", "berlin street summer"], take: 6 },
   { name: "card-paris", ratio: "4/5", queries: ["paris cafe terrace", "paris street morning"], take: 6 },
+  // 매칭 방식 오프너(노리스 ON/OFF TRACK) — 흰 배경 스튜디오 측면 인물 2명(누끼용). 왼쪽=브랜드 담당자(오른쪽을 봄), 오른쪽=크리에이터(왼쪽을 봄)
+  { name: "split-brand", ratio: "4/5", allowFaces: true, allowBlue: true, queries: ["man side profile white background studio shirt", "businessman profile portrait white background", "man looking sideways studio portrait white"], take: 12 },
+  { name: "split-creator", ratio: "4/5", allowFaces: true, allowBlue: true, queries: ["woman side profile white background studio", "young woman profile portrait white background camera", "woman looking sideways studio portrait white"], take: 12 },
   // 줌아웃 스테이지 배경 — 밝고 부드러운 하늘·구름(블루 허용)
   { name: "stage-sky", ratio: "16/9", allowBlue: true, queries: ["soft clouds blue sky daylight", "above the clouds aerial soft light"], take: 8 },
   // 콘텐츠 쇼케이스 슬라이드(가로) — 밝은 자연광, 사람·얼굴 허용
