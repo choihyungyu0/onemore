@@ -273,7 +273,12 @@ function useSearchDemo(rootRef: React.RefObject<HTMLDivElement | null>, still: b
       sync();
     };
   }, [rootRef, still]);
-  return still ? { phase: "filtered", typed: how.demo.query } : state;
+  // still(정지·감속 모션)도 첫 렌더는 서버와 같은 idle로 두고 effect에서 완성 상태로 바꾼다 (하이드레이션 안전)
+  const [stillState, setStillState] = useState<DemoState>({ phase: "idle", typed: "" });
+  useEffect(() => {
+    if (still) setStillState({ phase: "filtered", typed: how.demo.query });
+  }, [still]);
+  return still ? stillState : state;
 }
 
 function ScreenSearch({ rootRef, still }: { rootRef: React.RefObject<HTMLDivElement | null>; still?: boolean }) {

@@ -7,10 +7,11 @@ import os from "node:os";
 import path from "node:path";
 
 const [url] = process.argv.slice(2);
+const [VW, VH] = (process.env.VIEW || "1280x760").split("x").map(Number);
 const CHROME = process.env.CHROME || "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const port = 9300 + Math.floor(Math.random() * 300);
 const profile = path.join(os.tmpdir(), "cdp-diag-" + port);
-const chrome = spawn(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", "--no-first-run", "--no-default-browser-check", "--autoplay-policy=no-user-gesture-required", "--remote-debugging-port=" + port, "--user-data-dir=" + profile, "--window-size=1280,760", "about:blank"], { stdio: "ignore" });
+const chrome = spawn(CHROME, ["--headless=new", "--disable-gpu", "--hide-scrollbars", "--no-first-run", "--no-default-browser-check", "--autoplay-policy=no-user-gesture-required", "--remote-debugging-port=" + port, "--user-data-dir=" + profile, "--window-size=" + VW + "," + VH, "about:blank"], { stdio: "ignore" });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function ws() {
   for (let i = 0; i < 60; i++) {
@@ -32,17 +33,17 @@ try {
   sock.addEventListener("message", (m) => {
     const d = JSON.parse(m.data);
     if (d.id && pending.has(d.id)) { const { res, rej } = pending.get(d.id); pending.delete(d.id); d.error ? rej(new Error(JSON.stringify(d.error))) : res(d.result); }
-    if (d.method === "Runtime.consoleAPICalled" && (d.params.type === "error" || d.params.type === "warning")) logs.push(d.params.type + ": " + d.params.args.map((a) => a.value ?? a.description ?? "").join(" ").slice(0, 300));
-    if (d.method === "Runtime.exceptionThrown") logs.push("exception: " + (d.params.exceptionDetails.exception?.description || d.params.exceptionDetails.text).slice(0, 300));
+    if (d.method === "Runtime.consoleAPICalled" && (d.params.type === "error" || d.params.type === "warning")) logs.push(d.params.type + ": " + d.params.args.map((a) => a.value ?? a.description ?? "").join(" ").slice(0, Number(process.env.MSG || 300)));
+    if (d.method === "Runtime.exceptionThrown") logs.push("exception: " + (d.params.exceptionDetails.exception?.description || d.params.exceptionDetails.text).slice(0, Number(process.env.MSG || 300)));
   });
   const send = (method, params = {}) => new Promise((res, rej) => { const id = ++seq; pending.set(id, { res, rej }); sock.send(JSON.stringify({ id, method, params })); });
   const evaluate = async (expression) => (await send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true })).result.value;
   await send("Page.enable"); await send("Runtime.enable");
-  await send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 760, deviceScaleFactor: 1, mobile: false });
+  await send("Emulation.setDeviceMetricsOverride", { width: VW, height: VH, deviceScaleFactor: 1, mobile: false });
   await send("Page.addScriptToEvaluateOnNewDocument", { source: OBSERVER });
   const t0 = Date.now();
   await send("Page.navigate", { url });
-  await sleep(12000);
+  await sleep(Number(process.env.WAIT || 12000));
   const r = await evaluate(`JSON.stringify({ ...window.__diag, nav: performance.getEntriesByType("navigation")[0]?.toJSON?.(), fonts: document.fonts.status, lcp: performance.getEntriesByType("largest-contentful-paint").map(e=>({t:Math.round(e.startTime), el: e.element?.tagName})), res: performance.getEntriesByType("resource").filter(e=>e.duration>800).map(e=>({n:e.name.replace(location.origin,""), d:Math.round(e.duration), s:Math.round(e.startTime)})) })`);
   const d = JSON.parse(r);
   console.log("introDone(ms):", d.introDone, " fonts:", d.fonts);
