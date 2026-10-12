@@ -94,7 +94,7 @@ export function HowScrub() {
         </div>
 
         {/* 오른쪽: UI 비네트 카드 스택 */}
-        <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px]" style={{ maxHeight: "64vh" }}>
+        <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px]" style={{ maxHeight: "68vh" }}>
           {how.steps.map((s, i) => (
             <div key={s.title} data-vignette className="absolute inset-0">
               <Vignette step={i} />
