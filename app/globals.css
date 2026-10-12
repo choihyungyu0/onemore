@@ -915,3 +915,45 @@ html[data-nav-hidden] .site-header {
     animation: none;
   }
 }
+
+/* 함께 성장하기 — 여정 선·점 */
+.journey-line {
+  left: 3px;
+  top: 7px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--brand), rgba(255, 90, 60, 0.35));
+}
+@media (min-width: 1024px) {
+  .journey-line {
+    left: 0;
+    right: 0;
+    top: 11px;
+    bottom: auto;
+    width: auto;
+    height: 2px;
+    background: linear-gradient(to right, var(--brand), rgba(255, 90, 60, 0.35));
+  }
+}
+.journey-halo {
+  animation: journey-pulse 2.4s ease-out infinite;
+}
+@keyframes journey-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-halo {
+    animation: none;
+    opacity: 0;
+  }
+  .journey-accent {
+    color: var(--brand);
+  }
+}

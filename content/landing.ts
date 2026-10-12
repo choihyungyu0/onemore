@@ -571,6 +571,8 @@ export const growth = {
     },
   ],
   closing: "처음 함께한 브랜드가,\n성장한 뒤에도 함께하는 브랜드가 되도록.",
+  /* 마무리 문장에서 마지막에 코랄로 물드는 구절 (공백 기준 단어 연속 일치) */
+  closingAccent: "성장한 뒤에도 함께하는",
 };
 
 export const empathy = {
