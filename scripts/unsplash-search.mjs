@@ -10,10 +10,11 @@
  */
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { SLOTS } from "./unsplash-slots.mjs";
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1")), "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const WORK = path.join(ROOT, "scripts", ".unsplash");
 const THUMBS = path.join(WORK, "thumbs");
 
@@ -82,9 +83,19 @@ async function main() {
   if (!process.env.UNSPLASH_ACCESS_KEY) throw new Error("UNSPLASH_ACCESS_KEY가 .env.local에 없습니다.");
   await fs.mkdir(THUMBS, { recursive: true });
 
+  const only = process.argv.slice(2);
+  let existing = [];
+  try {
+    existing = JSON.parse(await fs.readFile(path.join(WORK, "candidates.json"), "utf8"));
+  } catch {}
   const out = [];
   let remaining = null;
   for (const slot of SLOTS) {
+    if (only.length && !only.includes(slot.name)) {
+      const prev = existing.find((e) => e.name === slot.name);
+      if (prev) out.push(prev);
+      continue;
+    }
     const orientation = slot.ratio === "4/5" ? "portrait" : "landscape";
     const picked = [];
     for (const q of slot.queries) {

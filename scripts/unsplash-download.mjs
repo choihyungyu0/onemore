@@ -10,9 +10,10 @@
  */
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1")), "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const WORK = path.join(ROOT, "scripts", ".unsplash");
 const OUT = path.join(ROOT, "public", "images");
 const GENERATED = path.join(ROOT, "content", "images.generated.ts");
@@ -54,6 +55,7 @@ async function main() {
 
   const headers = { Authorization: `Client-ID ${key}`, "Accept-Version": "v1" };
   const result = { ...existing };
+  const failed = [];
 
   for (const slot of slots) {
     if (only.length && !only.includes(slot.name)) continue;
@@ -67,10 +69,20 @@ async function main() {
       continue;
     }
 
-    // 1) 다운로드 집계 엔드포인트 호출 (가이드라인 필수)
+    if (result[slot.name]?.id === cand.id && !only.length) {
+      console.log(`= ${slot.name} 이미 처리됨`);
+      continue;
+    }
+    // 1) 다운로드 집계 엔드포인트 호출 (가이드라인 필수) — 한도 초과(403)면 남은 슬롯은 다음 시간에
     const dl = await fetch(cand.download_location, { headers });
+    if (dl.status === 403 || dl.status === 429) {
+      console.warn(`! ${slot.name}: 요청 한도 초과 (${dl.status}) — 이후 슬롯 건너뜀. 나중에 다시 실행하세요.`);
+      failed.push(slot.name);
+      break;
+    }
     if (!dl.ok) throw new Error(`download_location ${dl.status} (${slot.name})`);
     await dl.json().catch(() => null);
+    console.log(`  ratelimit remaining: ${dl.headers.get("x-ratelimit-remaining")}`);
 
     // 2) 원본 수신 (raw + 최대 폭 제한)
     const rawUrl = `${cand.raw}${cand.raw.includes("?") ? "&" : "?"}fm=jpg&q=92&w=2400&fit=max`;
@@ -128,6 +140,7 @@ ${body}
 `;
   await fs.writeFile(GENERATED, ts);
   console.log(`content/images.generated.ts 갱신 (${Object.keys(result).length} slots)`);
+  if (failed.length) console.log(`미완료 슬롯: ${failed.join(", ")}`);
 }
 
 main().catch((e) => {
