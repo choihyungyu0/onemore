@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { ButtonLink, Button, btnClass } from "./button";
 import { CreatorCard, formatFollowers } from "./creator-card";
 import { CreatorRing } from "./creator-ring";
+import { DiscoverPreview } from "./discover-preview";
 import { Placeholder } from "./placeholder";
 import { EASE, Lines, Reveal } from "./reveal";
 import { Section, SectionHeader } from "./section";
@@ -18,19 +19,26 @@ import { useSelection } from "./selection-context";
 function Chip({
   active,
   onClick,
+  onHover,
   children,
 }: {
   active: boolean;
   onClick: () => void;
+  /** 마우스를 올리면 그 조건으로 프리뷰 (누르기 전 미리 보기) */
+  onHover?: (on: boolean) => void;
   children: React.ReactNode;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      onMouseEnter={() => onHover?.(true)}
+      onMouseLeave={() => onHover?.(false)}
+      onFocus={() => onHover?.(true)}
+      onBlur={() => onHover?.(false)}
       aria-pressed={active}
       className={cn(
-        "h-8 rounded-full px-3 text-[13px] font-semibold transition-colors",
+        "h-8 rounded-full px-3 text-[13px] font-semibold transition-[color,background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 active:scale-95",
         active
           ? "bg-ink text-white"
           : "bg-white text-ink/75 ring-1 ring-inset ring-ink/12 hover:ring-ink/30"
@@ -48,6 +56,36 @@ function FilterRow({ label, children }: { label: string; children: React.ReactNo
       <div className="flex flex-wrap gap-2">{children}</div>
     </div>
   );
+}
+
+/** 검색창 자리표시자 — 예시 검색어가 한 글자씩 타이핑되고 지워지며 순환한다 */
+function useTypewriter(words: string[], active: boolean) {
+  const [text, setText] = useState(words[0] ?? "");
+  useEffect(() => {
+    if (!active || words.length === 0) return;
+    let w = 0;
+    let i = 0;
+    let dir = 1;
+    let t = 0;
+    const tick = () => {
+      const word = words[w];
+      i += dir;
+      setText(word.slice(0, Math.max(0, i)));
+      let delay = dir > 0 ? 70 : 35;
+      if (dir > 0 && i >= word.length) {
+        dir = -1;
+        delay = 1600;
+      } else if (dir < 0 && i <= 0) {
+        dir = 1;
+        w = (w + 1) % words.length;
+        delay = 350;
+      }
+      t = window.setTimeout(tick, delay);
+    };
+    t = window.setTimeout(tick, 900);
+    return () => window.clearTimeout(t);
+  }, [words, active]);
+  return text;
 }
 
 function matches(c: Creator, q: string, country: Country | null, keywords: string[], band: number | null) {
@@ -75,7 +113,25 @@ export function Discover() {
   const [band, setBand] = useState<number | null>(null);
   const [detail, setDetail] = useState<Creator | null>(null);
   const [view, setView] = useState<"ring" | "grid">("ring");
+  const [peek, setPeek] = useState<Creator[] | null>(null);
+  const [focused, setFocused] = useState(false);
   const lenis = useLenis();
+
+  const examples = useMemo(
+    () => discover.search.placeholder.replace(/^예:\s*/, "").split(/,\s*/).filter(Boolean),
+    []
+  );
+  const typed = useTypewriter(examples, !reduce && query === "" && !focused);
+  const placeholder = !reduce && query === "" && !focused ? `예: ${typed}` : discover.search.placeholder;
+
+  // 칩에 마우스를 올리면 그 조건을 적용했을 때의 사람들로 프리뷰
+  const peekWith = (patch: { country?: Country | null; keyword?: string; band?: number | null }) => {
+    const ctry = patch.country === undefined ? country : patch.country;
+    const kws = patch.keyword ? [patch.keyword] : keywords;
+    const b = patch.band === undefined ? band : patch.band;
+    setPeek(creators.filter((c) => matches(c, applied, ctry, kws, b)));
+  };
+  const endPeek = () => setPeek(null);
 
   // 포스터("키워드")·쇼케이스("국가")에서 보낸 필터 요청 → 적용하고 검색 패널로 스크롤
   useEffect(() => {
@@ -112,12 +168,16 @@ export function Discover() {
 
   return (
     <Section id="discover" className="bg-paper">
-      <SectionHeader
-        index="01"
-        kicker={discover.kicker}
-        title={discover.title}
-        description={discover.description}
-      />
+      <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <SectionHeader
+          index="01"
+          kicker={discover.kicker}
+          title={discover.title}
+          description={discover.description}
+        />
+        {/* 필터에 반응하는 사진 프리뷰 — 누르기 전에도 누가 있는지 보인다 */}
+        <DiscoverPreview list={peek ?? list} label={discover.results.title.replace("\n", " ")} />
+      </div>
 
       {/* 검색 + 필터 — 한 패널로 */}
       <div id="discover-panel" className="mt-10 rounded-[28px] bg-mist p-4 md:p-6">
@@ -140,7 +200,9 @@ export function Discover() {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder={discover.search.placeholder}
+              placeholder={placeholder}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
               className="h-11 w-full bg-transparent text-[16px] text-ink placeholder:text-muted/80 focus:outline-none"
             />
           </div>
@@ -153,11 +215,16 @@ export function Discover() {
       {/* 필터 */}
       <Reveal delay={0.15} className="mt-5 flex flex-col gap-3">
         <FilterRow label={discover.filters.country.label}>
-          <Chip active={country === null} onClick={() => setCountry(null)}>
+          <Chip active={country === null} onClick={() => setCountry(null)} onHover={(on) => (on ? peekWith({ country: null }) : endPeek())}>
             {discover.filters.country.all}
           </Chip>
           {discover.filters.country.options.map((c) => (
-            <Chip key={c} active={country === c} onClick={() => setCountry(country === c ? null : c)}>
+            <Chip
+              key={c}
+              active={country === c}
+              onClick={() => setCountry(country === c ? null : c)}
+              onHover={(on) => (on ? peekWith({ country: c }) : endPeek())}
+            >
               {c}
             </Chip>
           ))}
@@ -170,17 +237,23 @@ export function Discover() {
               onClick={() =>
                 setKeywords((prev) => (prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k]))
               }
+              onHover={(on) => (on ? peekWith({ keyword: k }) : endPeek())}
             >
               {k}
             </Chip>
           ))}
         </FilterRow>
         <FilterRow label={discover.filters.size.label}>
-          <Chip active={band === null} onClick={() => setBand(null)}>
+          <Chip active={band === null} onClick={() => setBand(null)} onHover={(on) => (on ? peekWith({ band: null }) : endPeek())}>
             {discover.filters.size.all}
           </Chip>
           {sizeBands.map((b, i) => (
-            <Chip key={b.label} active={band === i} onClick={() => setBand(band === i ? null : i)}>
+            <Chip
+              key={b.label}
+              active={band === i}
+              onClick={() => setBand(band === i ? null : i)}
+              onHover={(on) => (on ? peekWith({ band: i }) : endPeek())}
+            >
               {b.label}
             </Chip>
           ))}
