@@ -132,11 +132,9 @@ export function Intro() {
           </svg>
 
           {/* 상단 라벨 */}
-          <motion.div
-            className="absolute inset-x-0 top-0 flex items-center justify-between px-5 py-6 sm:px-8 lg:px-12"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+          <div
+            className="intro-in absolute inset-x-0 top-0 flex items-center justify-between px-5 py-6 sm:px-8 lg:px-12"
+            style={{ animationDelay: "0.2s" }}
           >
             <span className="flex items-center gap-2.5 text-[15px] font-extrabold tracking-tight">
               <span className="inline-flex h-5 w-5 items-center justify-center rounded-[6px] bg-brand font-display text-[9px] font-extrabold">
@@ -145,16 +143,11 @@ export function Intro() {
               {brand.name}
             </span>
             <span className="kicker text-white/50">{copy.label}</span>
-          </motion.div>
+          </div>
 
           {/* 뒤로 흐르는 대형 타이포 2줄 */}
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2">
-            <motion.div
-              className="marquee-mask w-full overflow-hidden"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-            >
+            <div className="intro-in marquee-mask w-full overflow-hidden" style={{ animationDelay: "0.5s" }}>
               <div className="marquee-track intro-marquee-left">
                 <span className="font-serif-accent whitespace-nowrap pr-10 text-[clamp(3.2rem,11vw,11rem)] uppercase leading-[0.9] text-brand">
                   {serifRow}
@@ -163,13 +156,8 @@ export function Intro() {
                   {serifRow}
                 </span>
               </div>
-            </motion.div>
-            <motion.div
-              className="marquee-mask -mt-2 w-full overflow-hidden"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-            >
+            </div>
+            <div className="intro-in marquee-mask -mt-2 w-full overflow-hidden" style={{ animationDelay: "0.7s" }}>
               <div className="marquee-track intro-marquee-right">
                 <span className="display whitespace-nowrap pr-10 text-[clamp(2.6rem,9vw,9rem)] uppercase leading-[0.95] text-white/90">
                   {sansRow}
@@ -178,18 +166,15 @@ export function Intro() {
                   {sansRow}
                 </span>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* 중앙 사진 */}
-          <motion.div
-            className="absolute left-1/2 top-1/2 w-[min(58vw,340px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[6px] shadow-lift"
-            initial={{ opacity: 0, scale: 1.06 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.1, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Placeholder ratio="4/5" tone={0} src={im.src} alt="" sizes="340px" priority className="intro-photo" />
-          </motion.div>
+          <div className="absolute left-1/2 top-1/2 w-[min(58vw,340px)] -translate-x-1/2 -translate-y-1/2">
+            <div className="intro-in-photo overflow-hidden rounded-[6px] shadow-lift" style={{ animationDelay: "0.35s" }}>
+              <Placeholder ratio="4/5" tone={0} src={im.src} alt="" sizes="340px" priority className="intro-photo" />
+            </div>
+          </div>
 
           {/* 코랄 서명 */}
           <svg
@@ -208,15 +193,13 @@ export function Intro() {
           </svg>
 
           {/* 하단 안내 */}
-          <motion.div
-            className="absolute inset-x-0 bottom-0 flex items-center justify-between px-5 pb-7 sm:px-8 lg:px-12"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.2 }}
+          <div
+            className="intro-in absolute inset-x-0 bottom-0 flex items-center justify-between px-5 pb-7 sm:px-8 lg:px-12"
+            style={{ animationDelay: "1.2s" }}
           >
             <span className="kicker text-white/40">{brand.latin}</span>
             <span className="kicker text-white/60">{copy.skip}</span>
-          </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
