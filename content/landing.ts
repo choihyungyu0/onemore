@@ -57,7 +57,7 @@ export const images = {
   "card-paris": img("card-paris", "파리 테라스 카페"),
   // 매칭 방식 오프너 — 누끼 인물(scripts: rembg로 배경 제거, -cut.webp)
   "split-brand": { src: "/images/split-brand-cut.webp", alt: "오른쪽을 바라보는 브랜드 담당자" },
-  "split-creator": { src: "/images/split-creator-cut-v3.webp", alt: "왼쪽을 바라보는 크리에이터" },
+  "split-creator": { src: "/images/split-creator-cut-v4.webp", alt: "왼쪽을 바라보는 크리에이터" },
   "show-01": img("show-01", "아침 햇살이 드는 창가에서 커피를 마시는 모습"),
   "show-02": img("show-02", "카페 창가에서 웃으며 이야기하는 친구들"),
   "show-03": img("show-03", "해안 도로를 달리는 여름 로드트립"),

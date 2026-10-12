@@ -818,11 +818,6 @@ html[data-nav-hidden] .site-header {
 .split-fig--r {
   transform: translateX(calc(var(--in) + var(--push)));
 }
-/* 오른쪽 인물은 원본 사진 경계에서 등이 직선으로 잘리므로 그 가장자리를 배경으로 녹인다 */
-.split-fig--r img {
-  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16%);
-  mask-image: linear-gradient(to right, transparent 0, #000 16%);
-}
 .split-col {
   opacity: 0;
   transition:
