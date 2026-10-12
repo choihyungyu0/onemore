@@ -957,3 +957,74 @@ html[data-nav-hidden] .site-header {
     color: var(--brand);
   }
 }
+
+/* 브랜드 공감 — 메시지 스레드 */
+.chat-bubble {
+  transition: transform 0.5s var(--ease-expo), box-shadow 0.5s var(--ease-expo);
+}
+.chat-bubble--you:hover {
+  transform: translateY(-3px) rotate(0.8deg);
+}
+.chat-bubble--us:hover {
+  transform: translateY(-3px) rotate(-0.6deg);
+  box-shadow: 0 24px 50px -20px rgba(11, 18, 32, 0.3);
+}
+.chat-dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  animation: chat-dot 1s ease-in-out infinite;
+}
+.chat-dots--dark i {
+  background: rgba(11, 18, 32, 0.45);
+}
+.chat-dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.chat-dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes chat-dot {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+.chat-caret {
+  animation: chat-blink 1s steps(1) infinite;
+}
+@keyframes chat-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.chat-pop {
+  animation: chat-pop 0.5s var(--ease-expo) both;
+}
+@keyframes chat-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-dots i,
+  .chat-caret,
+  .chat-pop {
+    animation: none;
+  }
+  .chat-bubble:hover {
+    transform: none;
+  }
+}

@@ -598,6 +598,15 @@ export const empathy = {
     },
   ],
   cta: { label: "우리 브랜드의 협업 상대 찾기", href: "#campaign" },
+  /* 메시지 스레드 — 답장 속 UI 조각 문구 */
+  chat: {
+    us: "워홀원모어",
+    hint: "브랜드가 보내온 세 가지 메시지와, 워홀원모어의 답.",
+    composer: "우리 브랜드는 어떤 크리에이터를 찾고 있나요?",
+    filter: { label: "조건으로 찾기", country: "호주", keyword: "여행", count: "후보 {n}명" },
+    range: { label: "팔로워 범위로 비교", from: "1천", to: "5만", range: "3천 – 1만", compare: "콘텐츠 주제와 스타일을 나란히 비교하고 관심 후보를 선택하세요." },
+    next: { label: "다음 협업", title: "두 번째 협업 제안", body: "지난 협업 크리에이터에게 새 제안을 보낼 수 있어요.", cta: "제안 보내기", later: "나중에" },
+  },
 };
 
 export const campaign = {

@@ -1,0 +1,314 @@
+"use client";
+
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useReducedMotion } from "framer-motion";
+import { ArrowUp, Check, Send } from "lucide-react";
+import { creators, discover, empathy, images, type ImageKey } from "@/content/landing";
+import { cn } from "@/lib/utils";
+import { BrandMark } from "./brand-mark";
+import { formatFollowers } from "./creator-card";
+import { Placeholder } from "./placeholder";
+import { Lines, Reveal } from "./reveal";
+import { Kicker } from "./section";
+
+/**
+ * 브랜드 공감 — "브랜드 담당자의 메시지" 스레드
+ * - 왼쪽 제목은 고정(sticky), 오른쪽에 대화가 스크롤에 따라 한 통씩 올라온다
+ * - 브랜드 메시지(오른쪽, 잉크색): 타이핑 점 → 글자 단위로 채워짐
+ * - 워홀원모어 답장(왼쪽, 흰색): 설명 문장 + 실제 UI 조각(조건 칩 / 팔로워 범위·비교 카드 / 다음 협업 알림)
+ * - 마지막엔 입력창이 나타나고 전송 버튼이 CTA(캠페인 문의)로 이어진다
+ * - 말풍선에 올리면 살짝 기울며 떠오른다. 감속 모션은 모두 완성 상태로 표시
+ */
+const AVATARS: ImageKey[] = ["fit-01", "fit-02", "fit-03"];
+type Phase = "idle" | "youTyping" | "you" | "usTyping" | "us";
+
+export function BrandChat() {
+  const reduce = useReducedMotion();
+  return (
+    <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+      {/* 왼쪽: 고정 제목 */}
+      <div className="lg:sticky lg:top-28 lg:self-start">
+        <Reveal>
+          <Kicker index="04" label={empathy.kicker} />
+        </Reveal>
+        <Reveal delay={0.05}>
+          <h2 className="display mt-5 text-[clamp(2rem,4.6vw,3.75rem)] text-ink">
+            <Lines text={empathy.title} />
+          </h2>
+        </Reveal>
+        <Reveal delay={0.12}>
+          <p className="mt-6 max-w-md text-[17px] leading-[1.7] text-muted md:text-lg">
+            <Lines text={empathy.description} />
+          </p>
+        </Reveal>
+        <Reveal delay={0.18}>
+          <p className="mt-8 flex items-center gap-3 text-[13px] text-muted">
+            <span className="h-px w-10 bg-ink/20" aria-hidden />
+            {empathy.chat.hint}
+          </p>
+        </Reveal>
+      </div>
+
+      {/* 오른쪽: 스레드 */}
+      <div className="relative">
+        <ol className="flex flex-col gap-10 lg:gap-14">
+          {empathy.items.map((it, i) => (
+            <Exchange key={it.label} index={i} item={it} reduce={!!reduce} />
+          ))}
+        </ol>
+
+        {/* 입력창 → CTA */}
+        <Reveal delay={0.1} className="mt-12 lg:mt-16">
+          <a
+            href={empathy.cta.href}
+            className="group flex items-center gap-3 rounded-full bg-white p-2 pl-6 shadow-lift ring-1 ring-ink/[0.06] transition-[box-shadow,transform] duration-500 ease-[var(--ease-expo)] hover:-translate-y-0.5 hover:shadow-[0_24px_50px_-20px_rgba(11,18,32,0.35)]"
+          >
+            <span className="flex-1 text-[15px] text-ink/45">
+              {empathy.chat.composer}
+              <span className="chat-caret ml-0.5 inline-block h-[16px] w-px translate-y-[3px] bg-ink/50" aria-hidden />
+            </span>
+            <span className="hidden text-[14px] font-bold text-ink sm:inline">{empathy.cta.label}</span>
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand text-white transition-transform duration-300 group-hover:scale-105">
+              <ArrowUp className="h-5 w-5" strokeWidth={2.4} />
+            </span>
+          </a>
+        </Reveal>
+      </div>
+    </div>
+  );
+}
+
+function Exchange({ index, item, reduce }: { index: number; item: (typeof empathy.items)[number]; reduce: boolean }) {
+  const root = useRef<HTMLLIElement>(null);
+  const [phase, setPhase] = useState<Phase>(reduce ? "us" : "idle");
+  const [typed, setTyped] = useState(reduce ? item.quote.length : 0);
+  const im = images[AVATARS[index]];
+
+  useEffect(() => {
+    if (reduce) return;
+    const el = root.current;
+    if (!el) return;
+    let alive = true;
+    const timers: number[] = [];
+    const wait = (ms: number) => new Promise<void>((r) => timers.push(window.setTimeout(r, ms)));
+    const run = async () => {
+      setPhase("youTyping");
+      await wait(650);
+      if (!alive) return;
+      setPhase("you");
+      for (let n = 1; n <= item.quote.length; n++) {
+        if (!alive) return;
+        setTyped(n);
+        await wait(item.quote[n - 1] === "\n" ? 140 : 26);
+      }
+      await wait(380);
+      if (!alive) return;
+      setPhase("usTyping");
+      await wait(620);
+      if (!alive) return;
+      setPhase("us");
+    };
+    const io = new IntersectionObserver(
+      (es) => {
+        if (es.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          void run();
+        }
+      },
+      { threshold: 0.45 }
+    );
+    io.observe(el);
+    return () => {
+      alive = false;
+      io.disconnect();
+      timers.forEach((t) => window.clearTimeout(t));
+    };
+  }, [reduce, item.quote]);
+
+  const youVisible = phase !== "idle";
+  const youText = phase === "youTyping";
+  const usVisible = phase === "usTyping" || phase === "us";
+  const usReady = phase === "us";
+
+  return (
+    <li ref={root} className="flex flex-col gap-4">
+      {/* 브랜드 메시지 — 오른쪽 */}
+      <div className={cn("flex flex-row-reverse items-end gap-3 transition-opacity duration-500", youVisible ? "opacity-100" : "opacity-0")}>
+        <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-card" aria-hidden>
+          <Placeholder fill tone={1} src={im.src} alt="" sizes="36px" />
+        </span>
+        <div className="flex max-w-[82%] flex-col items-end">
+          <span className="kicker mb-2 text-[9.5px] text-ink/45">{item.label}</span>
+          <div className="chat-bubble chat-bubble--you relative rounded-[20px] rounded-br-[6px] bg-ink px-5 py-4 text-white shadow-lift">
+            {/* 크기 고정용 전체 문장(보이지 않음) + 실제 타이핑 문장 */}
+            <p className="display-md invisible whitespace-pre-line text-[clamp(1.1rem,1.5vw,1.3rem)] leading-[1.45]" aria-hidden>
+              “{item.quote}”
+            </p>
+            <p className="display-md absolute inset-x-5 top-4 whitespace-pre-line text-[clamp(1.1rem,1.5vw,1.3rem)] leading-[1.45]">
+              {youText ? (
+                <span className="chat-dots inline-flex items-center gap-1 py-2" aria-label="…">
+                  <i /><i /><i />
+                </span>
+              ) : (
+                <>
+                  “{item.quote.slice(0, typed)}
+                  {typed >= item.quote.length ? "”" : <span className="chat-caret ml-0.5 inline-block h-[1em] w-[2px] translate-y-[2px] bg-white/80" aria-hidden />}
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 워홀원모어 답장 — 왼쪽 */}
+      <div className={cn("flex items-end gap-3 transition-[opacity,transform] duration-600 ease-[var(--ease-expo)]", usVisible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0")}>
+        <BrandMark className="h-9 w-9 shrink-0 rounded-full ring-2 ring-white shadow-card" />
+        <div className="flex max-w-[88%] flex-col items-start lg:max-w-[82%]">
+          <span className="kicker mb-2 text-[9.5px] text-brand">{empathy.chat.us}</span>
+          <div className="chat-bubble chat-bubble--us relative rounded-[20px] rounded-bl-[6px] bg-white p-5 shadow-lift ring-1 ring-ink/[0.05]">
+            {!usReady ? (
+              <span className="chat-dots chat-dots--dark inline-flex items-center gap-1 py-1" aria-label="…">
+                <i /><i /><i />
+              </span>
+            ) : (
+              <>
+                <p className="text-[15px] leading-[1.7] text-ink/80">
+                  <Lines text={item.description} />
+                </p>
+                <div className="chat-snippet mt-4">
+                  {index === 0 && <SnippetFilter />}
+                  {index === 1 && <SnippetRange />}
+                  {index === 2 && <SnippetNext />}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+/* ---------- 답장 속 UI 조각 ---------- */
+function Panel({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
+  return (
+    <div className={cn("rounded-[14px] bg-paper p-3.5 ring-1 ring-ink/[0.05]", className)}>
+      <p className="kicker text-[9.5px] text-ink/45">{label}</p>
+      <div className="mt-2.5">{children}</div>
+    </div>
+  );
+}
+
+function Chip({ on, children, delay }: { on?: boolean; children: ReactNode; delay: number }) {
+  return (
+    <span
+      className={cn("chat-pop inline-flex h-7 items-center rounded-full px-2.5 text-[11.5px] font-semibold", on ? "bg-ink text-white" : "bg-white text-ink/70 ring-1 ring-inset ring-ink/10")}
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {children}
+    </span>
+  );
+}
+
+/** 01 — 국가·키워드 칩으로 걸러진 후보 수 (실제 예시 데이터 기준) */
+function SnippetFilter() {
+  const s = empathy.chat.filter;
+  const n = creators.filter((c) => c.country === s.country && c.tags.includes(s.keyword)).length;
+  const countries = discover.filters.country.options.slice(0, 4);
+  const keywords = discover.filters.keyword.options.slice(0, 4);
+  return (
+    <Panel label={s.label}>
+      <div className="flex flex-wrap gap-1.5">
+        {countries.map((c, i) => (
+          <Chip key={c} on={c === s.country} delay={i * 60}>
+            {c}
+          </Chip>
+        ))}
+      </div>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {keywords.map((k, i) => (
+          <Chip key={k} on={k === s.keyword} delay={240 + i * 60}>
+            #{k}
+          </Chip>
+        ))}
+      </div>
+      <p className="chat-pop mt-3 flex items-center justify-between text-[12.5px] text-muted" style={{ animationDelay: "520ms" }}>
+        <span>
+          {s.country} · #{s.keyword}
+        </span>
+        <span className="rounded-full bg-brand/10 px-2 py-0.5 font-semibold text-brand">{s.count.replace("{n}", String(n))}</span>
+      </p>
+    </Panel>
+  );
+}
+
+/** 02 — 팔로워 범위 + 비교 카드 2장 */
+function SnippetRange() {
+  const s = empathy.chat.range;
+  const pair = [creators[0], creators[1]];
+  return (
+    <Panel label={s.label}>
+      <div className="chat-pop relative h-6" style={{ animationDelay: "40ms" }} aria-hidden>
+        <span className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-ink/10" />
+        <span className="absolute left-[18%] right-[46%] top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-brand" />
+        <span className="absolute left-[18%] top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white ring-2 ring-brand shadow-card" />
+        <span className="absolute right-[46%] top-1/2 h-4 w-4 translate-x-1/2 -translate-y-1/2 rounded-full bg-white ring-2 ring-brand shadow-card" />
+      </div>
+      <p className="chat-pop flex justify-between text-[11px] text-muted" style={{ animationDelay: "120ms" }}>
+        <span>{s.from}</span>
+        <span className="font-semibold text-ink">{s.range}</span>
+        <span>{s.to}</span>
+      </p>
+      <div className="mt-3 grid grid-cols-2 gap-2.5">
+        {pair.map((c, i) => {
+          const im = images[c.image];
+          return (
+            <div key={c.id} className="chat-pop overflow-hidden rounded-[10px] bg-white ring-1 ring-ink/[0.06]" style={{ animationDelay: `${260 + i * 120}ms` }}>
+              <Placeholder ratioClassName="aspect-[16/10]" tone={c.tone} src={im.src} alt="" sizes="180px" />
+              <div className="px-2.5 py-2">
+                <p className="text-[11.5px] font-bold tracking-tight">{c.name}</p>
+                <p className="text-[10px] text-muted">{formatFollowers(c.followers)}</p>
+                <p className="mt-1 text-[10px] text-ink/60">{c.tags.map((t) => `#${t}`).join(" ")}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p className="chat-pop mt-2.5 text-[11.5px] text-muted" style={{ animationDelay: "560ms" }}>
+        {s.compare}
+      </p>
+    </Panel>
+  );
+}
+
+/** 03 — 다음 협업 알림 */
+function SnippetNext() {
+  const s = empathy.chat.next;
+  const c = creators[1];
+  const im = images[c.image];
+  return (
+    <Panel label={s.label}>
+      <div className="chat-pop flex items-center gap-3" style={{ animationDelay: "60ms" }}>
+        <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-card">
+          <Placeholder fill tone={c.tone} src={im.src} alt="" sizes="44px" />
+          <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand text-white ring-2 ring-white">
+            <Check className="h-2.5 w-2.5" strokeWidth={3} />
+          </span>
+        </span>
+        <span>
+          <span className="block text-[13px] font-bold tracking-tight text-ink">
+            {c.name} · {s.title}
+          </span>
+          <span className="block text-[11.5px] text-muted">{s.body}</span>
+        </span>
+      </div>
+      <div className="chat-pop mt-3 flex items-center gap-2" style={{ animationDelay: "240ms" }}>
+        <span className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-full bg-ink text-[12.5px] font-bold text-white">
+          <Send className="h-3.5 w-3.5" />
+          {s.cta}
+        </span>
+        <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-[12.5px] font-semibold text-ink/70 ring-1 ring-inset ring-ink/10">{s.later}</span>
+      </div>
+    </Panel>
+  );
+}
