@@ -36,7 +36,7 @@ function MiniCard({ i, selected, mark }: { i: number; selected?: boolean; mark?:
         selected && "ring-2 ring-brand"
       )}
     >
-      <Placeholder ratio="4/5" tone={c.tone} src={im.src} alt="" sizes="160px" />
+      <Placeholder ratioClassName="aspect-[3/2]" tone={c.tone} src={im.src} alt="" sizes="160px" />
       <div className="px-2.5 py-2">
         <p className="text-[11.5px] font-bold tracking-tight">{c.name}</p>
         <p className="text-[10px] text-muted">{discover.card.followers.replace("{n}", c.followers.toLocaleString("ko-KR"))}</p>
@@ -57,7 +57,7 @@ function MiniCard({ i, selected, mark }: { i: number; selected?: boolean; mark?:
 
 function Frame({ children, label }: { children: React.ReactNode; label: string }) {
   return (
-    <div className="relative flex h-full flex-col rounded-[22px] bg-white p-5 shadow-lift ring-1 ring-ink/[0.05]">
+    <div className="relative flex h-full flex-col overflow-hidden rounded-[22px] bg-white p-5 shadow-lift ring-1 ring-ink/[0.05]">
       <div className="mb-4 flex items-center justify-between">
         <span className="kicker text-[10px] text-ink/50">{label}</span>
         <span className="rounded-full bg-mist px-2 py-0.5 font-display text-[9px] font-bold uppercase tracking-[0.14em] text-ink/50">
