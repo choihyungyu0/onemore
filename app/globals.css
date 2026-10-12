@@ -705,7 +705,7 @@ html[data-nav-hidden] .site-header {
 
 /* 프리뷰 스택 뒤 은은한 코랄 글로우 */
 .preview-glow {
-  background: radial-gradient(closest-side, rgba(255, 90, 60, 0.13), rgba(255, 90, 60, 0));
+  background: radial-gradient(closest-side, rgba(255, 90, 60, 0.16), rgba(255, 90, 60, 0));
 }
 
 /* 사진 인셋 호버 — 살짝 커지고 라벨이 뜬다 */

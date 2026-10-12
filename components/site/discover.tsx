@@ -169,7 +169,7 @@ export function Discover() {
   };
 
   return (
-    <Section id="discover" className="bg-paper">
+    <Section id="discover" className="overflow-x-clip bg-paper">
       <div
         ref={headRef}
         className={cn("sweep-hold grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center", headInView && "in-view")}
