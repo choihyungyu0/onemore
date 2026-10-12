@@ -95,7 +95,7 @@ async function main() {
     const file = `${slot.name}.webp`;
     await sharp(buf)
       .rotate()
-      .resize(w, h, { fit: "cover", position: "attention" })
+      .resize(...(process.env.NOCROP ? [{ width: w, height: w * 2, fit: "inside" }] : [w, h, { fit: "cover", position: "attention" }])) // NOCROP=1: 비율 크롭 없이 축소만
       .webp({ quality: 80 })
       .toFile(path.join(OUT, file));
 
