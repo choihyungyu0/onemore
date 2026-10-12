@@ -879,70 +879,42 @@ html[data-nav-hidden] .site-header {
   }
 }
 
-/* 매칭 방식 마무리 — 제목의 "협업." 둘레에 손으로 그린 동그라미가 그려지고, 옆에 작은 손글씨 주석 */
-.stmt-circle path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-}
-.how-statement.in-view .stmt-circle path {
-  animation: stmt-draw 1s cubic-bezier(0.65, 0, 0.35, 1) 0.9s forwards;
-}
-@keyframes stmt-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-.stmt-note {
-  opacity: 0;
-  transform: translateY(6px) rotate(-8deg);
-  transition: opacity 0.5s ease 1.7s, transform 0.6s var(--ease-expo) 1.7s;
-}
-.how-statement.in-view .stmt-note {
-  opacity: 1;
-  transform: translateY(0) rotate(-8deg);
-}
-/* 가운데 "서로 선택" 장면 — 카드 두 장이 양쪽에서 들어와 점선이 그려지고 스탬프가 찍힌다 */
-.stmt-card {
-  opacity: 0;
-  transform: translateX(var(--from, -40px));
-  transition: opacity 0.7s ease 0.2s, transform 0.9s var(--ease-expo) 0.2s;
-}
-.how-statement.in-view .stmt-card {
-  opacity: 1;
-  transform: none;
-}
-.stmt-line {
-  background-image: linear-gradient(90deg, var(--brand) 0 6px, transparent 6px 12px);
-  background-size: 12px 2px;
-  background-repeat: repeat-x;
-  background-position: 0 50%;
-  -webkit-mask-image: linear-gradient(90deg, #000 50%, transparent 50%);
-  mask-image: linear-gradient(90deg, #000 50%, transparent 50%);
-  -webkit-mask-size: 200% 100%;
-  mask-size: 200% 100%;
+/* 매칭 방식 마무리 — 손글씨 "Collab"이 펜으로 쓰듯 왼쪽→오른쪽으로 그려진다 (마스크가 글자 방향으로 열림) */
+.scribble {
+  -webkit-mask-image: linear-gradient(100deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  mask-image: linear-gradient(100deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  -webkit-mask-size: 240% 100%;
+  mask-size: 240% 100%;
   -webkit-mask-position: 100% 0;
   mask-position: 100% 0;
-  transition: -webkit-mask-position 1s cubic-bezier(0.65, 0, 0.35, 1) 0.9s;
-  transition: mask-position 1s cubic-bezier(0.65, 0, 0.35, 1) 0.9s;
+  transition: -webkit-mask-position 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
+  transition: mask-position 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
 }
-.how-statement.in-view .stmt-line {
-  -webkit-mask-position: 0 0;
-  mask-position: 0 0;
+.how-statement.in-view .scribble {
+  -webkit-mask-position: 0% 0;
+  mask-position: 0% 0;
 }
-.stmt-stamp {
-  opacity: 0;
-  transform: scale(2) rotate(-14deg);
-  transition: opacity 0.25s ease 1.9s, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1.9s;
+@media (prefers-reduced-motion: reduce) {
+  .scribble {
+    -webkit-mask-image: none;
+    mask-image: none;
+    transition: none;
+  }
 }
-.how-statement.in-view .stmt-stamp {
-  opacity: 1;
-  transform: scale(1) rotate(-6deg);
+
+/* 매칭 방식 마무리 — 제목 마지막 단어가 낙서가 그려진 뒤 코랄로 물든다 */
+.stmt-accent {
+  color: inherit;
+  transition: color 0.6s ease 1.6s;
 }
-/* 국가 띠 뒤 — 옅은 코랄 글로우 + 점 격자 */
+.how-statement.in-view .stmt-accent {
+  color: var(--brand);
+}
+/* 매칭 방식 마무리 — 배경 깊이(옅은 코랄 글로우 + 점 격자)와 국가 띠 "활동 중" 점 */
 .stmt-bg {
   background-image:
-    radial-gradient(60% 70% at 50% 60%, rgba(255, 90, 60, 0.14), transparent 70%),
-    radial-gradient(rgba(11, 18, 32, 0.08) 1px, transparent 1px);
+    radial-gradient(55% 60% at 70% 85%, rgba(255, 90, 60, 0.12), transparent 70%),
+    radial-gradient(rgba(11, 18, 32, 0.07) 1px, transparent 1px);
   background-size: 100% 100%, 22px 22px;
 }
 .stmt-live {
@@ -958,21 +930,6 @@ html[data-nav-hidden] .site-header {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .stmt-circle path {
-    stroke-dashoffset: 0;
-    animation: none;
-  }
-  .stmt-note,
-  .stmt-card,
-  .stmt-stamp {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-  .stmt-line {
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
   .stmt-live {
     animation: none;
   }
