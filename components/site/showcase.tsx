@@ -30,13 +30,13 @@ export function Showcase() {
     mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
       const stage = el.querySelector<HTMLElement>(".show-stage");
       const frame = el.querySelector<HTMLElement>(".show-frame");
-      const headline = el.querySelector<HTMLElement>(".show-headline");
+      const headline = gsap.utils.toArray<HTMLElement>(".show-headline", el);
       const ui = el.querySelector<HTMLElement>(".show-ui");
       const bar = el.querySelector<HTMLElement>(".show-bar-fill");
       const imgs = gsap.utils.toArray<HTMLElement>(".show-img", el);
       const titles = gsap.utils.toArray<HTMLElement>(".show-title", el);
       const descs = gsap.utils.toArray<HTMLElement>(".show-desc", el);
-      if (!stage || !frame || !headline || !ui || !bar || imgs.length < 2) return;
+      if (!stage || !frame || !headline.length || !ui || !bar || imgs.length < 2) return;
 
       // 초기 상태 — 아치형 창 사진 하나, 나머지 슬라이드·UI는 숨김
       gsap.set(frame, { width: "28vw", height: "70vh", borderRadius: "14vw 14vw 12px 12px" });
@@ -106,6 +106,14 @@ export function Showcase() {
               <span className="display-light whitespace-nowrap text-[clamp(3rem,6.5vw,7rem)] leading-none text-ink">
                 {row}
               </span>
+            </div>
+          </div>
+
+          {/* 같은 헤드라인의 외곽선 층 — 사진 앞. 사진이 가린 글자도 읽힌다 */}
+          <div className="show-headline show-headline--outline marquee-mask pointer-events-none absolute inset-x-0 top-1/2 z-[25] -translate-y-1/2 overflow-hidden" aria-hidden>
+            <div className="marquee-track show-marquee">
+              <span className="display-light whitespace-nowrap text-[clamp(3rem,6.5vw,7rem)] leading-none">{row}</span>
+              <span className="display-light whitespace-nowrap text-[clamp(3rem,6.5vw,7rem)] leading-none">{row}</span>
             </div>
           </div>
 

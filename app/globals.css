@@ -546,6 +546,39 @@ html.lenis body {
   }
 }
 
+/* 쇼케이스 헤드라인 외곽선 층 — 사진 위에서는 선으로만 읽힌다 */
+.show-headline--outline span {
+  color: transparent;
+  -webkit-text-stroke: 1.5px #0b1220;
+}
+
+/* 매칭 4단계 비네트 — 연결선 위 점이 브랜드에서 크리에이터로 흐른다 */
+.connect-dot {
+  animation: connect-flow 1.6s ease-in-out infinite;
+}
+@keyframes connect-flow {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 7px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .connect-dot {
+    animation: none;
+    left: calc(50% - 3px);
+  }
+}
+
 /* 포스터 제목 — 옆으로 눕힌 세로쓰기(한글 포함), 180° 돌려 아래→위로 읽힘 */
 .poster-title {
   writing-mode: vertical-rl;
