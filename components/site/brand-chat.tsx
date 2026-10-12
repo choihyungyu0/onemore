@@ -8,12 +8,13 @@ import { cn } from "@/lib/utils";
 import { BrandMark } from "./brand-mark";
 import { formatFollowers } from "./creator-card";
 import { Placeholder } from "./placeholder";
-import { Lines, Reveal } from "./reveal";
+import { Lines, Reveal, SweepLines } from "./reveal";
 import { Kicker } from "./section";
 
 /**
  * 브랜드 공감 — "브랜드 담당자의 메시지" 스레드
- * - 왼쪽 제목은 고정(sticky), 오른쪽에 대화가 스크롤에 따라 한 통씩 올라온다
+ * - 왼쪽 제목은 고정(sticky): 형광펜 강조 제목 + 설명, 그 아래 "누가 말하는 중인지" 상태판(세 브랜드 담당자가
+ *   대화 진행에 따라 순서대로 켜지고, 입력 중/답장 완료 표시). 뒤에는 큰 따옴표 글리프가 옅게 깔린다
  * - 브랜드 메시지(오른쪽, 잉크색): 타이핑 점 → 글자 단위로 채워짐
  * - 워홀원모어 답장(왼쪽, 흰색): 설명 문장 + 실제 UI 조각(조건 칩 / 팔로워 범위·비교 카드 / 다음 협업 알림)
  * - 마지막엔 입력창이 나타나고 전송 버튼이 CTA(캠페인 문의)로 이어진다
@@ -24,36 +25,111 @@ type Phase = "idle" | "youTyping" | "you" | "usTyping" | "us";
 
 export function BrandChat() {
   const reduce = useReducedMotion();
+  const [phases, setPhases] = useState<Phase[]>(() => empathy.items.map(() => (reduce ? "us" : "idle")));
+  const headRef = useRef<HTMLDivElement>(null);
+  const [headIn, setHeadIn] = useState(false);
+  useEffect(() => {
+    const el = headRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (es) => {
+        if (es.some((e) => e.isIntersecting)) {
+          setHeadIn(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const setPhaseAt = (i: number, p: Phase) => setPhases((prev) => (prev[i] === p ? prev : prev.map((x, k) => (k === i ? p : x))));
+  const [title1, title2] = empathy.title.split("\n");
+  const done = phases.filter((p) => p === "us").length;
+
   return (
     <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-      {/* 왼쪽: 고정 제목 */}
-      <div className="lg:sticky lg:top-28 lg:self-start">
-        <Reveal>
-          <Kicker index="04" label={empathy.kicker} />
-        </Reveal>
-        <Reveal delay={0.05}>
-          <h2 className="display mt-5 text-[clamp(2rem,4.6vw,3.75rem)] text-ink">
-            <Lines text={empathy.title} />
-          </h2>
-        </Reveal>
-        <Reveal delay={0.12}>
-          <p className="mt-6 max-w-md text-[17px] leading-[1.7] text-muted md:text-lg">
-            <Lines text={empathy.description} />
-          </p>
-        </Reveal>
-        <Reveal delay={0.18}>
-          <p className="mt-8 flex items-center gap-3 text-[13px] text-muted">
-            <span className="h-px w-10 bg-ink/20" aria-hidden />
-            {empathy.chat.hint}
-          </p>
-        </Reveal>
+      {/* 왼쪽: 고정 제목 + 상태판 */}
+      <div ref={headRef} className={cn("sweep-hold relative lg:sticky lg:top-28 lg:self-start", headIn && "in-view")}>
+        {/* 큰 따옴표 글리프 — "브랜드의 목소리" */}
+        <span aria-hidden className="font-serif-accent pointer-events-none absolute -left-3 -top-6 select-none text-[clamp(8rem,13vw,13rem)] leading-none text-brand/[0.12] lg:-left-6 lg:-top-9">
+          “
+        </span>
+        <div className="relative">
+          <Reveal>
+            <Kicker index="04" label={empathy.kicker} />
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2 className="display mt-5 text-[clamp(2rem,4.6vw,3.75rem)] text-ink">
+              <span className="marker">{title1}</span>
+              <br />
+              {title2}
+            </h2>
+          </Reveal>
+          <Reveal delay={0.12}>
+            <p className="mt-6 max-w-md text-[17px] leading-[1.7] md:text-lg">
+              <SweepLines text={empathy.description} from={0.9} step={0.25} />
+            </p>
+          </Reveal>
+
+          {/* 상태판 — 누가 말하는 중인지 */}
+          <Reveal delay={0.18} className="mt-10">
+            <div className="flex items-start justify-between gap-4">
+              <p className="kicker min-w-0 flex-1 text-ink/50">{empathy.chat.hint}</p>
+              <span className="kicker tnum shrink-0 whitespace-nowrap text-[10px] text-brand">
+                {String(done).padStart(2, "0")} / {String(empathy.items.length).padStart(2, "0")}
+              </span>
+            </div>
+            <ol className="relative mt-4 flex flex-col">
+              <span aria-hidden className="absolute bottom-5 left-[19px] top-5 w-px bg-ink/10" />
+              {empathy.items.map((it, i) => {
+                const p = phases[i];
+                const active = p !== "idle" && p !== "us";
+                const finished = p === "us";
+                const im = images[AVATARS[i]];
+                return (
+                  <li key={it.label} className={cn("relative flex items-center gap-4 py-2.5 transition-opacity duration-500", p === "idle" ? "opacity-45" : "opacity-100")}>
+                    <span className={cn("relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 transition-[box-shadow,transform] duration-500", active ? "scale-105 ring-brand" : "ring-white", finished && "ring-ink/15")}>
+                      <Placeholder fill tone={1} src={im.src} alt="" sizes="40px" />
+                      {active && <span className="chat-ping absolute inset-0 rounded-full ring-2 ring-brand" aria-hidden />}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className={cn("block truncate text-[14px] font-semibold tracking-tight transition-colors duration-300", p === "idle" ? "text-ink/60" : "text-ink")}>{it.label}</span>
+                      <span className={cn("mt-0.5 flex items-center gap-1.5 text-[11.5px] transition-colors duration-300", active ? "text-brand" : "text-muted")}>
+                        {finished && <Check className="h-3 w-3" strokeWidth={3} />}
+                        {p === "idle" && empathy.chat.status.idle}
+                        {(p === "youTyping" || p === "you") && (
+                          <>
+                            <span className="chat-dots chat-dots--brand inline-flex items-center gap-[3px]" aria-hidden>
+                              <i /><i /><i />
+                            </span>
+                            {empathy.chat.status.you}
+                          </>
+                        )}
+                        {p === "usTyping" && (
+                          <>
+                            <span className="chat-dots chat-dots--brand inline-flex items-center gap-[3px]" aria-hidden>
+                              <i /><i /><i />
+                            </span>
+                            {empathy.chat.status.us}
+                          </>
+                        )}
+                        {finished && empathy.chat.status.done}
+                      </span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+          </Reveal>
+        </div>
       </div>
 
       {/* 오른쪽: 스레드 */}
       <div className="relative">
         <ol className="flex flex-col gap-10 lg:gap-14">
           {empathy.items.map((it, i) => (
-            <Exchange key={it.label} index={i} item={it} reduce={!!reduce} />
+            <Exchange key={it.label} index={i} item={it} reduce={!!reduce} onPhase={(p) => setPhaseAt(i, p)} />
           ))}
         </ol>
 
@@ -78,9 +154,15 @@ export function BrandChat() {
   );
 }
 
-function Exchange({ index, item, reduce }: { index: number; item: (typeof empathy.items)[number]; reduce: boolean }) {
+function Exchange({ index, item, reduce, onPhase }: { index: number; item: (typeof empathy.items)[number]; reduce: boolean; onPhase: (p: Phase) => void }) {
   const root = useRef<HTMLLIElement>(null);
-  const [phase, setPhase] = useState<Phase>(reduce ? "us" : "idle");
+  const [phase, setPhaseRaw] = useState<Phase>(reduce ? "us" : "idle");
+  const onPhaseRef = useRef(onPhase);
+  onPhaseRef.current = onPhase;
+  const setPhase = (p: Phase) => {
+    setPhaseRaw(p);
+    onPhaseRef.current(p);
+  };
   const [typed, setTyped] = useState(reduce ? item.quote.length : 0);
   const im = images[AVATARS[index]];
 
