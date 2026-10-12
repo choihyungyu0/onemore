@@ -62,7 +62,7 @@ export function Hero() {
       </div>
 
       {/* 아래 블록 — 부제·버튼·필 */}
-      <div className="relative flex min-w-0 flex-col items-center pt-[max(3.5rem,7vh)] text-center">
+      <div className="relative flex min-w-0 flex-col items-center pt-14 text-center">
         <p className="rise text-[13px] font-semibold text-brand md:text-[14px]" style={delay(0.2)}>
           {hero.eyebrow}
         </p>
