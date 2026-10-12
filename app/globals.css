@@ -549,13 +549,44 @@ html[data-nav-hidden] .site-header {
   pointer-events: none;
 }
 
-/* WebGL 레이어는 마운트 후 부드럽게 나타남 (첫 프레임 글리치 마스킹) */
-.distort-in {
-  animation: intro-in 0.8s var(--ease-expo) both;
+/* 사진 프레임 전환(realevate 로더) — 다음 사진이 가운데서 바깥으로 열리며(clip-path) 1.5→1 줌아웃.
+   인트로(.intro-frame, 지연은 인라인)와 히어로 인셋(.hero-frame.is-in) 공용 */
+.frame-in {
+  clip-path: inset(50%);
 }
-
-/* 첫 화면이 카드로 축소되는 동안 WebGL 레이어는 숨김 (변형된 레이어 위 캔버스 어긋남 방지) */
-.zoom-hero[data-zooming] .distort-in {
-  opacity: 0 !important;
-  transition: opacity 0.2s linear;
+.frame-in > .frame-zoom {
+  transform: scale(1.5);
+}
+.intro-play .intro-frame,
+.hero-frame.is-in {
+  animation: frame-reveal 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.intro-play .intro-frame > .frame-zoom,
+.hero-frame.is-in > .frame-zoom {
+  animation: frame-zoom 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+/* 일찍 건너뛰어도 날아가는 사진은 히어로 인셋과 같은 마지막 프레임 */
+.intro-leaving .intro-frame {
+  animation: none;
+  clip-path: inset(0);
+}
+.intro-leaving .intro-frame > .frame-zoom {
+  animation: none;
+  transform: none;
+}
+@keyframes frame-reveal {
+  from {
+    clip-path: inset(50%);
+  }
+  to {
+    clip-path: inset(0%);
+  }
+}
+@keyframes frame-zoom {
+  from {
+    transform: scale(1.5);
+  }
+  to {
+    transform: scale(1);
+  }
 }

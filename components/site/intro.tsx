@@ -12,7 +12,7 @@ const PHOTO_W = 190;
 const PHOTO_H = 238;
 
 /**
- * 오프닝 — 1막: 노리스식 다크 인트로(등고선·코랄 세리프 마퀴·흰 한글 마퀴·중앙 사진·서명·하단 진행선).
+ * 오프닝 — 1막: 노리스식 다크 인트로(등고선·코랄 세리프 마퀴·흰 한글 마퀴·중앙 사진 프레임 전환·서명·하단 진행선).
  * 2막: realevate식 전환 — 진행선이 끝에 닿으면 중앙 사진이 히어로 인셋 자리로 날아가 안착하고,
  * 그 사이 커튼과 나머지 요소가 녹아 사라진다. 사진이 도착하는 순간 히어로의 인셋이 그 자리를 이어받는다.
  * 페이지를 열 때마다 재생. 클릭·스크롤·키로 건너뜀. 감속 모션이면 생략.
@@ -66,7 +66,8 @@ export function Intro() {
   const [phase, setPhase] = useState<Phase>("idle");
   const photoRef = useRef<HTMLDivElement>(null);
   const rings = useContours();
-  const im = images[hero.insetImage];
+  // 로더 프레임: 여행 사진 4장이 차례로 열리고, 마지막(히어로 인셋 사진)이 히어로로 날아간다
+  const frames = [...hero.insetFrames, hero.insetImage];
 
   useEffect(() => {
     const html = document.documentElement;
@@ -230,7 +231,17 @@ export function Intro() {
         }}
         aria-hidden
       >
-        <Placeholder fill tone={1} src={im.src} alt="" sizes="260px" priority />
+        {frames.map((key, k) => {
+          const im = images[key];
+          const delay = k === 0 ? undefined : { animationDelay: `${(0.35 + (k - 1) * 0.6).toFixed(2)}s` };
+          return (
+            <div key={key} className={k === 0 ? "absolute inset-0" : "intro-frame frame-in absolute inset-0"} style={delay}>
+              <div className={k === 0 ? "absolute inset-0" : "frame-zoom absolute inset-0"} style={delay}>
+                <Placeholder fill tone={1} src={im.src} alt="" sizes="260px" priority />
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* 코랄 서명 — 모든 것의 위 (z 165) */}

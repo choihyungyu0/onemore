@@ -125,6 +125,8 @@ export const hero = {
   tagline: ["찾는 건 구체적으로.", "선택은 브랜드가.", "연결은 워홀원모어가."],
   /** 첫 화면 마퀴 한가운데 사진 인셋 (인트로의 사진이 날아와 안착) */
   insetImage: "inset-01" as ImageKey,
+  /** 인트로 로더에서 차례로 열리는 사진(마지막은 insetImage) · 히어로 인셋 순환에도 사용 */
+  insetFrames: ["card-perth", "marquee-04", "card-goldcoast", "hero-02"] as ImageKey[],
   /** 첫 화면을 가로지르는 거대 마퀴 문장 */
   marquee: "첫 시딩부터, 메가를 향한 성장까지.",
   /** 버튼 아래 작은 필 */
@@ -152,7 +154,7 @@ export const posters = [
 
 /** 콘텐츠 쇼케이스(핀 고정 슬라이드) — 포스터 4개 카테고리를 가로 사진으로 */
 export const showcase = {
-  headline: "현지에서 만드는 콘텐츠",
+  headline: "크리에이터가 현지에서 만드는 콘텐츠",
   hint: "(Scroll)",
   more: { label: "크리에이터 찾기", href: "#discover" },
   slides: posters.map((p, i) => ({

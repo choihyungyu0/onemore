@@ -60,10 +60,9 @@ export function Showcase() {
           invalidateOnRefresh: true,
         },
       });
-      // 1) 창 → 카드 전체. 헤드라인은 사진 위에 옅게 남았다가 사라진다
+      // 1) 창 → 카드 전체. 헤드라인은 사진 뒤에 있다가 사진이 덮으면서 사라진다
       tl.to(frame, { width: "100%", height: "100%", borderRadius: "10px 10px 10px 10px", duration: 1 }, 0);
-      tl.to(headline, { opacity: 0.22, duration: 0.7 }, 0);
-      tl.to(headline, { opacity: 0, duration: 0.2 }, 0.8);
+      tl.to(headline, { opacity: 0, duration: 0.3 }, 0.7);
       // 2) 첫 슬라이드 UI 등장
       tl.to(ui, { opacity: 1, y: 0, duration: 0.3 }, 1.0);
       // 3) 슬라이드 전환 — 다음 사진이 아래에서 올라오고, 제목은 마스크 안에서 위로 교체
@@ -87,7 +86,7 @@ export function Showcase() {
         {/* 카드 — 상단은 고정 내비(76px) 아래부터 */}
         <div className="absolute inset-x-5 bottom-5 top-[88px]">
           {/* 사진 프레임 — 처음엔 아치형 창, 스크롤하면 카드 전체 */}
-          <div className="show-frame absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 overflow-hidden bg-mist">
+          <div className="show-frame absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 overflow-hidden bg-mist">
             {slides.map((s) => {
               const im = images[s.image];
               return (
@@ -98,8 +97,8 @@ export function Showcase() {
             })}
           </div>
 
-          {/* 헤드라인 마퀴 — 사진 앞 */}
-          <div className="show-headline marquee-mask pointer-events-none absolute inset-x-0 top-1/2 z-20 -translate-y-1/2 overflow-hidden">
+          {/* 헤드라인 마퀴 — 사진 뒤 (히어로와 같은 층위: 사진이 글자 앞) */}
+          <div className="show-headline marquee-mask pointer-events-none absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 overflow-hidden">
             <div className="marquee-track show-marquee">
               <span className="display-light whitespace-nowrap text-[clamp(3rem,6.5vw,7rem)] leading-none text-ink">
                 {row}

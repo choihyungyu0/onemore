@@ -1,14 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { useReducedMotion } from "framer-motion";
-import { brand, hero, images, nav } from "@/content/landing";
+import { brand, hero, nav } from "@/content/landing";
 import { ButtonLink, btnClass } from "./button";
-import { DistortImage } from "./distort-image";
 import { Magnetic } from "./magnetic";
 import { Logo } from "./navbar";
-import { Placeholder } from "./placeholder";
+import { HeroInset } from "./hero-inset";
 import { Lines } from "./reveal";
 
 /*
@@ -19,12 +16,6 @@ import { Lines } from "./reveal";
 const delay = (s: number) => ({ animationDelay: `${s}s` });
 
 export function Hero() {
-  const reduce = useReducedMotion() ?? false;
-  const [fine, setFine] = useState(false);
-  useEffect(() => {
-    setFine(window.matchMedia("(pointer: fine)").matches);
-  }, []);
-  const im = images[hero.insetImage];
   const line = `${hero.marquee}   ·   `;
   const row = line.repeat(3);
 
@@ -70,11 +61,7 @@ export function Hero() {
         </h1>
 
         <div className="hero-inset-wrap pointer-events-none absolute left-1/2 top-1/2 z-10 w-[clamp(120px,min(14vw,22vh),210px)] -translate-x-1/2 -translate-y-1/2">
-          <div id="hero-inset" className="hero-inset-inner pointer-events-auto relative overflow-hidden rounded-[6px] shadow-lift">
-            <Placeholder ratio="4/5" tone={1} src={im.src} alt={im.alt} sizes="260px" priority>
-              {!reduce && fine && <DistortImage src={im.src} className="absolute inset-0 z-[1]" />}
-            </Placeholder>
-          </div>
+          <HeroInset />
         </div>
       </div>
 
