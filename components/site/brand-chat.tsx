@@ -16,7 +16,7 @@ import { Kicker } from "./section";
  * - 왼쪽 제목은 고정(sticky): 형광펜 강조 제목 + 설명, 그 아래 "누가 말하는 중인지" 상태판(세 브랜드 담당자가
  *   대화 진행에 따라 순서대로 켜지고, 입력 중/답장 완료 표시). 뒤에는 큰 따옴표 글리프가 옅게 깔린다
  * - 브랜드 메시지(오른쪽, 잉크색): 타이핑 점 → 글자 단위로 채워짐
- * - 워홀원모어 답장(왼쪽, 흰색): 설명 문장 + 실제 UI 조각(조건 칩 / 팔로워 범위·비교 카드 / 다음 협업 알림)
+ * - 오엠엘 답장(왼쪽, 흰색): 설명 문장 + 실제 UI 조각(조건 칩 / 팔로워 범위·비교 카드 / 다음 협업 알림)
  * - 마지막엔 입력창이 나타나고 전송 버튼이 CTA(캠페인 문의)로 이어진다
  * - 말풍선에 올리면 살짝 기울며 떠오른다. 감속 모션은 모두 완성 상태로 표시
  */
@@ -247,7 +247,7 @@ function Exchange({ index, item, reduce, onPhase }: { index: number; item: (type
         </div>
       </div>
 
-      {/* 워홀원모어 답장 — 왼쪽 */}
+      {/* 오엠엘 답장 — 왼쪽 */}
       <div className={cn("flex items-end gap-3 transition-[opacity,transform] duration-600 ease-[var(--ease-expo)]", usVisible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0")}>
         <BrandMark className="h-9 w-9 shrink-0 rounded-full ring-2 ring-white shadow-card" />
         <div className="flex max-w-[88%] flex-col items-start lg:max-w-[82%]">

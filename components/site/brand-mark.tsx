@@ -2,7 +2,7 @@ import { useId } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * 워홀원모어 마스코트 마크 — 지구본 위 파일럿 캐릭터(브랜드 프로필 아이콘)를 벡터로 옮긴 것.
+ * 오엠엘 마스코트 마크 — 지구본 위 파일럿 캐릭터(브랜드 프로필 아이콘)를 벡터로 옮긴 것.
  * 같은 도형이 app/icon.svg(파비콘, 둥근 사각)과 public/brand/mark.svg(원형)에도 들어 있다 — 바꿀 때 함께 수정.
  * shape: circle(기본, 내비·본문) | square(앱 아이콘 느낌)
  */
