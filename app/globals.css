@@ -1375,3 +1375,13 @@ html[data-nav-hidden] .site-header {
 #main > .off * {
   animation-play-state: paused !important;
 }
+
+/* ── 모바일·태블릿: backdrop-filter 끄기 ──
+   카드 칩·스탬프의 유리 효과는 스크롤 중 매 프레임 뒤 레이어를 다시 흐리게 그려 저사양 폰에서 가장 비싼 효과 중 하나다.
+   1024px 미만에선 반투명 배경만 남기고 흐림은 제거한다 (데스크톱은 유지) */
+@media (max-width: 1023px) {
+  [class*="backdrop-blur"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
