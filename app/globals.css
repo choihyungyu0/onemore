@@ -917,20 +917,27 @@ html[data-nav-hidden] .site-header {
     radial-gradient(rgba(11, 18, 32, 0.07) 1px, transparent 1px);
   background-size: 100% 100%, 22px 22px;
 }
-.stmt-live {
-  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
-  animation: stmt-ping 1.8s ease-out infinite;
+.stmt-live::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 999px;
+  border: 2px solid rgba(34, 197, 94, 0.55);
+  animation: stmt-ping 1.8s ease-out infinite; /* transform·opacity만 → 컴포지터에서 처리 */
 }
 @keyframes stmt-ping {
-  70% {
-    box-shadow: 0 0 0 7px rgba(34, 197, 94, 0);
+  0% {
+    transform: scale(1);
+    opacity: 1;
   }
+  70%,
   100% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    transform: scale(2.2);
+    opacity: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .stmt-live {
+  .stmt-live::after {
     animation: none;
   }
 }
@@ -1360,4 +1367,11 @@ html[data-nav-hidden] .site-header {
 /* 어두운 배경용 형광펜 */
 .marker--dark {
   background-image: linear-gradient(transparent 58%, rgba(255, 90, 60, 0.45) 58% 94%, transparent 94%);
+}
+
+/* ── 화면 밖 섹션(main 직계 자식 .off, components/site/offscreen-pause.tsx)의 CSS 애니메이션 일시정지 ──
+   무한 깜빡임·핑·마퀴가 보이지 않는 곳에서 매 프레임 스타일을 다시 계산하지 않도록 */
+#main > .off,
+#main > .off * {
+  animation-play-state: paused !important;
 }

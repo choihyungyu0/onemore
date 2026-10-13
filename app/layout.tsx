@@ -8,6 +8,7 @@ import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { Intro } from "@/components/site/intro";
 import { Cursor } from "@/components/site/cursor";
 import { ScrollProgress } from "@/components/site/scroll-progress";
+import { OffscreenPause } from "@/components/site/offscreen-pause";
 
 // 한글 본문·헤드라인: Pretendard Variable (self-hosted, OFL) — KS X 1001 2,350자+사이트 카피 서브셋. 첫 화면 폰트 교체 깜빡임을 막기 위해 block
 const pretendard = localFont({
@@ -104,6 +105,7 @@ export default function RootLayout({
         </SmoothScroll>
         <Cursor />
         <ScrollProgress />
+        <OffscreenPause />
       </body>
     </html>
   );
