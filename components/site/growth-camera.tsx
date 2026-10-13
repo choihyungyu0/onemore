@@ -4,6 +4,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { scheduleRefresh } from "@/lib/scroll-refresh";
+import { createLoop, isFinePointer, settled, whenInView } from "@/lib/raf-loop";
 import { useLenis } from "lenis/react";
 import { growth, images, type ImageKey, type SiteImage } from "@/content/landing";
 import { cn } from "@/lib/utils";
@@ -55,19 +56,22 @@ function Hud({ dist, ev, live }: { dist: string; ev: string; live?: boolean }) {
     if (!el.getClientRects().length) return; // display:none 변형(모바일/데스크톱 중 숨은 쪽)에선 돌리지 않는다
     const t0 = performance.now();
     const pad = (n: number) => String(n).padStart(2, "0");
-    let raf = 0;
     let last = "";
-    const loop = (now: number) => {
-      const s = (now - t0) / 1000;
+    // 화면에 보일 때만 센다
+    const loop = createLoop(() => {
+      const s = (performance.now() - t0) / 1000;
       const txt = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(Math.floor(s) % 60)}:${pad(Math.floor((s % 1) * 24))}`;
       if (txt !== last) {
         last = txt;
         el.textContent = txt;
       }
-      raf = requestAnimationFrame(loop);
+      return true;
+    });
+    const off = whenInView(el, (v) => (v ? loop.kick() : loop.stop()), "0px");
+    return () => {
+      off();
+      loop.stop();
     };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
   }, [live]);
 
   return (
@@ -234,13 +238,14 @@ function DesktopScene({ im, lines }: { im: SiteImage; lines: string[] }) {
     const card = el.querySelector<HTMLElement>("[data-card]");
     const box = el.querySelector<HTMLElement>("[data-focus]");
     if (!card || !box) return;
+    if (!isFinePointer()) return;
     let tx = 0.5;
     let ty = 0.5;
     let cx = 0.5;
     let cy = 0.5;
-    let raf = 0;
     let lastDist = "";
-    const loop = () => {
+    // 커서가 움직일 때만 돌고, 상자가 목표에 닿으면 멈춘다
+    const loop = createLoop(() => {
       cx += (tx - cx) * 0.12;
       cy += (ty - cy) * 0.12;
       box.style.left = `${(cx * 100).toFixed(2)}%`;
@@ -251,24 +256,25 @@ function DesktopScene({ im, lines }: { im: SiteImage; lines: string[] }) {
         setDist(d);
         setEv(`EV ${((cy - 0.5) * -1.4).toFixed(1).replace("-0.0", "0.0")}`);
       }
-      raf = requestAnimationFrame(loop);
-    };
+      return !(settled(cx, tx) && settled(cy, ty));
+    });
     const onMove = (e: PointerEvent) => {
       const r = card.getBoundingClientRect();
       tx = Math.min(0.92, Math.max(0.08, (e.clientX - r.left) / r.width));
       ty = Math.min(0.9, Math.max(0.1, (e.clientY - r.top) / r.height));
+      loop.kick();
     };
     const onLeave = () => {
       tx = 0.5;
       ty = 0.5;
+      loop.kick();
     };
-    card.addEventListener("pointermove", onMove);
+    card.addEventListener("pointermove", onMove, { passive: true });
     card.addEventListener("pointerleave", onLeave);
-    raf = requestAnimationFrame(loop);
     return () => {
       card.removeEventListener("pointermove", onMove);
       card.removeEventListener("pointerleave", onLeave);
-      cancelAnimationFrame(raf);
+      loop.stop();
     };
   }, []);
 

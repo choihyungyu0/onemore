@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useLenis } from "lenis/react";
+import { createLoop, isFinePointer, settled, whenInView } from "@/lib/raf-loop";
 import { how, images, showcase } from "@/content/landing";
 import { requestFilter } from "@/lib/filter-events";
 import { cn } from "@/lib/utils";
@@ -111,49 +112,37 @@ function CountryMarquee() {
   useEffect(() => {
     const el = track.current;
     if (!el || reduce) return;
-    let raf = 0;
     let x = 0;
     let boost = 0;
-    let last = performance.now();
-    const loop = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
+    // 화면에 보일 때만 흐른다
+    const loop = createLoop((dt) => {
       const v = Math.abs(lenisRef.current?.velocity ?? 0);
       boost = Math.max(boost * 0.92, Math.min(v * 12, 900));
       if (!paused.current) x += (70 + boost) * dt;
       const half = el.scrollWidth / 2;
       if (half > 0 && x >= half) x -= half;
       el.style.transform = `translate3d(${(x - half).toFixed(2)}px,0,0)`;
-      raf = requestAnimationFrame(loop);
+      return true;
+    });
+    const off = whenInView(el, (v) => (v ? loop.kick() : loop.stop()), "0px");
+    return () => {
+      off();
+      loop.stop();
     };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
   }, [reduce]);
 
   // 커서 옆 사진 미리보기 — 스프링으로 따라간다
   useEffect(() => {
     const w = wrap.current;
     const p = preview.current;
-    if (!w || !p || reduce) return;
+    if (!w || !p || reduce || !isFinePointer()) return;
     let tx = 0;
     let ty = 0;
     let cx = 0;
     let cy = 0;
-    let raf = 0;
     let armed = false; // 처음 들어올 때는 커서 자리에서 바로 시작 (화면 구석에서 날아오지 않게)
-    const onMove = (e: PointerEvent) => {
-      tx = e.clientX;
-      ty = e.clientY;
-      if (!armed) {
-        armed = true;
-        cx = tx;
-        cy = ty;
-      }
-    };
-    const onLeave = () => {
-      armed = false;
-    };
-    const loop = () => {
+    // 커서가 움직일 때만 돌고, 미리보기가 커서를 따라잡으면 멈춘다
+    const loop = createLoop(() => {
       cx += (tx - cx) * 0.16;
       cy += (ty - cy) * 0.16;
       // 커서 오른쪽 위에 띄우되 화면 위로 나가면 아래쪽으로
@@ -162,15 +151,27 @@ function CountryMarquee() {
       const x = Math.min(window.innerWidth - w2 - 12, cx + 24);
       const y = cy - h2 - 16 < 12 ? cy + 24 : cy - h2 - 16;
       p.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${((cx - tx) * 0.04).toFixed(2)}deg)`;
-      raf = requestAnimationFrame(loop);
+      return !(settled(cx, tx, 0.2) && settled(cy, ty, 0.2));
+    });
+    const onMove = (e: PointerEvent) => {
+      tx = e.clientX;
+      ty = e.clientY;
+      if (!armed) {
+        armed = true;
+        cx = tx;
+        cy = ty;
+      }
+      loop.kick();
     };
-    w.addEventListener("pointermove", onMove);
+    const onLeave = () => {
+      armed = false;
+    };
+    w.addEventListener("pointermove", onMove, { passive: true });
     w.addEventListener("pointerleave", onLeave);
-    raf = requestAnimationFrame(loop);
     return () => {
       w.removeEventListener("pointermove", onMove);
       w.removeEventListener("pointerleave", onLeave);
-      cancelAnimationFrame(raf);
+      loop.stop();
     };
   }, [reduce]);
 

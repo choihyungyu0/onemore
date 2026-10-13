@@ -1,5 +1,7 @@
 "use client";
 
+import { createLoop, isFinePointer, settled, whenInView } from "@/lib/raf-loop";
+
 import { useEffect, useRef, type CSSProperties } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { discover, images, type Creator } from "@/content/landing";
@@ -23,30 +25,37 @@ export function DiscoverPreview({ list, label }: { list: Creator[]; label: strin
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (reduce) return;
+    if (reduce || !isFinePointer()) return;
     const el = root.current;
     if (!el) return;
-    let raf = 0;
     let tx = 0;
     let ty = 0;
     let cx = 0;
     let cy = 0;
-    const onMove = (e: PointerEvent) => {
-      tx = e.clientX / window.innerWidth - 0.5;
-      ty = e.clientY / window.innerHeight - 0.5;
-    };
-    const loop = () => {
+    let visible = false;
+    // 화면 안에서 커서가 움직일 때만 돌고, 목표에 닿으면 멈춘다
+    const loop = createLoop(() => {
       cx += (tx - cx) * 0.06;
       cy += (ty - cy) * 0.06;
       el.style.setProperty("--px", cx.toFixed(3));
       el.style.setProperty("--py", cy.toFixed(3));
-      raf = requestAnimationFrame(loop);
+      return !(settled(cx, tx) && settled(cy, ty));
+    });
+    const onMove = (e: PointerEvent) => {
+      tx = e.clientX / window.innerWidth - 0.5;
+      ty = e.clientY / window.innerHeight - 0.5;
+      if (visible) loop.kick();
     };
-    window.addEventListener("pointermove", onMove);
-    raf = requestAnimationFrame(loop);
+    const off = whenInView(el, (v) => {
+      visible = v;
+      if (v) loop.kick();
+      else loop.stop();
+    });
+    window.addEventListener("pointermove", onMove, { passive: true });
     return () => {
       window.removeEventListener("pointermove", onMove);
-      cancelAnimationFrame(raf);
+      off();
+      loop.stop();
     };
   }, [reduce]);
 

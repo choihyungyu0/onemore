@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Mona_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { brand, seo } from "@/content/landing";
+import { INAPP_REDIRECT_SCRIPT } from "@/lib/inapp-redirect";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { Intro } from "@/components/site/intro";
 import { Cursor } from "@/components/site/cursor";
@@ -86,6 +87,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* 인앱 브라우저(카카오톡 등)에서 열리면 크롬으로 — 첫 그리기 전에 실행 */}
+        <script dangerouslySetInnerHTML={{ __html: INAPP_REDIRECT_SCRIPT }} />
         <script dangerouslySetInnerHTML={{ __html: PRELOAD_SCRIPT }} />
       </head>
       <body className="antialiased">

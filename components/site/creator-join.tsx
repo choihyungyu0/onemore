@@ -4,6 +4,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { scheduleRefresh } from "@/lib/scroll-refresh";
+import { createLoop, isFinePointer, settled, whenInView } from "@/lib/raf-loop";
 import { Check, ChevronRight, Clock } from "lucide-react";
 import { creatorJoin, creators, images } from "@/content/landing";
 import { cn } from "@/lib/utils";
@@ -76,29 +77,34 @@ export function CreatorJoin() {
   // 마우스 시차 — 뒤 카드가 벌어진다
   useEffect(() => {
     const el = stage.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let raf = 0;
+    if (!el || !isFinePointer() || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let tx = 0;
     let cx = 0;
+    // 커서가 움직일 때만 돌고, 목표에 닿으면 멈춘다
+    const loop = createLoop(() => {
+      cx += (tx - cx) * 0.08;
+      el.style.setProperty("--mx", cx.toFixed(3));
+      return !settled(cx, tx);
+    });
     const onMove = (e: PointerEvent) => {
       const r = el.getBoundingClientRect();
       tx = (e.clientX - r.left) / r.width - 0.5;
+      loop.kick();
     };
     const onLeave = () => {
       tx = 0;
+      loop.kick();
     };
-    const loop = () => {
-      cx += (tx - cx) * 0.08;
-      el.style.setProperty("--mx", cx.toFixed(3));
-      raf = requestAnimationFrame(loop);
-    };
-    el.addEventListener("pointermove", onMove);
+    const off = whenInView(el, (v) => {
+      if (!v) loop.stop();
+    });
+    el.addEventListener("pointermove", onMove, { passive: true });
     el.addEventListener("pointerleave", onLeave);
-    raf = requestAnimationFrame(loop);
     return () => {
       el.removeEventListener("pointermove", onMove);
       el.removeEventListener("pointerleave", onLeave);
-      cancelAnimationFrame(raf);
+      off();
+      loop.stop();
     };
   }, []);
 

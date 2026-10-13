@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
+import { createLoop, settled } from "@/lib/raf-loop";
 
 /**
  * 커스텀 커서: 즉답하는 점 + 뒤따르는 링. 링크·버튼 위에서 링이 커진다.
@@ -22,19 +23,20 @@ export function Cursor() {
     let mx = -100,
       my = -100,
       rx = -100,
-      ry = -100,
-      raf = 0;
+      ry = -100;
 
+    // 링은 점을 따라잡으면 멈춘다 (가만히 있을 때 매 프레임 일하지 않도록)
+    const loop = createLoop(() => {
+      rx += (mx - rx) * 0.18;
+      ry += (my - ry) * 0.18;
+      if (ringRef.current) ringRef.current.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+      return !(settled(rx, mx, 0.1) && settled(ry, my, 0.1));
+    });
     const onMove = (e: PointerEvent) => {
       mx = e.clientX;
       my = e.clientY;
       if (dotRef.current) dotRef.current.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
-    };
-    const loop = () => {
-      rx += (mx - rx) * 0.18;
-      ry += (my - ry) * 0.18;
-      if (ringRef.current) ringRef.current.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
-      raf = requestAnimationFrame(loop);
+      loop.kick();
     };
     const setHover = (e: Event, v: boolean) => {
       const t = e.target as HTMLElement | null;
@@ -49,14 +51,13 @@ export function Cursor() {
     document.addEventListener("pointerover", onOver);
     document.addEventListener("pointerout", onOut);
     document.documentElement.classList.add("has-cursor");
-    raf = requestAnimationFrame(loop);
 
     return () => {
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerover", onOver);
       document.removeEventListener("pointerout", onOut);
       document.documentElement.classList.remove("has-cursor", "cursor-hover");
-      cancelAnimationFrame(raf);
+      loop.stop();
     };
   }, [reduce]);
 
